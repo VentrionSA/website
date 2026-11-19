@@ -69,7 +69,7 @@ export function Approach() {
   return (
     <section ref={root} id="approach" aria-labelledby="approach-title" className="relative bg-coal">
       <div ref={pinArea} className="relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden py-[clamp(6rem,10vw,9rem)]">
-        <SectionBackdrop src={BACKDROPS.approach} wash={0.84} />
+        <SectionBackdrop src={BACKDROPS.approach} wash={0.5} side="both" />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_80%_0%,rgba(196,167,121,0.08),transparent_70%)]"

@@ -150,7 +150,7 @@ export function Network() {
 
   return (
     <section id="network" aria-labelledby="network-title" className="relative isolate overflow-hidden bg-graphite py-[clamp(6rem,12vw,11rem)]">
-      <SectionBackdrop src={BACKDROPS.network} wash={0.84} />
+      <SectionBackdrop src={BACKDROPS.network} wash={0.55} side="both" />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_40%_at_32%_58%,rgba(196,167,121,0.08),transparent_72%)]"

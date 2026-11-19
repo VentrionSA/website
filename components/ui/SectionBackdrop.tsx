@@ -1,38 +1,77 @@
+"use client";
+
 import Image, { type StaticImageData } from "next/image";
+import { useRef } from "react";
+import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 
 /**
- * Full-bleed photographic background washed with the cream page colour, so the
- * image reads as texture while dark text stays crisp. The parent must be
- * `relative isolate`.
+ * Full-bleed photographic background in the style of the commodity panels:
+ * the photo stays clearly visible, a directional cream overlay keeps the text
+ * side readable, and the image drifts with a scroll-linked parallax.
+ * The parent must be `relative isolate`.
  */
 export function SectionBackdrop({
   src,
   position = "50% 50%",
-  wash = 0.8,
+  wash = 0.45,
+  side = "left",
   priority = false,
 }: {
   src: StaticImageData;
   position?: string;
-  /** 0–1: strength of the cream wash over the photo. */
+  /** 0–1: base cream wash across the whole photo. */
   wash?: number;
+  /** Which side carries the text and gets the stronger overlay. */
+  side?: "left" | "right" | "both";
   priority?: boolean;
 }) {
+  const root = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(MOTION_QUERIES.motion, () => {
+        gsap.fromTo(
+          "[data-backdrop-media]",
+          { scale: 1.22, yPercent: -7 },
+          {
+            scale: 1.04,
+            yPercent: 7,
+            ease: "none",
+            scrollTrigger: { trigger: root.current?.parentElement, start: "top bottom", end: "bottom top", scrub: true },
+          },
+        );
+      });
+    },
+    { scope: root },
+  );
+
+  const sideGradient =
+    side === "both"
+      ? "bg-[radial-gradient(70%_80%_at_50%_50%,transparent_0%,var(--color-ink)_100%)] opacity-70"
+      : side === "left"
+        ? "bg-gradient-to-r from-ink via-ink/75 to-ink/10"
+        : "bg-gradient-to-l from-ink via-ink/75 to-ink/10";
+
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-30 overflow-hidden">
-      <Image
-        src={src}
-        alt=""
-        fill
-        sizes="100vw"
-        quality={60}
-        placeholder="blur"
-        {...(priority ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
-        className="object-cover"
-        style={{ objectPosition: position }}
-      />
+    <div ref={root} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-30 overflow-hidden">
+      <div data-backdrop-media className="absolute inset-0 will-change-transform">
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes="100vw"
+          quality={60}
+          placeholder="blur"
+          {...(priority ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
+          className="object-cover"
+          style={{ objectPosition: position }}
+        />
+      </div>
       <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} />
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
+      <div className={`absolute inset-0 ${sideGradient}`} />
+      <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ink to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
     </div>
   );
 }

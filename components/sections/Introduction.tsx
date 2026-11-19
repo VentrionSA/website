@@ -75,7 +75,7 @@ function ConnectedNetwork() {
 export function Introduction() {
   return (
     <section id="about" aria-labelledby="about-title" className="relative isolate overflow-hidden bg-ink pt-[clamp(6rem,14vw,12rem)]">
-      <SectionBackdrop src={BACKDROPS.about} wash={0.82} />
+      <SectionBackdrop src={BACKDROPS.about} wash={0.5} side="both" />
       <div className="shell grid gap-y-14 lg:grid-cols-12 lg:gap-x-8">
         <div className="lg:col-span-7">
           <Eyebrow index="01">About</Eyebrow>

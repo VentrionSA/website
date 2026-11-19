@@ -56,7 +56,7 @@ export function Contact() {
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-hidden bg-ink py-[clamp(6rem,12vw,11rem)]">
-      <SectionBackdrop src={BACKDROPS.contact} wash={0.86} />
+      <SectionBackdrop src={BACKDROPS.contact} wash={0.4} side="left" />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_50%_at_15%_20%,rgba(196,167,121,0.08),transparent_70%)]"
