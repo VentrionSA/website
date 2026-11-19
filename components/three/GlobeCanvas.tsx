@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode, type RefObject } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Line } from "@react-three/drei";
+import { Environment, Lightformer, Line } from "@react-three/drei";
 import * as THREE from "three";
 import { decodeLandPoints } from "@/lib/geo/points";
 import { CONNECTIONS, MARKETS } from "@/lib/content";
 import { arcPoints, latLonToVector3, makeGlowTexture } from "./geo";
+import { useEngravedMaps } from "./engraved";
 
 type Tier = "high" | "low";
 type DragState = { dx: number; dragging: boolean };
@@ -55,7 +56,7 @@ const dotFragment = /* glsl */ `
   varying float vFocus;
   void main() {
     float d = length(gl_PointCoord - 0.5);
-    if (d > 0.5) discard;
+    if (d > 0.5 || vNetwork < 0.5) discard;
     float edge = smoothstep(0.5, 0.32, d);
     float rim = smoothstep(-0.05, 0.45, vFacing);
     float tint = max(vNetwork * 0.55, vFocus);
@@ -191,15 +192,29 @@ function GlobeBody() {
     return { body, halo, graticule: new THREE.LineSegments(geo, lineMat) };
   }, []);
 
+  const { bumpTex, roughTex, colorTex } = useEngravedMaps(4096);
+  void body;
+  void graticule;
   return (
     <>
-      <mesh material={body}>
-        <sphereGeometry args={[1, 96, 96]} />
+      <mesh>
+        <sphereGeometry args={[1, 160, 112]} />
+        <meshPhysicalMaterial
+          color="#ffffff"
+          map={colorTex}
+          metalness={1}
+          roughness={0.44}
+          roughnessMap={roughTex}
+          bumpMap={bumpTex}
+          bumpScale={3}
+          clearcoat={0.5}
+          clearcoatRoughness={0.32}
+          envMapIntensity={1.2}
+        />
       </mesh>
       <mesh material={halo} scale={1.1}>
         <sphereGeometry args={[1, 64, 64]} />
       </mesh>
-      <primitive object={graticule} />
     </>
   );
 }
@@ -481,8 +496,14 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
         dpr={tier === "high" ? [1, 1.75] : [1, 1.4]}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, 4.6], fov: 30, near: 0.1, far: 20 }}
-        flat
       >
+        <Environment frames={1} resolution={256} background={false}>
+          <Lightformer form="rect" intensity={3.2} color="#f6e6c6" position={[-5, 4, 4]} scale={[9, 1.6, 1]} target={[0, 0, 0]} />
+          <Lightformer form="rect" intensity={1.6} color="#c4a779" position={[6, -1, 3]} scale={[2.2, 7, 1]} target={[0, 0, 0]} />
+          <Lightformer form="ring" intensity={1.1} color="#ffffff" position={[1, 6, -5]} scale={5} target={[0, 0, 0]} />
+        </Environment>
+        <directionalLight position={[-5, 6, 6]} intensity={1.4} color="#f4e4c4" />
+        <directionalLight position={[6, -2, -5]} intensity={2.4} color="#c4a779" />
         <Rig focusIndex={focusIndex} drag={drag}>
           <GlobeBody />
           <LandDots focusIndex={focusIndex} tier={tier} calm={calm} />

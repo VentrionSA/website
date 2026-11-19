@@ -149,7 +149,7 @@ export function Network() {
   }, []);
 
   return (
-    <section id="network" aria-labelledby="network-title" className="relative isolate overflow-hidden bg-graphite py-[clamp(6rem,12vw,11rem)]">
+    <section id="network" aria-labelledby="network-title" className="relative isolate overflow-clip bg-graphite py-[clamp(6rem,12vw,11rem)]">
       <SectionBackdrop src={BACKDROPS.network} wash={0.55} side="both" />
       <div
         aria-hidden="true"

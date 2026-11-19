@@ -146,7 +146,7 @@ export function Commodities() {
 
   return (
     <section id="commodities" aria-labelledby="commodities-title" className="relative bg-ink">
-      <div className="relative isolate overflow-hidden">
+      <div className="relative isolate overflow-clip">
         <SectionBackdrop src={BACKDROPS.commodities} wash={0.35} side="left" />
       <div className="shell pb-[clamp(4rem,8vw,7rem)] pt-[clamp(6rem,12vw,11rem)]">
         <Eyebrow index="03">Commodities</Eyebrow>

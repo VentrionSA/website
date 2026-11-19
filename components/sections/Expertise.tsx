@@ -39,7 +39,7 @@ export function Expertise() {
   );
 
   return (
-    <section id="expertise" aria-labelledby="expertise-title" className="relative isolate overflow-hidden bg-ink py-[clamp(6rem,12vw,11rem)]">
+    <section id="expertise" aria-labelledby="expertise-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
       <SectionBackdrop src={BACKDROPS.expertise} wash={0.6} side="both" />
       <div className="shell">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">

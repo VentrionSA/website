@@ -55,7 +55,7 @@ export function Contact() {
   const mail = getMailtoHref();
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-hidden bg-ink py-[clamp(6rem,12vw,11rem)]">
+    <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
       <SectionBackdrop src={BACKDROPS.contact} wash={0.4} side="left" />
       <div
         aria-hidden="true"

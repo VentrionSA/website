@@ -33,10 +33,10 @@ export function SectionBackdrop({
       mm.add(MOTION_QUERIES.motion, () => {
         gsap.fromTo(
           "[data-backdrop-media]",
-          { scale: 1.22, yPercent: -7 },
+          { scale: 1.12, yPercent: -4 },
           {
-            scale: 1.04,
-            yPercent: 7,
+            scale: 1.02,
+            yPercent: 4,
             ease: "none",
             scrollTrigger: { trigger: root.current?.parentElement, start: "top bottom", end: "bottom top", scrub: true },
           },
@@ -54,22 +54,25 @@ export function SectionBackdrop({
         : "bg-gradient-to-l from-ink via-ink/75 to-ink/10";
 
   return (
-    <div ref={root} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-30 overflow-hidden">
-      <div data-backdrop-media className="absolute inset-0 will-change-transform">
-        <Image
-          src={src}
-          alt=""
-          fill
-          sizes="100vw"
-          quality={60}
-          placeholder="blur"
-          {...(priority ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
-          className="object-cover"
-          style={{ objectPosition: position }}
-        />
+    <div ref={root} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-30 overflow-clip">
+      {/* Viewport-sized sticky layer: the photo is never stretched over tall sections */}
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
+        <div data-backdrop-media className="absolute inset-0 will-change-transform">
+          <Image
+            src={src}
+            alt=""
+            fill
+            sizes="100vw"
+            quality={85}
+            placeholder="blur"
+            {...(priority ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
+            className="object-cover"
+            style={{ objectPosition: position }}
+          />
+        </div>
+        <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} />
+        <div className={`absolute inset-0 ${sideGradient}`} />
       </div>
-      <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} />
-      <div className={`absolute inset-0 ${sideGradient}`} />
       <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ink to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
     </div>
