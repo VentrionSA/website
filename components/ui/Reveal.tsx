@@ -34,7 +34,7 @@ export function Reveal({ as: Tag = "div", className, children, delay = 0, y = 36
           delay,
           stagger: stagger ?? 0,
           ease: "expo.out",
-          scrollTrigger: { trigger: el, start, once: true },
+          scrollTrigger: { trigger: el, start, toggleActions: "play none none none" },
         });
       });
     },

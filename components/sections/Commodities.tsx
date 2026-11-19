@@ -70,7 +70,7 @@ function SectorPanel({ sector, index, total }: { sector: Sector; index: number; 
           </div>
 
           <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-            <div className={`lg:col-span-7 ${mirrored ? "lg:order-2 lg:col-start-6 lg:text-right" : ""}`}>
+            <div className={`lg:col-span-7 ${mirrored ? "lg:order-2 lg:col-start-6 lg:pr-20 lg:text-right" : ""}`}>
               <ul data-panel-reveal className={`eyebrow mb-6 flex flex-wrap gap-x-5 gap-y-2 text-ivory/75 ${mirrored ? "lg:justify-end" : ""}`}>
                 {sector.products.map((p, i) => (
                   <li key={p} className="flex items-center gap-5">

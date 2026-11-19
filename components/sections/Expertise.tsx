@@ -19,7 +19,7 @@ export function Expertise() {
           const draw = row.querySelectorAll<SVGElement>("[data-draw]");
           const text = row.querySelectorAll("[data-service-text]");
           const rule = row.querySelector("[data-service-rule]");
-          const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: "top 80%", once: true } });
+          const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: "top 80%", toggleActions: "play none none none" } });
           tl.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "expo.inOut" }, 0)
             .from(text, { y: 40, autoAlpha: 0, duration: 1.3, stagger: 0.08, ease: "expo.out" }, 0.15)
             .fromTo(
@@ -59,26 +59,26 @@ export function Expertise() {
               <li key={service.index} data-service className="group relative">
                 <span data-service-rule aria-hidden="true" className="absolute inset-x-0 top-0 block h-px origin-left bg-line-strong" />
                 <div className="grid gap-8 py-12 lg:grid-cols-12 lg:items-center lg:gap-8 lg:py-14">
-                  <div className={`lg:col-span-3 ${flip ? "lg:order-last lg:col-start-10" : ""}`}>
+                  <div className={`lg:col-span-3 lg:row-start-1 ${flip ? "lg:col-start-10" : "lg:col-start-1"}`}>
                     <figure className="relative aspect-[4/3] overflow-hidden border border-line bg-coal transition-colors duration-700 group-hover:border-gold/40">
                       <ServiceGlyph kind={service.glyph} className="absolute inset-0 h-full w-full p-[7%] opacity-85 transition-opacity duration-700 group-hover:opacity-100" />
                       <figcaption className="eyebrow absolute bottom-3 left-4 text-[9px] text-mist/70">Fig. {service.index}</figcaption>
                     </figure>
                   </div>
-                  <p data-service-text className={`eyebrow tabular-nums text-gold lg:col-span-1 ${flip ? "lg:col-start-1" : "lg:col-start-5"}`}>
-                    {service.index}
-                  </p>
-                  <h3
-                    data-service-text
-                    className={`display-md text-ivory transition-[color,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-2 group-hover:text-gold-soft lg:col-span-3 ${
-                      flip ? "lg:col-start-2" : "lg:col-start-6"
-                    }`}
-                  >
-                    {service.title}
-                  </h3>
+                  <div className={`lg:col-span-4 lg:row-start-1 ${flip ? "lg:col-start-1" : "lg:col-start-5"}`}>
+                    <p data-service-text className="eyebrow tabular-nums text-gold">
+                      {service.index}
+                    </p>
+                    <h3
+                      data-service-text
+                      className="display-md mt-5 text-ivory transition-[color,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-2 group-hover:text-gold-soft"
+                    >
+                      {service.title}
+                    </h3>
+                  </div>
                   <p
                     data-service-text
-                    className={`max-w-md text-[15.5px] leading-relaxed text-mist lg:col-span-3 ${flip ? "lg:col-start-6" : "lg:col-start-10"}`}
+                    className={`max-w-md text-[15.5px] leading-relaxed text-mist lg:col-span-3 lg:row-start-1 ${flip ? "lg:col-start-6" : "lg:col-start-10"}`}
                   >
                     {service.body}
                   </p>

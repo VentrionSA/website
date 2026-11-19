@@ -43,7 +43,12 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     const hashTimer = initialHash ? window.setTimeout(() => scrollToId(initialHash, { updateHash: false }), 450) : 0;
 
     // Keep trigger positions accurate once fonts and late assets arrive.
-    const refresh = () => ScrollTrigger.refresh();
+    // Triggers are created per section (some asynchronously), so sort them by
+    // page position before recalculating to keep pin spacing correct.
+    const refresh = () => {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    };
     document.fonts?.ready.then(refresh).catch(() => undefined);
     window.addEventListener("load", refresh);
 

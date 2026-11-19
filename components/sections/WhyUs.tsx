@@ -20,7 +20,7 @@ export function WhyUs() {
           { rotate: 60, yPercent: 10, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 0.8 } },
         );
         gsap.utils.toArray<HTMLElement>("[data-pillar]").forEach((pillar, i) => {
-          const tl = gsap.timeline({ scrollTrigger: { trigger: "[data-pillars]", start: "top 78%", once: true } });
+          const tl = gsap.timeline({ scrollTrigger: { trigger: "[data-pillars]", start: "top 78%", toggleActions: "play none none none" } });
           tl.fromTo(pillar.querySelector("[data-pillar-rule]"), { scaleX: 0 }, { scaleX: 1, duration: 1.5, ease: "expo.inOut" }, i * 0.12).from(
             pillar.querySelectorAll("[data-pillar-text]"),
             { y: 36, autoAlpha: 0, duration: 1.2, stagger: 0.08, ease: "expo.out" },

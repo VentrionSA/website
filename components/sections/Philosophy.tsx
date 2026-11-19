@@ -62,7 +62,7 @@ export function Philosophy() {
             duration: 2.4,
             stagger: 0.12,
             ease: "power2.inOut",
-            scrollTrigger: { trigger: root.current, start: "top 60%", once: true },
+            scrollTrigger: { trigger: root.current, start: "top 60%", toggleActions: "play none none none" },
           },
         );
         gsap.from("[data-philo-node]", {
@@ -71,7 +71,7 @@ export function Philosophy() {
           duration: 1,
           stagger: 0.08,
           ease: "back.out(2)",
-          scrollTrigger: { trigger: root.current, start: "top 55%", once: true },
+          scrollTrigger: { trigger: root.current, start: "top 55%", toggleActions: "play none none none" },
         });
       });
     },
@@ -81,7 +81,7 @@ export function Philosophy() {
   return (
     <section ref={root} id="philosophy" aria-labelledby="philosophy-title" className="relative isolate overflow-hidden bg-ink">
       <div data-philo-media className="absolute inset-0 -z-20 will-change-transform">
-        <Image src={PHILOSOPHY_MEDIA.src} alt={PHILOSOPHY_MEDIA.alt} fill sizes="100vw" quality={75} placeholder="blur" className="object-cover" />
+        <Image src={PHILOSOPHY_MEDIA.src} alt={PHILOSOPHY_MEDIA.alt} fill sizes="100vw" quality={75} placeholder="blur" className="object-cover object-[65%_50%]" />
       </div>
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-ink/55" />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(70%_70%_at_50%_50%,transparent_20%,rgba(16,17,16,0.92)_100%)]" />
@@ -109,7 +109,7 @@ export function Philosophy() {
         <SplitHeading id="philosophy-title" className="display-xl mt-8 max-w-[13ch] text-ivory">
           Essential commodities. <em className="text-gold">Connected opportunities.</em>
         </SplitHeading>
-        <Reveal className="mt-10 max-w-xl lg:ml-[41.66%]">
+        <Reveal className="mt-10 max-w-xl">
           <p className="text-lg leading-relaxed text-ivory/80 sm:text-xl">
             Behind every successful commodity transaction is a network of relationships, informed decisions and
             coordinated execution. Our role is to help bring those elements together.

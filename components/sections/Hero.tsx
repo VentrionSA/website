@@ -57,7 +57,7 @@ export function Hero() {
       </div>
 
       {/* 3D armillary sphere */}
-      <div data-hero-visual aria-hidden="true" className="absolute inset-0 -z-10 opacity-80 lg:left-[30%] lg:opacity-100">
+      <div data-hero-visual aria-hidden="true" className="absolute inset-0 -z-10 opacity-60 lg:left-[30%] lg:opacity-100">
         <HeroVisual />
       </div>
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[55%] bg-gradient-to-t from-ink via-ink/70 to-transparent lg:h-[45%]" />
@@ -72,7 +72,7 @@ export function Hero() {
           </p>
         </div>
 
-        <div data-hero-copy className="mt-auto pt-[28vh] lg:pt-16">
+        <div data-hero-copy className="mt-auto pt-[26vh] lg:pt-6">
           <h1 id="hero-title" className="display-hero max-w-[13.5ch] text-ivory">
             <span className="line-mask">
               <span className="hero-line" style={i(0)}>
@@ -91,7 +91,7 @@ export function Hero() {
             </span>
           </h1>
 
-          <div className="mt-9 grid gap-8 lg:mt-12 lg:grid-cols-12 lg:items-end">
+          <div className="mt-9 grid gap-8 lg:mt-10 lg:grid-cols-12 lg:items-end">
             <p className="hero-fade max-w-[34rem] text-[15px] leading-relaxed text-mist sm:text-lg lg:col-span-5" style={i(2)}>
               An independent commodities advisory and brokerage firm connecting trusted buyers and suppliers across
               global markets in Oil &amp; Gas, Agriculture, Metals and Perishables.
@@ -107,7 +107,7 @@ export function Hero() {
           </div>
         </div>
 
-        <div data-hero-fade className="hero-fade mt-10 flex items-center justify-between border-t border-line pt-5 lg:mt-14" style={i(4)}>
+        <div data-hero-fade className="hero-fade mt-10 flex items-center justify-between border-t border-line pt-5 lg:mt-10" style={i(4)}>
           <a href="/#about" className="group flex items-center gap-4" aria-label="Scroll to explore">
             <span className="scroll-cue" aria-hidden="true" />
             <span className="eyebrow text-mist transition-colors duration-500 group-hover:text-ivory">Scroll to explore</span>

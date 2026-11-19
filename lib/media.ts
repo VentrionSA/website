@@ -7,18 +7,18 @@ import perishables from "@/assets/images/sector-perishables.jpg";
 import vessel from "@/assets/images/philosophy-vessel.jpg";
 
 /**
- * Imagery used across the site. The current files are original rendered
- * artwork; replace them with commissioned photography at the same paths
- * (or point these imports elsewhere) and update the alt text.
+ * Imagery used across the site. These files are original rendered artwork
+ * created for Ventrion; swap them for commissioned photography at the same
+ * paths (or point these imports elsewhere) and update the alt text.
  */
 export const SECTOR_MEDIA: Record<SectorId, { src: StaticImageData; alt: string }> = {
-  "oil-gas": { src: oilGas, alt: "Glossy dark crude oil surface rippling under warm light" },
-  agriculture: { src: agriculture, alt: "Aerial view of furrowed agricultural fields at golden hour" },
-  metals: { src: metals, alt: "Stacked aluminium ingots catching dramatic warehouse light" },
-  perishables: { src: perishables, alt: "Green and black olives in low, warm light" },
+  "oil-gas": { src: oilGas, alt: "Ripples spreading across a dark, glossy oil surface lit in warm gold" },
+  agriculture: { src: agriculture, alt: "Macro view of a heap of golden grain in low side light" },
+  metals: { src: metals, alt: "Bundles of aluminium ingots stacked in a dimly lit warehouse" },
+  perishables: { src: perishables, alt: "Green and black olives with olive leaves on dark slate" },
 };
 
 export const PHILOSOPHY_MEDIA = {
   src: vessel,
-  alt: "Aerial view of a bulk carrier crossing dark open water",
+  alt: "Aerial view of a bulk carrier and its wake crossing dark open water",
 };

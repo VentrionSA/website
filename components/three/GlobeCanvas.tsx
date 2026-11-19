@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode, type RefObject } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Html, Line } from "@react-three/drei";
+import { Line } from "@react-three/drei";
 import * as THREE from "three";
 import { decodeLandPoints } from "@/lib/geo/points";
 import { CONNECTIONS, MARKETS } from "@/lib/content";
@@ -147,8 +147,8 @@ const haloFragment = /* glsl */ `
   varying vec3 vV;
   void main() {
     float facing = dot(vN, vV);
-    float glow = pow(clamp(1.0 + facing * 1.6, 0.0, 1.0), 3.0);
-    gl_FragColor = vec4(uRim, glow * 0.22);
+    float glow = pow(clamp(1.0 + facing * 2.8, 0.0, 1.0), 4.0);
+    gl_FragColor = vec4(uRim, glow * 0.14);
   }
 `;
 
@@ -194,7 +194,7 @@ function GlobeBody() {
       <mesh material={body}>
         <sphereGeometry args={[1, 96, 96]} />
       </mesh>
-      <mesh material={halo} scale={1.16}>
+      <mesh material={halo} scale={1.1}>
         <sphereGeometry args={[1, 64, 64]} />
       </mesh>
       <primitive object={graticule} />
@@ -293,7 +293,6 @@ function Marker({
   const market = MARKETS[index];
   const group = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
-  const label = useRef<HTMLDivElement>(null);
   const position = useMemo(() => latLonToVector3(market.lat, market.lon, 1.006), [market]);
   const world = useMemo(() => new THREE.Vector3(), []);
 
@@ -301,18 +300,13 @@ function Marker({
     group.current?.lookAt(position.clone().multiplyScalar(2));
   }, [position]);
 
-  useFrame(({ clock, camera }) => {
+  useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (ring.current) {
       const phase = (t * 0.55 + index * 0.21) % 1;
       const s = 1 + phase * (focused ? 2.4 : 1.6);
       ring.current.scale.setScalar(s);
       (ring.current.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (focused ? 0.9 : 0.5);
-    }
-    if (label.current && group.current) {
-      group.current.getWorldPosition(world);
-      const facing = world.clone().normalize().dot(camera.position.clone().normalize());
-      label.current.style.opacity = String(THREE.MathUtils.clamp((facing - 0.25) * 3, 0, 1));
     }
   });
 
@@ -358,18 +352,34 @@ function Marker({
         <sphereGeometry args={[0.055, 12, 12]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      {focused ? (
-        <Html center zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
-          <div ref={label} className="relative -translate-y-[calc(50%+26px)] whitespace-nowrap transition-opacity duration-300">
-            <div className="flex flex-col items-center gap-2">
-              <span className="eyebrow bg-ink/80 px-3 py-1.5 text-[10px] text-gold backdrop-blur-sm">{market.name}</span>
-              <span className="h-4 w-px bg-gold/70" />
-            </div>
-          </div>
-        </Html>
-      ) : null}
     </group>
   );
+}
+
+/** Projects the focused marker to screen space and positions a DOM label over the canvas. */
+function LabelTracker({ focusIndex, labelRef }: { focusIndex: number; labelRef: RefObject<HTMLDivElement | null> }) {
+  const anchor = useRef<THREE.Group>(null);
+  const v = useMemo(() => new THREE.Vector3(), []);
+  const n = useMemo(() => new THREE.Vector3(), []);
+  const c = useMemo(() => new THREE.Vector3(), []);
+
+  useFrame(({ camera, size }) => {
+    const el = labelRef.current;
+    const a = anchor.current;
+    if (!el || !a) return;
+    const m = MARKETS[focusIndex];
+    latLonToVector3(m.lat, m.lon, 1.006, v);
+    a.localToWorld(v);
+    n.copy(v).normalize();
+    const facing = n.dot(c.copy(camera.position).normalize());
+    v.project(camera);
+    const x = (v.x * 0.5 + 0.5) * size.width;
+    const y = (-v.y * 0.5 + 0.5) * size.height;
+    el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    el.style.opacity = String(THREE.MathUtils.clamp((facing - 0.3) * 3, 0, 1));
+  });
+
+  return <group ref={anchor} />;
 }
 
 /* ── Rotation rig ──────────────────────────────────────────────────────── */
@@ -419,6 +429,7 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier }: Glo
   const wrap = useRef<HTMLDivElement>(null);
   const drag = useRef<DragState>({ dx: 0, dragging: false });
   const lastX = useRef(0);
+  const labelRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
 
   useEffect(() => {
@@ -469,8 +480,15 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier }: Glo
           {MARKETS.map((_, i) => (
             <Marker key={i} index={i} focused={i === focusIndex} onHover={onHover} onSelect={onSelect} />
           ))}
+          <LabelTracker focusIndex={focusIndex} labelRef={labelRef} />
         </Rig>
       </Canvas>
+      <div ref={labelRef} aria-hidden="true" className="pointer-events-none absolute left-0 top-0 z-10 opacity-0 will-change-transform">
+        <div className="flex -translate-x-1/2 -translate-y-[calc(100%+8px)] flex-col items-center gap-2">
+          <span className="eyebrow whitespace-nowrap bg-ink/80 px-3 py-1.5 text-[10px] text-gold backdrop-blur-sm">{MARKETS[focusIndex].name}</span>
+          <span className="h-4 w-px bg-gold/70" />
+        </div>
+      </div>
     </div>
   );
 }

@@ -40,7 +40,7 @@ export function SplitHeading({ as: Tag = "h2", id, className, children, delay = 
             stagger: 0.085,
             delay,
             ease: "expo.out",
-            scrollTrigger: { trigger: el, start, once: true },
+            scrollTrigger: { trigger: el, start, toggleActions: "play none none none" },
             onComplete: () => {
               split?.revert();
               split = null;

@@ -116,7 +116,7 @@
 @utility display-hero {
   font-family: var(--font-serif);
   font-weight: 400;
-  font-size: clamp(3.05rem, 8.4vw, 10.25rem);
+  font-size: clamp(3.05rem, min(7.5vw, 12.2vh), 9.5rem);
   line-height: 0.9;
   letter-spacing: -0.025em;
 }
