@@ -4,8 +4,8 @@ import { EnquiryForm } from "@/components/contact/EnquiryForm";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { LinkedInIcon, WhatsAppIcon } from "@/components/ui/icons";
-import { getLinkedInHref, getMailtoHref, getWhatsAppHref, siteConfig } from "@/lib/site";
+import { WhatsAppIcon } from "@/components/ui/icons";
+import { getMailtoHref, getWhatsAppHref, siteConfig } from "@/lib/site";
 
 function ContactRow({
   href,
@@ -51,7 +51,6 @@ function ContactRow({
 export function Contact() {
   const whatsapp = getWhatsAppHref();
   const mail = getMailtoHref();
-  const linkedin = getLinkedInHref();
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="relative overflow-hidden bg-ink py-[clamp(6rem,12vw,11rem)]">
@@ -95,16 +94,6 @@ export function Contact() {
                   label="Email"
                   value={siteConfig.email}
                   placeholder="[CONTACT_EMAIL]"
-                />
-              </div>
-              <div data-reveal>
-                <ContactRow
-                  href={linkedin}
-                  icon={<LinkedInIcon className="h-4 w-4 text-gold" />}
-                  label="LinkedIn"
-                  value="Ventrion"
-                  placeholder="[LINKEDIN_URL]"
-                  external
                 />
               </div>
             </Reveal>

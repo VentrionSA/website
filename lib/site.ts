@@ -23,10 +23,9 @@ export const siteConfig = {
     "Ventrion is an independent international commodity brokerage and advisory firm connecting buyers and suppliers across the Middle East, Central Asia and Asia in Oil & Gas, Agriculture, Metals and Perishables.",
 
   /** Business contact details — placeholders until confirmed. */
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "[CONTACT_EMAIL]",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@ventrion.sa",
   /** International format, digits only or with +, e.g. +9665XXXXXXXX */
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "[WHATSAPP_NUMBER_WITH_COUNTRY_CODE]",
-  linkedinUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL || "[LINKEDIN_URL]",
 
   whatsappMessage: "Hello, I would like to enquire about your commodity brokerage and advisory services.",
 } as const;
@@ -53,9 +52,4 @@ export function getWhatsAppHref(message: string = siteConfig.whatsappMessage): s
 export function getMailtoHref(): string | null {
   if (isPlaceholder(siteConfig.email)) return null;
   return `mailto:${siteConfig.email}`;
-}
-
-export function getLinkedInHref(): string | null {
-  if (isPlaceholder(siteConfig.linkedinUrl)) return null;
-  return siteConfig.linkedinUrl;
 }

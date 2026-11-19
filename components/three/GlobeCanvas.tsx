@@ -16,6 +16,8 @@ type GlobeProps = {
   onHover: (index: number | null) => void;
   onSelect: (index: number) => void;
   tier: Tier;
+  /** Reduced motion: no flowing dashes, pulses or breathing markers. */
+  calm?: boolean;
 };
 
 const DEG = Math.PI / 180;
@@ -63,7 +65,7 @@ const dotFragment = /* glsl */ `
   }
 `;
 
-function LandDots({ focusIndex, tier }: { focusIndex: number; tier: Tier }) {
+function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; calm: boolean }) {
   const gl = useThree((s) => s.gl);
   const { geometry, material } = useMemo(() => {
     const pts = decodeLandPoints();
@@ -101,7 +103,7 @@ function LandDots({ focusIndex, tier }: { focusIndex: number; tier: Tier }) {
   }, [focusIndex, material]);
 
   useFrame(({ clock }) => {
-    material.uniforms.uTime.value = clock.getElapsedTime();
+    material.uniforms.uTime.value = calm ? 0 : clock.getElapsedTime();
   });
 
   useEffect(
@@ -206,7 +208,7 @@ function GlobeBody() {
 
 type Line2Like = { material: { dashOffset: number } };
 
-function Arcs({ focusIndex }: { focusIndex: number }) {
+function Arcs({ focusIndex, calm }: { focusIndex: number; calm: boolean }) {
   const arcs = useMemo(
     () =>
       CONNECTIONS.map(([a, b]) => ({
@@ -222,11 +224,17 @@ function Arcs({ focusIndex }: { focusIndex: number }) {
 
   useFrame(({ clock }, delta) => {
     const t = clock.getElapsedTime();
-    lineRefs.current.forEach((line) => {
-      if (line) line.material.dashOffset -= Math.min(delta, 0.05) * 0.18;
-    });
+    if (!calm) {
+      lineRefs.current.forEach((line) => {
+        if (line) line.material.dashOffset -= Math.min(delta, 0.05) * 0.18;
+      });
+    }
     pulseRefs.current.forEach((sprite, i) => {
       if (!sprite) return;
+      if (calm) {
+        sprite.visible = false;
+        return;
+      }
       const arc = arcs[i];
       const active = arc.a === focusIndex || arc.b === focusIndex;
       const forward = arc.a === focusIndex || !active;
@@ -282,11 +290,13 @@ function Arcs({ focusIndex }: { focusIndex: number }) {
 function Marker({
   index,
   focused,
+  calm,
   onHover,
   onSelect,
 }: {
   index: number;
   focused: boolean;
+  calm: boolean;
   onHover: (index: number | null) => void;
   onSelect: (index: number) => void;
 }) {
@@ -303,7 +313,7 @@ function Marker({
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (ring.current) {
-      const phase = (t * 0.55 + index * 0.21) % 1;
+      const phase = calm ? 0.35 : (t * 0.55 + index * 0.21) % 1;
       const s = 1 + phase * (focused ? 2.4 : 1.6);
       ring.current.scale.setScalar(s);
       (ring.current.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (focused ? 0.9 : 0.5);
@@ -425,7 +435,7 @@ function Rig({ focusIndex, drag, children }: { focusIndex: number; drag: Mutable
   );
 }
 
-export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier }: GlobeProps) {
+export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm = false }: GlobeProps) {
   const wrap = useRef<HTMLDivElement>(null);
   const drag = useRef<DragState>({ dx: 0, dragging: false });
   const lastX = useRef(0);
@@ -475,10 +485,10 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier }: Glo
       >
         <Rig focusIndex={focusIndex} drag={drag}>
           <GlobeBody />
-          <LandDots focusIndex={focusIndex} tier={tier} />
-          <Arcs focusIndex={focusIndex} />
+          <LandDots focusIndex={focusIndex} tier={tier} calm={calm} />
+          <Arcs focusIndex={focusIndex} calm={calm} />
           {MARKETS.map((_, i) => (
-            <Marker key={i} index={i} focused={i === focusIndex} onHover={onHover} onSelect={onSelect} />
+            <Marker key={i} index={i} focused={i === focusIndex} calm={calm} onHover={onHover} onSelect={onSelect} />
           ))}
           <LabelTracker focusIndex={focusIndex} labelRef={labelRef} />
         </Rig>

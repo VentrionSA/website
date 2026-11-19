@@ -42,10 +42,10 @@ export default function PrivacyPage() {
       <h2>Your rights</h2>
       <p>
         Depending on where you are located, you may have rights to access, correct or delete your personal information.
-        To make a request, contact us at [CONTACT_EMAIL].
+        To make a request, contact us at info@ventrion.sa.
       </p>
       <h2>Contact</h2>
-      <p>Questions about this policy can be sent to [CONTACT_EMAIL].</p>
+      <p>Questions about this policy can be sent to info@ventrion.sa.</p>
     </LegalPage>
   );
 }

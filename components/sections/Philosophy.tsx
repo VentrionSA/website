@@ -81,7 +81,7 @@ export function Philosophy() {
   return (
     <section ref={root} id="philosophy" aria-labelledby="philosophy-title" className="relative isolate overflow-hidden bg-ink">
       <div data-philo-media className="absolute inset-0 -z-20 will-change-transform">
-        <Image src={PHILOSOPHY_MEDIA.src} alt={PHILOSOPHY_MEDIA.alt} fill sizes="100vw" quality={75} placeholder="blur" className="object-cover object-[65%_50%]" />
+        <Image src={PHILOSOPHY_MEDIA.src} alt={PHILOSOPHY_MEDIA.alt} fill sizes="100vw" quality={75} placeholder="blur" className="object-cover object-[28%_50%]" />
       </div>
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-ink/55" />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(70%_70%_at_50%_50%,transparent_20%,rgba(16,17,16,0.92)_100%)]" />

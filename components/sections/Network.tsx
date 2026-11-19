@@ -11,7 +11,8 @@ import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { FlatMap } from "./network/FlatMap";
 
-const GlobeCanvas = dynamic(() => import("@/components/three/GlobeCanvas"), { ssr: false });
+const loadGlobe = () => import("@/components/three/GlobeCanvas");
+const GlobeCanvas = dynamic(loadGlobe, { ssr: false });
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -98,7 +99,8 @@ export function Network() {
   const globeBox = useRef<HTMLDivElement>(null);
   const near = useNearViewport(globeBox, "900px 0px");
   const inView = useInViewport(globeBox);
-  const tier = useGraphicsTier();
+  // Reduced-motion visitors still get the 3D globe, with ambient motion stilled.
+  const tier = useGraphicsTier({ allowReducedMotion: true });
   const reduce = usePrefersReducedMotion();
   const [active, setActive] = useState(0);
   const [hover, setHover] = useState<number | null>(null);
@@ -109,6 +111,14 @@ export function Network() {
   useEffect(() => {
     hoverRef.current = hover;
   }, [hover]);
+
+  // Warm the 3D bundle shortly after load so the globe is ready before it is reached.
+  useEffect(() => {
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    const run = () => void loadGlobe();
+    if (w.requestIdleCallback) w.requestIdleCallback(run);
+    else window.setTimeout(run, 1500);
+  }, []);
 
   // Gently cycle through markets while the section is on screen and idle.
   useEffect(() => {
@@ -170,7 +180,7 @@ export function Network() {
               {tier === "none" ? (
                 <FlatMap focusIndex={focus} onHover={hoverMarket} onSelect={select} />
               ) : tier !== "pending" && near ? (
-                <GlobeCanvas focusIndex={focus} onHover={hoverMarket} onSelect={select} tier={tier} />
+                <GlobeCanvas focusIndex={focus} onHover={hoverMarket} onSelect={select} tier={tier} calm={reduce} />
               ) : null}
             </div>
             <p className="eyebrow pointer-events-none absolute bottom-3 left-6 text-[9.5px] text-mist/70">

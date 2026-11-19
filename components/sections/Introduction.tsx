@@ -38,20 +38,20 @@ function ConnectedNetwork() {
     <div ref={root} className="relative mt-[clamp(5rem,11vw,10rem)] select-none overflow-hidden" aria-hidden="true">
       <div className="border-y border-line py-[clamp(1.5rem,3vw,3rem)]">
         <div data-row="a" className="flex items-center gap-[3vw] whitespace-nowrap will-change-transform">
-          <span className="font-serif text-[clamp(4.25rem,13.5vw,15rem)] uppercase leading-[0.86] tracking-[-0.02em] text-outline">
+          <span className="font-serif text-[clamp(3.4rem,11.2vw,12.75rem)] uppercase leading-[0.86] tracking-[-0.02em] text-outline">
             One
           </span>
-          <span className="font-serif text-[clamp(4.25rem,13.5vw,15rem)] uppercase leading-[0.86] tracking-[-0.02em] text-ivory">
+          <span className="font-serif text-[clamp(3.4rem,11.2vw,12.75rem)] uppercase leading-[0.86] tracking-[-0.02em] text-ivory">
             Connected
           </span>
         </div>
         <div data-row="b" className="mt-[1vw] flex items-center justify-end gap-[3vw] whitespace-nowrap will-change-transform">
           <span data-star className="inline-block text-gold">
-            <LogoMark className="h-[clamp(3rem,9vw,9.5rem)] w-auto" />
+            <LogoMark className="h-[clamp(2.6rem,7.8vw,8.25rem)] w-auto" />
           </span>
           <span
             data-sweep
-            className="font-serif text-[clamp(4.25rem,13.5vw,15rem)] uppercase italic leading-[0.86] tracking-[-0.02em]"
+            className="font-serif text-[clamp(3.4rem,11.2vw,12.75rem)] uppercase italic leading-[0.86] tracking-[-0.02em]"
             style={{
               backgroundImage: "linear-gradient(90deg, #c4a779 0%, #dcc8a2 48%, transparent 52%, transparent 100%)",
               backgroundSize: "210% 100%",

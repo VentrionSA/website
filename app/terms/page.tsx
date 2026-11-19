@@ -38,7 +38,7 @@ export default function TermsPage() {
       <h2>Governing law</h2>
       <p>These terms are governed by the laws of [JURISDICTION].</p>
       <h2>Contact</h2>
-      <p>Questions about these terms can be sent to [CONTACT_EMAIL].</p>
+      <p>Questions about these terms can be sent to info@ventrion.sa.</p>
     </LegalPage>
   );
 }

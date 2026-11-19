@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LogoMark, LogoWordmark } from "@/components/brand/Logo";
 import { NAV_LINKS, SECTORS } from "@/lib/content";
-import { getLinkedInHref, getMailtoHref, getWhatsAppHref, siteConfig } from "@/lib/site";
+import { getMailtoHref, getWhatsAppHref, siteConfig } from "@/lib/site";
 
 function Placeholder({ children }: { children: string }) {
   return (
@@ -16,7 +16,6 @@ const linkClass = "link-draw text-sm text-ivory/80 transition-colors duration-50
 export function Footer() {
   const mail = getMailtoHref();
   const whatsapp = getWhatsAppHref();
-  const linkedin = getLinkedInHref();
   const year = new Date().getFullYear();
 
   return (
@@ -96,16 +95,6 @@ export function Footer() {
                   </a>
                 ) : (
                   <Placeholder>[WHATSAPP_NUMBER]</Placeholder>
-                )}
-              </li>
-              <li className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-[0.24em] text-mist">LinkedIn</span>
-                {linkedin ? (
-                  <a href={linkedin} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                    Ventrion on LinkedIn
-                  </a>
-                ) : (
-                  <Placeholder>[LINKEDIN_URL]</Placeholder>
                 )}
               </li>
             </ul>

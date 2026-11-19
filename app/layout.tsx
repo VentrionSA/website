@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Manrope } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
 import { MARKETS, SECTORS } from "@/lib/content";
-import { getLinkedInHref, getSiteUrl, isPlaceholder, siteConfig } from "@/lib/site";
+import { getSiteUrl, isPlaceholder, siteConfig } from "@/lib/site";
 
-const serif = Instrument_Serif({
+const serif = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -70,7 +70,6 @@ export const viewport: Viewport = {
 };
 
 function StructuredData() {
-  const linkedin = getLinkedInHref();
   const data = {
     "@context": "https://schema.org",
     "@graph": [
@@ -89,7 +88,6 @@ function StructuredData() {
           "Commodity sourcing",
           ...SECTORS.flatMap((s) => [s.name, ...s.products]),
         ],
-        ...(linkedin ? { sameAs: [linkedin] } : {}),
         ...(!isPlaceholder(siteConfig.email)
           ? { contactPoint: { "@type": "ContactPoint", contactType: "sales", email: siteConfig.email } }
           : {}),

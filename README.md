@@ -15,15 +15,14 @@ Pushing to GitHub deploys automatically to the linked Vercel project (`website`)
 
 ## Configure before launch
 
-### 1. Contact details (placeholders)
+### 1. Contact details
 
 Values still in `[BRACKETS]` are treated as “not configured”. Set them in **Vercel → Project → Settings → Environment Variables** (then redeploy) or edit `lib/site.ts`:
 
 | Variable | Example | Used for |
 | --- | --- | --- |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | `+9665XXXXXXXX` | Floating WhatsApp button, contact section, mobile menu (`wa.me` link with a pre-filled message) |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | `hello@yourdomain.com` | Contact section, footer, structured data |
-| `NEXT_PUBLIC_LINKEDIN_URL` | `https://www.linkedin.com/company/…` | Contact section, footer |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | defaults to `info@ventrion.sa` | Contact section, footer, structured data |
 | `NEXT_PUBLIC_COMPANY_LEGAL_NAME` | `Ventrion …` | Copyright line |
 | `NEXT_PUBLIC_SITE_URL` | `https://www.yourdomain.com` | Canonical URLs, sitemap, Open Graph (falls back to the Vercel URL) |
 
@@ -50,7 +49,8 @@ Configure at least one channel (server-side variables, not `NEXT_PUBLIC_`):
 ## Content
 
 - **Copy, markets, sectors, services, process, pillars:** `lib/content.ts`
-- **Imagery:** `assets/images/` (alt text in `lib/media.ts`). The current images are original rendered artwork made for this site; replace them with commissioned photography at the same filenames (any size ≥ 2400px wide; Next.js serves AVIF/WebP automatically).
+- **Imagery:** `assets/images/` (alt text and sources in `lib/media.ts`). Sector and philosophy images are placeholder photography from Pexels (free commercial licence, no attribution required), cropped and colour-graded; replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically).
+- **Hero globe poster:** `assets/images/hero-globe.webp` is a still of the live 3D globe shown instantly while WebGL loads (and kept for reduced-motion / no-WebGL visitors). If you change the globe's look in `components/three/HeroCanvas.tsx`, re-capture it using the component's `capture` mode.
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
 - **Globe data:** `lib/geo/land-points.json` (Natural Earth land via `world-atlas`, run-length encoded).
 

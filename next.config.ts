@@ -10,6 +10,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Don't let `next dev` drop an AGENTS.md into the repo.
+  agentRules: false,
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [60, 75, 85],
