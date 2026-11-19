@@ -17,7 +17,7 @@ export function isPlaceholder(value: string | null | undefined): boolean {
 export const siteConfig = {
   name: "Ventrion",
   /** Registered legal entity name, shown in the copyright line. */
-  legalName: process.env.NEXT_PUBLIC_COMPANY_LEGAL_NAME || "Ventrion",
+  legalName: process.env.NEXT_PUBLIC_COMPANY_LEGAL_NAME || "Ventrion Company",
   tagline: "International Commodity Brokerage & Advisory",
   description:
     "Ventrion is an independent international commodity brokerage and advisory firm connecting buyers and suppliers across the Middle East, Central Asia and Asia in Oil & Gas, Agriculture, Metals and Perishables.",

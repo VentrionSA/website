@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Privacy Policy" updated="[DATE]">
+    <LegalPage eyebrow="Legal" title="Privacy Policy" updated="19 November 2026">
       <p>
-        This policy explains how <strong>[COMPANY_LEGAL_NAME]</strong> (“Ventrion”, “we”, “us”) collects and uses
+        This policy explains how <strong>Ventrion Company</strong> (“Ventrion”, “we”, “us”) collects and uses
         personal information when you visit this website or submit an enquiry.
       </p>
       <h2>Information we collect</h2>
@@ -33,12 +33,12 @@ export default function PrivacyPage() {
       </p>
       <h2>Sharing</h2>
       <p>
-        Enquiry details are delivered to us through [EMAIL / CRM PROVIDER]. We may share information with prospective
+        Enquiry details are delivered to us by email at info@ventrion.sa. We may share information with prospective
         counterparties only where this is necessary to progress an opportunity you have asked us to explore, and where
         appropriate with your agreement.
       </p>
       <h2>Retention</h2>
-      <p>We keep enquiry information for [RETENTION_PERIOD] or as long as needed for the purposes above.</p>
+      <p>We keep enquiry information for up to 24 months from our last contact with you, unless a longer period is required to meet legal, regulatory or contractual obligations, after which it is securely deleted.</p>
       <h2>Your rights</h2>
       <p>
         Depending on where you are located, you may have rights to access, correct or delete your personal information.

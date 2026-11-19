@@ -23,7 +23,10 @@ export function Footer() {
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      <div className="shell pb-10 pt-24 lg:pt-32">
+      <div aria-hidden="true" className="pointer-events-none absolute -right-[8vw] bottom-[8%] text-gold/[0.07]">
+        <LogoMark className="float-mark h-[52vw] w-auto max-h-[720px] lg:h-[34vw]" />
+      </div>
+      <div className="shell relative pb-10 pt-24 lg:pt-32">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-5">
             <a href="/#top" className="inline-flex items-center gap-4 text-ivory" aria-label="Ventrion — back to top">
