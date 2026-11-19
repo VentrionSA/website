@@ -6,6 +6,8 @@ import { heroState } from "@/lib/hero-state";
 import { SECTORS } from "@/lib/content";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { HeroVisual } from "./hero/HeroVisual";
+import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
+import { BACKDROPS } from "@/lib/backdrops";
 
 const i = (n: number) => ({ "--i": n }) as CSSProperties;
 
@@ -41,6 +43,7 @@ export function Hero() {
 
   return (
     <section ref={root} id="top" aria-labelledby="hero-title" className="relative isolate min-h-[100svh] overflow-hidden bg-ink">
+      <SectionBackdrop src={BACKDROPS.hero} position="50% 60%" wash={0.78} priority />
       {/* Atmosphere */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20">
         <div className="absolute inset-0 bg-[radial-gradient(50%_55%_at_50%_30%,rgba(196,167,121,0.11),transparent_72%)] lg:bg-[radial-gradient(42%_60%_at_66%_46%,rgba(196,167,121,0.12),transparent_72%)]" />

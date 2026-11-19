@@ -6,7 +6,11 @@ import { SERVICES } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import Image from "next/image";
+import { SERVICE_IMAGES } from "@/lib/backdrops";
 import { ServiceGlyph } from "./expertise/ServiceGlyph";
+import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
+import { BACKDROPS } from "@/lib/backdrops";
 
 export function Expertise() {
   const list = useRef<HTMLOListElement>(null);
@@ -35,7 +39,8 @@ export function Expertise() {
   );
 
   return (
-    <section id="expertise" aria-labelledby="expertise-title" className="relative bg-ink py-[clamp(6rem,12vw,11rem)]">
+    <section id="expertise" aria-labelledby="expertise-title" className="relative isolate overflow-hidden bg-ink py-[clamp(6rem,12vw,11rem)]">
+      <SectionBackdrop src={BACKDROPS.expertise} wash={0.88} />
       <div className="shell">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
@@ -60,8 +65,17 @@ export function Expertise() {
                 <span data-service-rule aria-hidden="true" className="absolute inset-x-0 top-0 block h-px origin-left bg-line-strong" />
                 <div className="grid gap-8 py-12 lg:grid-cols-12 lg:items-center lg:gap-8 lg:py-14">
                   <div className={`lg:col-span-3 lg:row-start-1 ${flip ? "lg:col-start-10" : "lg:col-start-1"}`}>
-                    <figure className="theme-dark relative aspect-[4/3] overflow-hidden border border-line bg-coal transition-colors duration-700 group-hover:border-gold/40">
-                      <ServiceGlyph kind={service.glyph} className="absolute inset-0 h-full w-full p-[7%] opacity-85 transition-opacity duration-700 group-hover:opacity-100" />
+                    <figure className="theme-dark relative aspect-[4/3] overflow-hidden bg-coal shadow-[0_30px_60px_-30px_rgba(60,45,20,0.45)]">
+                      <Image
+                        src={SERVICE_IMAGES[service.glyph]}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 25vw, 100vw"
+                        placeholder="blur"
+                        className="object-cover transition-transform duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                      />
+                      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/45 to-ink/15" />
+                      <ServiceGlyph kind={service.glyph} className="absolute inset-0 h-full w-full p-[7%] opacity-70 transition-opacity duration-700 group-hover:opacity-100" />
                       <figcaption className="eyebrow absolute bottom-3 left-4 text-[9px] text-mist/70">Fig. {service.index}</figcaption>
                     </figure>
                   </div>

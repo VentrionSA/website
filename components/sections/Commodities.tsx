@@ -12,6 +12,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 
 import { PREFILL_EVENT } from "@/lib/events";
+import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
+import { BACKDROPS } from "@/lib/backdrops";
 
 function SectorPanel({ sector, index, total }: { sector: Sector; index: number; total: number }) {
   const media = SECTOR_MEDIA[sector.id];
@@ -144,6 +146,8 @@ export function Commodities() {
 
   return (
     <section id="commodities" aria-labelledby="commodities-title" className="relative bg-ink">
+      <div className="relative isolate overflow-hidden">
+        <SectionBackdrop src={BACKDROPS.commodities} wash={0.8} />
       <div className="shell pb-[clamp(4rem,8vw,7rem)] pt-[clamp(6rem,12vw,11rem)]">
         <Eyebrow index="03">Commodities</Eyebrow>
         <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:items-end">
@@ -157,6 +161,7 @@ export function Commodities() {
             </p>
           </Reveal>
         </div>
+      </div>
       </div>
 
       <div ref={stack} className="relative">

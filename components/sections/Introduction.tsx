@@ -7,6 +7,8 @@ import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { LogoMark } from "@/components/brand/Logo";
+import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
+import { BACKDROPS } from "@/lib/backdrops";
 
 /** Oversized, scroll-driven typographic statement: "One connected network". */
 function ConnectedNetwork() {
@@ -72,7 +74,8 @@ function ConnectedNetwork() {
 
 export function Introduction() {
   return (
-    <section id="about" aria-labelledby="about-title" className="relative bg-ink pt-[clamp(6rem,14vw,12rem)]">
+    <section id="about" aria-labelledby="about-title" className="relative isolate overflow-hidden bg-ink pt-[clamp(6rem,14vw,12rem)]">
+      <SectionBackdrop src={BACKDROPS.about} wash={0.82} />
       <div className="shell grid gap-y-14 lg:grid-cols-12 lg:gap-x-8">
         <div className="lg:col-span-7">
           <Eyebrow index="01">About</Eyebrow>

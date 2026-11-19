@@ -21,8 +21,10 @@ type GlobeProps = {
 };
 
 const DEG = Math.PI / 180;
-const GOLD = "#c4a779";
-const IVORY = "#f1efe8";
+const GOLD = "#a07c45";
+const GOLD_DEEP = "#7a5a2c";
+/** Land dots: dark ink so they read on the light sphere. */
+const IVORY = "#3a3328";
 
 /* ── Land dots ─────────────────────────────────────────────────────────── */
 
@@ -139,7 +141,7 @@ const bodyFragment = /* glsl */ `
     float fres = pow(1.0 - facing, 3.0);
     vec3 light = normalize(vec3(-0.5, 0.6, 0.65));
     float lambert = max(dot(vN, light), 0.0);
-    vec3 col = uBase * (0.65 + 0.55 * lambert) + uRim * fres * 0.5;
+    vec3 col = uBase * (0.82 + 0.22 * lambert) + uRim * fres * 0.35;
     gl_FragColor = vec4(col, 1.0);
   }
 `;
@@ -156,7 +158,7 @@ const haloFragment = /* glsl */ `
 
 function GlobeBody() {
   const { body, halo, graticule } = useMemo(() => {
-    const uniforms = { uBase: { value: new THREE.Color("#121412") }, uRim: { value: new THREE.Color(GOLD) } };
+    const uniforms = { uBase: { value: new THREE.Color("#ece2cf") }, uRim: { value: new THREE.Color(GOLD) } };
     const body = new THREE.ShaderMaterial({ vertexShader: bodyVertex, fragmentShader: bodyFragment, uniforms });
     const halo = new THREE.ShaderMaterial({
       vertexShader: bodyVertex,
@@ -187,7 +189,7 @@ function GlobeBody() {
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-    const lineMat = new THREE.LineBasicMaterial({ color: IVORY, transparent: true, opacity: 0.05, depthWrite: false });
+    const lineMat = new THREE.LineBasicMaterial({ color: IVORY, transparent: true, opacity: 0.09, depthWrite: false });
     return { body, halo, graticule: new THREE.LineSegments(geo, lineMat) };
   }, []);
 
@@ -262,10 +264,10 @@ function Arcs({ focusIndex, calm }: { focusIndex: number; calm: boolean }) {
                 lineRefs.current[i] = el as Line2Like | null;
               }}
               points={arc.points}
-              color={active ? "#dcc39a" : GOLD}
+              color={active ? GOLD_DEEP : GOLD}
               lineWidth={active ? 1.6 : 1}
               transparent
-              opacity={active ? 0.95 : 0.22}
+              opacity={active ? 0.95 : 0.35}
               dashed
               dashSize={active ? 0.05 : 0.025}
               gapSize={active ? 0.018 : 0.03}
@@ -276,7 +278,7 @@ function Arcs({ focusIndex, calm }: { focusIndex: number; calm: boolean }) {
                 pulseRefs.current[i] = el;
               }}
             >
-              <spriteMaterial map={glow} color="#f1dcb2" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+              <spriteMaterial map={glow} color={GOLD_DEEP} transparent depthWrite={false} toneMapped={false} />
             </sprite>
           </group>
         );
@@ -329,7 +331,7 @@ function Marker({
     <group ref={group} position={position}>
       <mesh renderOrder={3}>
         <circleGeometry args={[focused ? 0.017 : 0.012, 24]} />
-        <meshBasicMaterial color={focused ? "#f3dfb6" : GOLD} toneMapped={false} depthWrite={false} transparent />
+        <meshBasicMaterial color={focused ? GOLD_DEEP : GOLD} toneMapped={false} depthWrite={false} transparent />
       </mesh>
       <mesh ref={ring} renderOrder={3}>
         <ringGeometry args={[0.02, 0.023, 48]} />
@@ -338,7 +340,7 @@ function Marker({
       {focused ? (
         <mesh renderOrder={3}>
           <ringGeometry args={[0.04, 0.0425, 64]} />
-          <meshBasicMaterial color="#f3dfb6" transparent opacity={0.85} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+          <meshBasicMaterial color={GOLD_DEEP} transparent opacity={0.85} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
         </mesh>
       ) : null}
       {/* Generous invisible hit area */}

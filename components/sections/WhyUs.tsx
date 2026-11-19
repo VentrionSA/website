@@ -6,6 +6,8 @@ import { PILLARS } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { LogoMark } from "@/components/brand/Logo";
+import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
+import { BACKDROPS } from "@/lib/backdrops";
 
 export function WhyUs() {
   const root = useRef<HTMLElement>(null);
@@ -33,7 +35,8 @@ export function WhyUs() {
   );
 
   return (
-    <section ref={root} id="why" aria-labelledby="why-title" className="relative overflow-hidden bg-ink py-[clamp(6rem,13vw,12rem)]">
+    <section ref={root} id="why" aria-labelledby="why-title" className="relative isolate overflow-hidden bg-ink py-[clamp(6rem,13vw,12rem)]">
+      <SectionBackdrop src={BACKDROPS.why} wash={0.82} />
       <div data-why-mark aria-hidden="true" className="pointer-events-none absolute -right-[12vw] top-[6%] text-ivory/[0.035]">
         <LogoMark className="h-[62vw] w-auto max-h-[900px] lg:h-[46vw]" />
       </div>

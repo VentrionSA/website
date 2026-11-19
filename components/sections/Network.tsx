@@ -10,6 +10,8 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { FlatMap } from "./network/FlatMap";
+import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
+import { BACKDROPS } from "@/lib/backdrops";
 
 const loadGlobe = () => import("@/components/three/GlobeCanvas");
 const GlobeCanvas = dynamic(loadGlobe, { ssr: false });
@@ -147,7 +149,8 @@ export function Network() {
   }, []);
 
   return (
-    <section id="network" aria-labelledby="network-title" className="relative overflow-hidden bg-graphite py-[clamp(6rem,12vw,11rem)]">
+    <section id="network" aria-labelledby="network-title" className="relative isolate overflow-hidden bg-graphite py-[clamp(6rem,12vw,11rem)]">
+      <SectionBackdrop src={BACKDROPS.network} wash={0.84} />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_40%_at_32%_58%,rgba(196,167,121,0.08),transparent_72%)]"
