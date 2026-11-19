@@ -44,8 +44,7 @@ export function Hero() {
       {/* Atmosphere */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20">
         <div className="absolute inset-0 bg-[radial-gradient(50%_55%_at_50%_30%,rgba(196,167,121,0.11),transparent_72%)] lg:bg-[radial-gradient(42%_60%_at_66%_46%,rgba(196,167,121,0.12),transparent_72%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_120%,rgba(0,0,0,0.75),transparent_60%)]" />
-      </div>
+              </div>
 
       {/* Editorial column guides */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
@@ -57,7 +56,7 @@ export function Hero() {
       </div>
 
       {/* 3D armillary sphere */}
-      <div data-hero-visual aria-hidden="true" className="absolute inset-0 -z-10 opacity-60 lg:left-[30%] lg:opacity-100">
+      <div data-hero-visual aria-hidden="true" className="absolute inset-0 -z-10 opacity-80 lg:left-[30%] lg:opacity-100">
         <HeroVisual />
       </div>
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[55%] bg-gradient-to-t from-ink via-ink/70 to-transparent lg:h-[45%]" />
@@ -65,7 +64,7 @@ export function Hero() {
       <div className="shell relative flex min-h-[100svh] flex-col pb-[clamp(1.25rem,3.5vh,2.5rem)] pt-[clamp(6.5rem,15vh,9.5rem)]">
         <div data-hero-fade className="flex items-start justify-between gap-6">
           <p className="hero-fade eyebrow max-w-[18rem] text-gold sm:max-w-none" style={i(0)}>
-            Independent Commodity Brokerage &amp; Advisory
+            Independent Commodity Consulting &amp; Advisory
           </p>
           <p className="hero-fade eyebrow hidden text-right text-mist md:block" style={i(1)}>
             Middle East <span className="px-2 text-gold/70">/</span> Central Asia <span className="px-2 text-gold/70">/</span> Asia
@@ -93,7 +92,7 @@ export function Hero() {
 
           <div className="mt-9 grid gap-8 lg:mt-10 lg:grid-cols-12 lg:items-end">
             <p className="hero-fade max-w-[34rem] text-[15px] leading-relaxed text-mist sm:text-lg lg:col-span-5" style={i(2)}>
-              An independent commodities advisory and brokerage firm connecting trusted buyers and suppliers across
+              An independent commodities advisory and consulting firm connecting trusted buyers and suppliers across
               global markets in Oil &amp; Gas, Agriculture, Metals and Perishables.
             </p>
             <div className="hero-fade flex flex-col gap-3 sm:flex-row lg:col-span-7 lg:justify-end" style={i(3)}>

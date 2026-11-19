@@ -28,7 +28,7 @@ function SectorPanel({ sector, index, total }: { sector: Sector; index: number; 
       id={sector.id}
       data-panel
       aria-labelledby={`${sector.id}-title`}
-      className="group/panel sticky top-0 h-[100svh] overflow-hidden"
+      className="group/panel theme-dark sticky top-0 h-[100svh] overflow-hidden"
     >
       <div data-panel-inner className="relative h-full w-full origin-[50%_0%] overflow-hidden bg-ink will-change-transform">
         <div data-panel-media className="absolute inset-0 will-change-transform">

@@ -60,7 +60,7 @@ export function Expertise() {
                 <span data-service-rule aria-hidden="true" className="absolute inset-x-0 top-0 block h-px origin-left bg-line-strong" />
                 <div className="grid gap-8 py-12 lg:grid-cols-12 lg:items-center lg:gap-8 lg:py-14">
                   <div className={`lg:col-span-3 lg:row-start-1 ${flip ? "lg:col-start-10" : "lg:col-start-1"}`}>
-                    <figure className="relative aspect-[4/3] overflow-hidden border border-line bg-coal transition-colors duration-700 group-hover:border-gold/40">
+                    <figure className="theme-dark relative aspect-[4/3] overflow-hidden border border-line bg-coal transition-colors duration-700 group-hover:border-gold/40">
                       <ServiceGlyph kind={service.glyph} className="absolute inset-0 h-full w-full p-[7%] opacity-85 transition-opacity duration-700 group-hover:opacity-100" />
                       <figcaption className="eyebrow absolute bottom-3 left-4 text-[9px] text-mist/70">Fig. {service.index}</figcaption>
                     </figure>
