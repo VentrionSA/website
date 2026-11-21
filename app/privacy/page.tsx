@@ -18,7 +18,7 @@ export default function PrivacyPage() {
       <p>When you submit the enquiry form we collect the details you provide:</p>
       <ul>
         <li>Full name, company name, business email and WhatsApp or phone number</li>
-        <li>Country and whether you are a buyer, seller or other party</li>
+        <li>Country of operation</li>
         <li>Any message details you choose to share</li>
       </ul>
       <p>

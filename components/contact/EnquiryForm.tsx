@@ -3,7 +3,6 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, CircleAlert, LoaderCircle } from "lucide-react";
-import { ENQUIRY_ROLES } from "@/lib/content";
 import { enquiryFields, enquirySchema, toFieldErrors, type EnquiryField, type EnquiryResponse } from "@/lib/enquiry";
 import { getWhatsAppHref } from "@/lib/site";
 import { WhatsAppIcon } from "@/components/ui/icons";
@@ -17,7 +16,6 @@ const INITIAL: Values = {
   email: "",
   phone: "",
   country: "",
-  role: "",
   message: "",
 };
 
@@ -207,34 +205,9 @@ export function EnquiryForm() {
           <FieldError id={id("country-error")} message={errors.country} />
         </div>
 
-        <fieldset className="sm:col-span-2" aria-describedby={errors.role ? id("role-error") : undefined}>
-          <legend className="eyebrow mb-4 text-[10px] text-mist">
-            I am a <span className="text-gold">*</span>
-          </legend>
-          <div className="flex flex-wrap gap-2.5">
-            {ENQUIRY_ROLES.map((role) => (
-              <label key={role} className="relative">
-                <input
-                  type="radio"
-                  name="role"
-                  value={role}
-                  checked={values.role === role}
-                  onChange={() => {
-                    setValues((v) => ({ ...v, role }));
-                    setErrors((e) => ({ ...e, role: undefined }));
-                  }}
-                  className="peer sr-only"
-                />
-                <span className="chip">{role}</span>
-              </label>
-            ))}
-          </div>
-          <FieldError id={id("role-error")} message={errors.role} />
-        </fieldset>
-
         <div className="sm:col-span-2">
           {label("message", "Message")}
-          <textarea {...inputProps("message")} rows={4} placeholder="What you are looking to buy or sell, and where" />
+          <textarea {...inputProps("message")} rows={4} placeholder="Your message" />
           <FieldError id={id("message-error")} message={errors.message} />
         </div>
       </div>

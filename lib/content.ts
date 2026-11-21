@@ -56,9 +56,3 @@ export const CONNECTIONS: [number, number][] = [
   [3, 7],
   [6, 8],
 ];
-
-/* ── Enquiry form options ───────────────────────────────────────────────── */
-
-export const ENQUIRY_ROLES = ["Buyer", "Seller", "Other"] as const;
-
-export type EnquiryRole = (typeof ENQUIRY_ROLES)[number];

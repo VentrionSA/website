@@ -6,7 +6,7 @@ import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 
 /**
  * Full-bleed photographic background:
- * the photo stays clearly visible, a directional dark overlay keeps the text
+ * the photo stays clearly visible, a directional ivory overlay keeps the text
  * side readable, and the image drifts with a scroll-linked parallax.
  * The parent must be `relative isolate`.
  */

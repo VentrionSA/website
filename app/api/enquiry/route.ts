@@ -51,7 +51,6 @@ const FIELD_LABELS: [keyof Enquiry, string][] = [
   ["email", "Business email"],
   ["phone", "WhatsApp / phone"],
   ["country", "Country"],
-  ["role", "I am a"],
   ["message", "Message"],
 ];
 
@@ -67,9 +66,7 @@ async function sendWithResend(enquiry: Enquiry, reference: string) {
         String(enquiry[key] || "—"),
       )}</td></tr>`,
   ).join("");
-  const html = `<div style="background:#f1efe8;padding:32px"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:32px;border-top:3px solid #c4a779"><p style="margin:0 0 4px;color:#8f7650;font:12px Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase">New website enquiry</p><h1 style="margin:0 0 24px;font:24px Georgia,serif;color:#101110">${escapeHtml(
-    enquiry.company,
-  )} — ${escapeHtml(enquiry.role)}</h1><table style="border-collapse:collapse">${rows}</table><p style="margin:24px 0 0;color:#6f706a;font:12px Arial,sans-serif">Reference ${reference}</p></div></div>`;
+  const html = `<div style="background:#f1efe8;padding:32px"><div style="max-width:640px;margin:0 auto;background:#ffffff;padding:32px;border-top:3px solid #c4a779"><p style="margin:0 0 4px;color:#8f7650;font:12px Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase">New website enquiry</p><h1 style="margin:0 0 24px;font:24px Georgia,serif;color:#101110">${escapeHtml(enquiry.company)}</h1><table style="border-collapse:collapse">${rows}</table><p style="margin:24px 0 0;color:#6f706a;font:12px Arial,sans-serif">Reference ${reference}</p></div></div>`;
   const text = FIELD_LABELS.map(([key, labelText]) => `${labelText}: ${enquiry[key] || "—"}`).join("\n") + `\n\nReference: ${reference}`;
 
   const response = await fetch("https://api.resend.com/emails", {
@@ -79,7 +76,7 @@ async function sendWithResend(enquiry: Enquiry, reference: string) {
       from,
       to: to.split(",").map((s) => s.trim()).filter(Boolean),
       reply_to: enquiry.email,
-      subject: `Enquiry ${reference}: ${enquiry.role} — ${enquiry.company}`,
+      subject: `Enquiry ${reference}: ${enquiry.company}`,
       html,
       text,
     }),

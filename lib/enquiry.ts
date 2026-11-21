@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ENQUIRY_ROLES } from "@/lib/content";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_PATTERN = /^\+?[\d\s().-]{6,32}$/;
@@ -30,7 +29,6 @@ export const enquiryFields = {
     .trim()
     .min(2, "Please enter your country.")
     .max(80, "Please shorten the country name."),
-  role: z.enum(ENQUIRY_ROLES, { error: "Please select the option that best describes you." }),
   message: z
     .string()
     .trim()

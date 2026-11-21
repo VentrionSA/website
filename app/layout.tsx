@@ -4,7 +4,6 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
-import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
 import { MARKETS } from "@/lib/content";
 import { getSiteUrl, isPlaceholder, siteConfig } from "@/lib/site";
 
@@ -56,8 +55,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#101110",
-  colorScheme: "dark",
+  themeColor: "#f3eee4",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -111,7 +110,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Navigation />
           {children}
           <Footer />
-          <WhatsAppFloat />
         </SmoothScroll>
         <div className="grain" aria-hidden="true" />
         <StructuredData />

@@ -21,7 +21,7 @@ Values still in `[BRACKETS]` are treated as “not configured”. Set them in **
 
 | Variable | Example | Used for |
 | --- | --- | --- |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | `+9665XXXXXXXX` | Floating WhatsApp button, contact section, mobile menu (`wa.me` link with a pre-filled message) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | `+9665XXXXXXXX` | Contact section and mobile menu (`wa.me` link with a pre-filled message) |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | defaults to `info@ventrion.sa` | Contact section, footer, structured data |
 | `NEXT_PUBLIC_COMPANY_LEGAL_NAME` | `Ventrion …` | Copyright line |
 | `NEXT_PUBLIC_SITE_URL` | `https://www.yourdomain.com` | Canonical URLs, sitemap, Open Graph (falls back to the Vercel URL) |

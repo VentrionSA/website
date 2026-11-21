@@ -2,9 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { CONNECTIONS, MARKETS, REGIONS } from "@/lib/content";
+import { MARKETS, REGIONS } from "@/lib/content";
 import { useGraphicsTier, useInViewport, useNearViewport, usePrefersReducedMotion } from "@/lib/device";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
@@ -15,74 +13,6 @@ import { BACKDROPS } from "@/lib/backdrops";
 
 const loadGlobe = () => import("@/components/three/GlobeCanvas");
 const GlobeCanvas = dynamic(loadGlobe, { ssr: false });
-
-const EASE = [0.22, 1, 0.36, 1] as const;
-
-function formatCoord(value: number, pos: string, neg: string) {
-  return `${Math.abs(value).toFixed(1)}° ${value >= 0 ? pos : neg}`;
-}
-
-function linkedMarkets(index: number) {
-  return CONNECTIONS.filter(([a, b]) => a === index || b === index).map(([a, b]) => MARKETS[a === index ? b : a].name);
-}
-
-function MarketPanel({ index, onStep }: { index: number; onStep: (dir: 1 | -1) => void }) {
-  const market = MARKETS[index];
-  return (
-    <div className="relative">
-      <div className="flex items-center justify-between border-b border-line pb-5">
-        <p className="eyebrow tabular-nums text-mist">
-          <span className="text-gold">{String(index + 1).padStart(2, "0")}</span> / {String(MARKETS.length).padStart(2, "0")}
-        </p>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => onStep(-1)}
-            aria-label="Previous market"
-            className="flex h-10 w-10 items-center justify-center border border-line-strong text-ivory transition-colors duration-500 hover:border-gold hover:text-gold"
-          >
-            <ArrowLeft className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => onStep(1)}
-            aria-label="Next market"
-            className="flex h-10 w-10 items-center justify-center border border-line-strong text-ivory transition-colors duration-500 hover:border-gold hover:text-gold"
-          >
-            <ArrowRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-          </button>
-        </div>
-      </div>
-
-      <div className="relative min-h-[240px] pt-8" aria-live="polite">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={market.id}
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.55, ease: EASE }}
-          >
-            <p className="eyebrow text-gold">{market.region}</p>
-            <h3 className="display-md mt-4 text-ivory">{market.name}</h3>
-            <dl className="mt-8 grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm">
-              <div>
-                <dt className="eyebrow text-[10px] text-mist">Position</dt>
-                <dd className="mt-2 font-mono text-[12px] tabular-nums text-ivory/85">
-                  {formatCoord(market.lat, "N", "S")} · {formatCoord(market.lon, "E", "W")}
-                </dd>
-              </div>
-              <div>
-                <dt className="eyebrow text-[10px] text-mist">Linked markets</dt>
-                <dd className="mt-2 text-[13px] leading-relaxed text-ivory/85">{linkedMarkets(index).join(" · ")}</dd>
-              </div>
-            </dl>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
 
 function CornerFrame() {
   const corner = "absolute h-5 w-5 border-gold/40";
@@ -141,15 +71,9 @@ export function Network() {
     setHover(index);
   }, []);
 
-  const step = useCallback((dir: 1 | -1) => {
-    lastInteraction.current = Date.now();
-    setHover(null);
-    setActive((a) => (a + dir + MARKETS.length) % MARKETS.length);
-  }, []);
-
   return (
     <section id="network" aria-labelledby="network-title" className="relative isolate overflow-clip bg-graphite py-[clamp(6rem,12vw,11rem)]">
-      <SectionBackdrop src={BACKDROPS.network} wash={0.66} side="both" saturate={0.45} />
+      <SectionBackdrop src={BACKDROPS.network} wash={0.74} side="both" saturate={0.4} />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_40%_at_32%_58%,rgba(196,167,121,0.08),transparent_72%)]"
@@ -176,7 +100,7 @@ export function Network() {
         </div>
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:items-center lg:gap-8">
-          <div ref={globeBox} className="relative mx-auto aspect-square w-full max-w-[780px] lg:col-span-7">
+          <div ref={globeBox} className="relative mx-auto aspect-square w-full max-w-[760px] lg:col-span-7">
             <CornerFrame />
             <div className="absolute inset-[4%]">
               {tier === "none" ? (
@@ -185,46 +109,41 @@ export function Network() {
                 <GlobeCanvas focusIndex={focus} onHover={hoverMarket} onSelect={select} tier={tier} calm={reduce} />
               ) : null}
             </div>
-            <p className="eyebrow pointer-events-none absolute bottom-3 left-6 text-[9.5px] text-mist/70">
+            <p className="eyebrow pointer-events-none absolute bottom-3 left-6 text-[9.5px] text-mist/80">
               {tier === "none" ? "Network map" : "Drag to rotate"}
             </p>
-            <p className="eyebrow pointer-events-none absolute right-6 top-3 text-[9.5px] text-mist/70">Network view</p>
           </div>
 
-          <div className="lg:col-span-4 lg:col-start-9">
-            <MarketPanel index={focus} onStep={step} />
+          {/* Country index: hover or tap a name to bring it to the front of the globe */}
+          <div className="border-t border-line lg:col-span-4 lg:col-start-9">
+            {REGIONS.map((region) => (
+              <div key={region} className="border-b border-line py-6">
+                <p className="eyebrow text-gold">{region}</p>
+                <ul className="mt-3 flex flex-wrap items-baseline gap-x-7 gap-y-1.5">
+                  {MARKETS.map((market, i) =>
+                    market.region === region ? (
+                      <li key={market.id}>
+                        <button
+                          type="button"
+                          onClick={() => select(i)}
+                          onMouseEnter={() => hoverMarket(i)}
+                          onMouseLeave={() => hoverMarket(null)}
+                          onFocus={() => hoverMarket(i)}
+                          onBlur={() => hoverMarket(null)}
+                          aria-pressed={i === active}
+                          className={`font-serif text-[1.4rem] leading-tight transition-colors duration-500 sm:text-[1.6rem] ${
+                            i === focus ? "text-gold" : "text-ivory hover:text-gold"
+                          }`}
+                        >
+                          {market.name}
+                        </button>
+                      </li>
+                    ) : null,
+                  )}
+                </ul>
+              </div>
+            ))}
           </div>
-        </div>
-
-        {/* Compact market index: hover or tap a name to bring it to the front of the globe */}
-        <div className="mt-14 border-t border-line lg:mt-20">
-          {REGIONS.map((region) => (
-            <div key={region} className="grid gap-3 border-b border-line py-6 md:grid-cols-12 md:items-baseline md:gap-8">
-              <p className="eyebrow text-gold md:col-span-3">{region}</p>
-              <ul className="flex flex-wrap items-baseline gap-x-8 gap-y-2 md:col-span-9">
-                {MARKETS.map((market, i) =>
-                  market.region === region ? (
-                    <li key={market.id}>
-                      <button
-                        type="button"
-                        onClick={() => select(i)}
-                        onMouseEnter={() => hoverMarket(i)}
-                        onMouseLeave={() => hoverMarket(null)}
-                        onFocus={() => hoverMarket(i)}
-                        onBlur={() => hoverMarket(null)}
-                        aria-pressed={i === active}
-                        className={`font-serif text-[1.4rem] leading-tight transition-colors duration-500 sm:text-[1.65rem] ${
-                          i === focus ? "text-gold" : "text-ivory hover:text-gold"
-                        }`}
-                      >
-                        {market.name}
-                      </button>
-                    </li>
-                  ) : null,
-                )}
-              </ul>
-            </div>
-          ))}
         </div>
 
         <p className="mt-6 text-xs leading-relaxed text-mist/70">

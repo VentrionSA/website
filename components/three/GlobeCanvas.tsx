@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode, type RefObject } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Environment, Lightformer, Line } from "@react-three/drei";
+import { Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
 import { decodeLandPoints } from "@/lib/geo/points";
-import { CONNECTIONS, MARKETS } from "@/lib/content";
-import { arcPoints, latLonToVector3, makeGlowTexture } from "./geo";
+import { MARKETS } from "@/lib/content";
+import { latLonToVector3 } from "./geo";
 import { useEngravedMaps } from "./engraved";
 
 type Tier = "high" | "low";
@@ -24,6 +24,7 @@ type GlobeProps = {
 const DEG = Math.PI / 180;
 const GOLD = "#c4a779";
 const IVORY = "#f1efe8";
+const GOLD_LIGHT = "#f6e3bb";
 
 /* ── Land dots ─────────────────────────────────────────────────────────── */
 
@@ -36,32 +37,41 @@ const dotVertex = /* glsl */ `
   varying float vFacing;
   varying float vNetwork;
   varying float vFocus;
+  varying float vShimmer;
   void main() {
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     vec3 n = normalize(normalMatrix * normalize(position));
     vFacing = dot(n, normalize(-mv.xyz));
     vNetwork = step(-0.5, aCountry);
     vFocus = 1.0 - step(0.5, abs(aCountry - uFocus));
-    float pulse = 1.0 + vFocus * (0.35 + 0.15 * sin(uTime * 2.4));
+    // a slow band of light sweeping across every connected country
+    float lon = atan(position.x, position.z);
+    vShimmer = pow(0.5 + 0.5 * sin(uTime * 0.9 - lon * 3.0 + position.y * 2.0), 6.0);
+    float pulse = 1.0 + vFocus * (0.3 + 0.12 * sin(uTime * 2.4)) + vShimmer * 0.2;
     gl_PointSize = uSize * uPixelRatio * pulse * (4.6 / -mv.z);
     gl_Position = projectionMatrix * mv;
   }
 `;
 
 const dotFragment = /* glsl */ `
-  uniform vec3 uIvory;
   uniform vec3 uGold;
+  uniform vec3 uLight;
   varying float vFacing;
   varying float vNetwork;
   varying float vFocus;
+  varying float vShimmer;
   void main() {
     float d = length(gl_PointCoord - 0.5);
     if (d > 0.5 || vNetwork < 0.5) discard;
-    float edge = smoothstep(0.5, 0.32, d);
+    // bright core with a soft halo, so connected countries glow above the engraved surface
+    float core = smoothstep(0.26, 0.12, d);
+    float halo = smoothstep(0.5, 0.18, d) * 0.55;
     float rim = smoothstep(-0.05, 0.45, vFacing);
-    float tint = max(vNetwork * 0.55, vFocus);
-    vec3 col = mix(uIvory, uGold, tint);
-    float alpha = edge * rim * mix(0.28, 0.95, max(vNetwork * 0.55, vFocus));
+    float lift = max(vFocus, vShimmer * 0.8);
+    vec3 col = mix(uGold, uLight, 0.55 + 0.45 * lift);
+    col = mix(col, vec3(1.0, 0.97, 0.9), core * (0.25 + 0.5 * vFocus));
+    col *= 1.35 + 1.1 * lift;
+    float alpha = max(core, halo) * rim;
     gl_FragColor = vec4(col, alpha);
   }
 `;
@@ -86,13 +96,14 @@ function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; 
       fragmentShader: dotFragment,
       transparent: true,
       depthWrite: false,
+      blending: THREE.AdditiveBlending,
       uniforms: {
         uFocus: { value: focusIndex },
         uPixelRatio: { value: Math.min(gl.getPixelRatio(), 2) },
-        uSize: { value: tier === "high" ? 3.1 : 2.8 },
+        uSize: { value: tier === "high" ? 5.4 : 4.8 },
         uTime: { value: 0 },
-        uIvory: { value: new THREE.Color(IVORY) },
         uGold: { value: new THREE.Color(GOLD) },
+        uLight: { value: new THREE.Color(GOLD_LIGHT) },
       },
     });
     return { geometry: geo, material: mat };
@@ -216,87 +227,6 @@ function GlobeBody() {
         <sphereGeometry args={[1, 64, 64]} />
       </mesh>
     </>
-  );
-}
-
-/* ── Connection arcs and travelling pulses ─────────────────────────────── */
-
-type Line2Like = { material: { dashOffset: number } };
-
-function Arcs({ focusIndex, calm }: { focusIndex: number; calm: boolean }) {
-  const arcs = useMemo(
-    () =>
-      CONNECTIONS.map(([a, b]) => ({
-        a,
-        b,
-        points: arcPoints(MARKETS[a], MARKETS[b], { radius: 1.004, segments: 80, lift: 0.34 }),
-      })),
-    [],
-  );
-  const lineRefs = useRef<(Line2Like | null)[]>([]);
-  const pulseRefs = useRef<(THREE.Sprite | null)[]>([]);
-  const glow = useMemo(() => makeGlowTexture(64), []);
-
-  useFrame(({ clock }, delta) => {
-    const t = clock.getElapsedTime();
-    if (!calm) {
-      lineRefs.current.forEach((line) => {
-        if (line) line.material.dashOffset -= Math.min(delta, 0.05) * 0.18;
-      });
-    }
-    pulseRefs.current.forEach((sprite, i) => {
-      if (!sprite) return;
-      if (calm) {
-        sprite.visible = false;
-        return;
-      }
-      const arc = arcs[i];
-      const active = arc.a === focusIndex || arc.b === focusIndex;
-      const forward = arc.a === focusIndex || !active;
-      let u = (t * (active ? 0.32 : 0.16) + i * 0.173) % 1;
-      if (!forward) u = 1 - u;
-      const idx = u * (arc.points.length - 1);
-      const i0 = Math.floor(idx);
-      const i1 = Math.min(i0 + 1, arc.points.length - 1);
-      sprite.position.lerpVectors(arc.points[i0], arc.points[i1], idx - i0);
-      const fade = Math.sin(Math.PI * u);
-      (sprite.material as THREE.SpriteMaterial).opacity = (active ? 0.95 : 0.35) * fade;
-      const s = active ? 0.085 : 0.05;
-      sprite.scale.set(s, s, 1);
-    });
-  });
-
-  return (
-    <group>
-      {arcs.map((arc, i) => {
-        const active = arc.a === focusIndex || arc.b === focusIndex;
-        return (
-          <group key={i}>
-            <Line
-              ref={(el: unknown) => {
-                lineRefs.current[i] = el as Line2Like | null;
-              }}
-              points={arc.points}
-              color={active ? "#dcc39a" : GOLD}
-              lineWidth={active ? 1.6 : 1}
-              transparent
-              opacity={active ? 0.95 : 0.22}
-              dashed
-              dashSize={active ? 0.05 : 0.025}
-              gapSize={active ? 0.018 : 0.03}
-              depthWrite={false}
-            />
-            <sprite
-              ref={(el) => {
-                pulseRefs.current[i] = el;
-              }}
-            >
-              <spriteMaterial map={glow} color="#f1dcb2" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
-            </sprite>
-          </group>
-        );
-      })}
-    </group>
   );
 }
 
@@ -507,7 +437,6 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
         <Rig focusIndex={focusIndex} drag={drag}>
           <GlobeBody />
           <LandDots focusIndex={focusIndex} tier={tier} calm={calm} />
-          <Arcs focusIndex={focusIndex} calm={calm} />
           {MARKETS.map((_, i) => (
             <Marker key={i} index={i} focused={i === focusIndex} calm={calm} onHover={onHover} onSelect={onSelect} />
           ))}

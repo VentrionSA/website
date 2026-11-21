@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { decodeLandPoints } from "@/lib/geo/points";
-import { CONNECTIONS, MARKETS } from "@/lib/content";
+import { MARKETS } from "@/lib/content";
 
 // Crop of the equirectangular world focused on the network.
 const VIEW = { lonMin: 14, lonMax: 146, latMin: -24, latMax: 62 };
@@ -44,7 +44,7 @@ export function FlatMap({
       for (const p of points) {
         const { x, y } = project(p.lat, p.lon);
         const focus = p.country === focusIndex;
-        ctx.fillStyle = focus ? "rgba(220,195,154,0.95)" : p.country >= 0 ? "rgba(196,167,121,0.55)" : "rgba(241,239,232,0.2)";
+        ctx.fillStyle = focus ? "rgba(148,113,63,1)" : p.country >= 0 ? "rgba(148,113,63,0.6)" : "rgba(34,30,24,0.12)";
         ctx.beginPath();
         ctx.arc((x / 100) * canvas.width, (y / 100) * canvas.height, focus ? r * 1.3 : r, 0, Math.PI * 2);
         ctx.fill();
@@ -60,26 +60,6 @@ export function FlatMap({
     <div className="absolute inset-0 flex items-center">
       <div className="relative w-full" style={{ aspectRatio: `${W} / ${H}` }}>
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden="true" />
-        <svg className="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          {CONNECTIONS.map(([a, b], i) => {
-            const p = project(MARKETS[a].lat, MARKETS[a].lon);
-            const q = project(MARKETS[b].lat, MARKETS[b].lon);
-            const mx = (p.x + q.x) / 2;
-            const my = (p.y + q.y) / 2 - Math.hypot(q.x - p.x, q.y - p.y) * 0.28;
-            const active = a === focusIndex || b === focusIndex;
-            return (
-              <path
-                key={i}
-                d={`M${p.x},${p.y} Q${mx},${my} ${q.x},${q.y}`}
-                fill="none"
-                stroke={active ? "#dcc39a" : "#c4a779"}
-                strokeOpacity={active ? 0.9 : 0.25}
-                strokeWidth={active ? 1.4 : 0.8}
-                vectorEffect="non-scaling-stroke"
-              />
-            );
-          })}
-        </svg>
         {MARKETS.map((m, i) => {
           const { x, y } = project(m.lat, m.lon);
           const focused = i === focusIndex;

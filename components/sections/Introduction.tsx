@@ -106,13 +106,13 @@ function ConnectedNetwork() {
             data-sweep
             className="font-serif text-[clamp(3.4rem,11.2vw,12.75rem)] uppercase italic leading-[0.86] tracking-[-0.02em]"
             style={{
-              backgroundImage: "linear-gradient(90deg, #c4a779 0%, #dcc8a2 48%, transparent 52%, transparent 100%)",
+              backgroundImage: "linear-gradient(90deg, #8d6b3b 0%, #b08a52 48%, transparent 52%, transparent 100%)",
               backgroundSize: "210% 100%",
               backgroundPosition: "0% 0%",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
-              WebkitTextStroke: "1px rgba(196,167,121,0.55)",
+              WebkitTextStroke: "1px rgba(141,107,59,0.55)",
             }}
           >
             Network
@@ -126,7 +126,7 @@ function ConnectedNetwork() {
 export function Introduction() {
   return (
     <section id="about" aria-labelledby="about-title" className="relative isolate overflow-clip bg-ink pt-[clamp(7rem,14vw,12rem)]">
-      <SectionBackdrop src={BACKDROPS.about} wash={0.55} side="both" saturate={0.65} />
+      <SectionBackdrop src={BACKDROPS.about} wash={0.72} side="both" saturate={0.55} />
       <div className="shell flex flex-col items-center text-center">
         <Eyebrow index="01" className="justify-center">
           The Meeting Point
