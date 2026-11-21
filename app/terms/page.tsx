@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Terms of Use" updated="19 November 2026">
+    <LegalPage eyebrow="Legal" title="Terms of Use" updated="21 November 2026">
       <p>
         These terms govern your use of this website, operated by <strong>Ventrion Company</strong> (“Ventrion”). By
         using the website you agree to these terms.

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Privacy Policy" updated="19 November 2026">
+    <LegalPage eyebrow="Legal" title="Privacy Policy" updated="21 November 2026">
       <p>
         This policy explains how <strong>Ventrion Company</strong> (“Ventrion”, “we”, “us”) collects and uses
         personal information when you visit this website or submit an enquiry.
