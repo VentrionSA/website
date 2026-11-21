@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CONNECTIONS, MARKETS, REGIONS } from "@/lib/content";
 import { useGraphicsTier, useInViewport, useNearViewport, usePrefersReducedMotion } from "@/lib/device";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -54,7 +54,7 @@ function MarketPanel({ index, onStep }: { index: number; onStep: (dir: 1 | -1) =
         </div>
       </div>
 
-      <div className="relative min-h-[300px] pt-8" aria-live="polite">
+      <div className="relative min-h-[240px] pt-8" aria-live="polite">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={market.id}
@@ -65,7 +65,6 @@ function MarketPanel({ index, onStep }: { index: number; onStep: (dir: 1 | -1) =
           >
             <p className="eyebrow text-gold">{market.region}</p>
             <h3 className="display-md mt-4 text-ivory">{market.name}</h3>
-            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-mist">{market.description}</p>
             <dl className="mt-8 grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm">
               <div>
                 <dt className="eyebrow text-[10px] text-mist">Position</dt>
@@ -150,7 +149,7 @@ export function Network() {
 
   return (
     <section id="network" aria-labelledby="network-title" className="relative isolate overflow-clip bg-graphite py-[clamp(6rem,12vw,11rem)]">
-      <SectionBackdrop src={BACKDROPS.network} wash={0.55} side="both" />
+      <SectionBackdrop src={BACKDROPS.network} wash={0.66} side="both" saturate={0.45} />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_40%_at_32%_58%,rgba(196,167,121,0.08),transparent_72%)]"
@@ -160,18 +159,18 @@ export function Network() {
       <div className="shell relative">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <Eyebrow index="02">Our Network</Eyebrow>
-            <SplitHeading id="network-title" className="display-lg mt-8 max-w-[14ch] text-ivory">
-              Regional connections. <em className="text-gold">International</em> perspective.
+            <Eyebrow index="02">The Network</Eyebrow>
+            <SplitHeading id="network-title" className="display-lg mt-8 max-w-[13ch] text-ivory">
+              A uniquely extensive <em className="text-gold">network.</em>
             </SplitHeading>
           </div>
           <Reveal stagger={0.1} className="space-y-4 lg:col-span-4 lg:col-start-9">
             <p data-reveal className="display-sm text-ivory/90">
-              Connected across the markets that matter.
+              Nine markets. One network.
             </p>
             <p data-reveal className="text-[16px] leading-relaxed text-mist">
-              Nine markets across the Middle East, Central Asia and Asia define the reach of our network. Select a market
-              to explore it.
+              Relationships spanning the Middle East, Central Asia and Asia give Ventrion the reach to bring buyers and
+              sellers into direct contact.
             </p>
           </Reveal>
         </div>
@@ -197,11 +196,12 @@ export function Network() {
           </div>
         </div>
 
-        <div className="mt-16 grid gap-12 border-t border-line pt-12 md:grid-cols-3 md:gap-8 lg:mt-24">
+        {/* Compact market index: hover or tap a name to bring it to the front of the globe */}
+        <div className="mt-14 border-t border-line lg:mt-20">
           {REGIONS.map((region) => (
-            <div key={region}>
-              <p className="eyebrow mb-4 text-gold">{region}</p>
-              <ul>
+            <div key={region} className="grid gap-3 border-b border-line py-6 md:grid-cols-12 md:items-baseline md:gap-8">
+              <p className="eyebrow text-gold md:col-span-3">{region}</p>
+              <ul className="flex flex-wrap items-baseline gap-x-8 gap-y-2 md:col-span-9">
                 {MARKETS.map((market, i) =>
                   market.region === region ? (
                     <li key={market.id}>
@@ -213,19 +213,11 @@ export function Network() {
                         onFocus={() => hoverMarket(i)}
                         onBlur={() => hoverMarket(null)}
                         aria-pressed={i === active}
-                        className={`group flex w-full items-center justify-between border-b border-line py-4 text-left transition-colors duration-500 ${
+                        className={`font-serif text-[1.4rem] leading-tight transition-colors duration-500 sm:text-[1.65rem] ${
                           i === focus ? "text-gold" : "text-ivory hover:text-gold"
                         }`}
                       >
-                        <span className="flex items-baseline gap-5">
-                          <span className="eyebrow w-6 text-[10px] tabular-nums text-mist">{String(i + 1).padStart(2, "0")}</span>
-                          <span className="font-serif text-[1.6rem] leading-none">{market.name}</span>
-                        </span>
-                        <ArrowUpRight
-                          aria-hidden="true"
-                          strokeWidth={1.25}
-                          className={`h-4 w-4 transition-all duration-500 ${i === focus ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"}`}
-                        />
+                        {market.name}
                       </button>
                     </li>
                   ) : null,
@@ -235,9 +227,8 @@ export function Network() {
           ))}
         </div>
 
-        <p className="mt-10 max-w-2xl text-xs leading-relaxed text-mist/80">
-          Markets shown represent the reach of our commercial network and market coverage. They do not indicate office
-          locations.
+        <p className="mt-6 text-xs leading-relaxed text-mist/70">
+          Markets reflect the reach of our network. They do not indicate office locations.
         </p>
       </div>
     </section>

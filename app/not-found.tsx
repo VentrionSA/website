@@ -8,7 +8,7 @@ export default function NotFound() {
       <div className="shell relative">
         <p className="eyebrow text-gold">Error 404</p>
         <h1 className="display-xl mt-8 max-w-[12ch] text-ivory">This route does not exist.</h1>
-        <p className="mt-6 max-w-md text-mist">The page you are looking for may have moved. Let us take you back to familiar markets.</p>
+        <p className="mt-6 max-w-md text-mist">The page you are looking for may have moved. Let us take you back.</p>
         <Link
           href="/"
           className="mt-12 inline-flex items-center gap-4 bg-gold px-7 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-ink transition-colors duration-500 hover:bg-ivory"

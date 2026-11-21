@@ -18,8 +18,8 @@ export default function PrivacyPage() {
       <p>When you submit the enquiry form we collect the details you provide:</p>
       <ul>
         <li>Full name, company name, business email and WhatsApp or phone number</li>
-        <li>Country, your role (buyer, seller, supplier, distributor or other) and commodity interest</li>
-        <li>Any requirement, volume or message details you choose to share</li>
+        <li>Country and whether you are a buyer, seller or other party</li>
+        <li>Any message details you choose to share</li>
       </ul>
       <p>
         Our hosting provider may also process standard technical information (such as IP address and browser type) to
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       </p>
       <h2>How we use it</h2>
       <p>
-        We use enquiry information only to respond to your enquiry, to assess and discuss potential commercial
+        We use enquiry information only to respond to your enquiry, to assess and discuss the introductions and trade
         opportunities you have asked about, and to keep appropriate business records. We do not sell personal
         information.
       </p>

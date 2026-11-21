@@ -3,11 +3,10 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, CircleAlert, LoaderCircle } from "lucide-react";
-import { ENQUIRY_INTERESTS, ENQUIRY_ROLES } from "@/lib/content";
+import { ENQUIRY_ROLES } from "@/lib/content";
 import { enquiryFields, enquirySchema, toFieldErrors, type EnquiryField, type EnquiryResponse } from "@/lib/enquiry";
 import { getWhatsAppHref } from "@/lib/site";
 import { WhatsAppIcon } from "@/components/ui/icons";
-import { PREFILL_EVENT } from "@/lib/events";
 
 type Values = Record<EnquiryField, string>;
 type Status = "idle" | "submitting" | "success" | "error";
@@ -19,8 +18,6 @@ const INITIAL: Values = {
   phone: "",
   country: "",
   role: "",
-  interest: "",
-  volume: "",
   message: "",
 };
 
@@ -59,15 +56,6 @@ export function EnquiryForm() {
 
   useEffect(() => {
     startedAt.current = Date.now();
-    const onPrefill = (event: Event) => {
-      const detail = (event as CustomEvent<string>).detail;
-      if ((ENQUIRY_INTERESTS as readonly string[]).includes(detail)) {
-        setValues((v) => ({ ...v, interest: detail }));
-        setErrors((e) => ({ ...e, interest: undefined }));
-      }
-    };
-    window.addEventListener(PREFILL_EVENT, onPrefill);
-    return () => window.removeEventListener(PREFILL_EVENT, onPrefill);
   }, []);
 
   const id = (name: string) => `${uid}-${name}`;
@@ -86,7 +74,6 @@ export function EnquiryForm() {
 
   const onBlur = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = event.target.name as EnquiryField;
-    if (name === "volume" && !event.target.value) return;
     if (event.target.value) validateField(name, event.target.value);
   };
 
@@ -141,10 +128,10 @@ export function EnquiryForm() {
     className: "field-input",
   });
 
-  const label = (name: EnquiryField, text: string, optional = false) => (
+  const label = (name: EnquiryField, text: string) => (
     <label htmlFor={id(name)} className="eyebrow block text-[10px] text-mist">
       {text}
-      {optional ? <span className="ml-2 normal-case tracking-normal text-mist/60">(optional)</span> : <span className="text-gold"> *</span>}
+      <span className="text-gold"> *</span>
     </label>
   );
 
@@ -161,9 +148,9 @@ export function EnquiryForm() {
         <span className="flex h-14 w-14 items-center justify-center rounded-full border border-gold text-gold">
           <Check className="h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
         </span>
-        <h3 className="display-md mt-8 text-ivory">Thank you — your enquiry has been received.</h3>
+        <h3 className="display-md mt-8 text-ivory">Thank you. Your enquiry has been received.</h3>
         <p className="mt-5 max-w-md leading-relaxed text-mist">
-          A member of our team will review your requirement and respond to the contact details provided.
+          We will be in touch using the details you provided.
         </p>
         {reference ? (
           <p className="eyebrow mt-8 text-[10px] text-mist">
@@ -245,40 +232,9 @@ export function EnquiryForm() {
           <FieldError id={id("role-error")} message={errors.role} />
         </fieldset>
 
-        <fieldset className="sm:col-span-2" aria-describedby={errors.interest ? id("interest-error") : undefined}>
-          <legend className="eyebrow mb-4 text-[10px] text-mist">
-            Commodity interest <span className="text-gold">*</span>
-          </legend>
-          <div className="flex flex-wrap gap-2.5">
-            {ENQUIRY_INTERESTS.map((interest) => (
-              <label key={interest} className="relative">
-                <input
-                  type="radio"
-                  name="interest"
-                  value={interest}
-                  checked={values.interest === interest}
-                  onChange={() => {
-                    setValues((v) => ({ ...v, interest }));
-                    setErrors((e) => ({ ...e, interest: undefined }));
-                  }}
-                  className="peer sr-only"
-                />
-                <span className="chip">{interest}</span>
-              </label>
-            ))}
-          </div>
-          <FieldError id={id("interest-error")} message={errors.interest} />
-        </fieldset>
-
-        <div className="sm:col-span-2">
-          {label("volume", "Estimated requirement / volume", true)}
-          <input {...inputProps("volume")} type="text" placeholder="e.g. quantity, frequency or delivery terms" />
-          <FieldError id={id("volume-error")} message={errors.volume} />
-        </div>
-
         <div className="sm:col-span-2">
           {label("message", "Message")}
-          <textarea {...inputProps("message")} rows={5} placeholder="Tell us about your requirement or opportunity" />
+          <textarea {...inputProps("message")} rows={4} placeholder="What you are looking to buy or sell, and where" />
           <FieldError id={id("message-error")} message={errors.message} />
         </div>
       </div>
@@ -329,7 +285,7 @@ export function EnquiryForm() {
             </>
           ) : (
             <>
-              Submit Enquiry
+              Request an Introduction
               <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" strokeWidth={1.5} aria-hidden="true" />
             </>
           )}

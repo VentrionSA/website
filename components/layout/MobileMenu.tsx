@@ -112,7 +112,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
               transition={{ delay: 0.7, duration: 0.9, ease: EASE_OUT }}
             >
               <p className="max-w-xs text-sm leading-relaxed text-mist">
-                International commodity brokerage &amp; advisory across the Middle East, Central Asia and Asia.
+                The meeting point between buyers and sellers.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
@@ -120,7 +120,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                   onClick={(event) => go(event, "/#contact")}
                   className="inline-flex items-center justify-between gap-4 bg-gold px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-ink"
                 >
-                  Start a Conversation
+                  Request an Introduction
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
                 </a>
                 <a

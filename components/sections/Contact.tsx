@@ -64,14 +64,13 @@ export function Contact() {
       <div className="shell relative grid gap-16 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-32">
-            <Eyebrow index="08">Contact</Eyebrow>
-            <SplitHeading id="contact-title" className="display-lg mt-8 max-w-[12ch] text-ivory">
-              Let’s discuss your next <em className="text-gold">opportunity.</em>
+            <Eyebrow index="03">Contact</Eyebrow>
+            <SplitHeading id="contact-title" className="display-lg mt-8 max-w-[11ch] text-ivory">
+              Request an <em className="text-gold">introduction.</em>
             </SplitHeading>
             <Reveal className="mt-8 max-w-md">
               <p className="text-[17px] leading-relaxed text-mist">
-                Whether you are looking to source commodities, explore supply opportunities or establish a commercial
-                relationship, we welcome a conversation.
+                Whether you are buying or selling, the conversation begins here.
               </p>
             </Reveal>
 

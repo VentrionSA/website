@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Ventrion — International Commodity Brokerage & Advisory",
+    name: "Ventrion — Connecting Global Markets",
     short_name: "Ventrion",
-    description: "Independent commodity brokerage and advisory across the Middle East, Central Asia and Asia.",
+    description: "The meeting point between buyers and sellers.",
     start_url: "/",
     display: "standalone",
     background_color: "#101110",

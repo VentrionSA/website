@@ -5,10 +5,61 @@ import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { ArrowLink } from "@/components/ui/ArrowLink";
 import { LogoMark } from "@/components/brand/Logo";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
+
+/** Buyers and sellers drawn together, meeting at the Ventrion star. */
+function MeetingPoint() {
+  const root = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(MOTION_QUERIES.motion, () => {
+        const tl = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: { trigger: root.current, start: "top 88%", end: "center 52%", scrub: 0.8 },
+        });
+        tl.fromTo("[data-line='l']", { scaleX: 0 }, { scaleX: 1 }, 0)
+          .fromTo("[data-line='r']", { scaleX: 0 }, { scaleX: 1 }, 0)
+          .fromTo("[data-side='l']", { x: -24, autoAlpha: 0.25 }, { x: 0, autoAlpha: 1 }, 0)
+          .fromTo("[data-side='r']", { x: 24, autoAlpha: 0.25 }, { x: 0, autoAlpha: 1 }, 0)
+          .fromTo("[data-star]", { rotate: -135, scale: 0.55, autoAlpha: 0.3 }, { rotate: 0, scale: 1, autoAlpha: 1 }, 0.25)
+          .fromTo("[data-star-glow]", { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1 }, 0.55);
+      });
+    },
+    { scope: root },
+  );
+
+  const side = "font-serif text-[clamp(1.45rem,3.8vw,3.25rem)] italic leading-none text-ivory";
+
+  return (
+    <div ref={root} aria-hidden="true" className="mt-[clamp(3.5rem,7vw,6rem)] flex w-full max-w-5xl items-center gap-3 sm:gap-7">
+      <span data-side="l" className={side}>
+        Buyers
+      </span>
+      <span className="relative h-px flex-1">
+        <span data-line="l" className="absolute inset-0 origin-left bg-gradient-to-r from-ivory/15 via-gold/50 to-gold" />
+      </span>
+      <span className="relative flex flex-col items-center">
+        <span
+          data-star-glow
+          className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(220,200,162,0.35),transparent_68%)]"
+        />
+        <span data-star className="relative text-gold-soft">
+          <LogoMark className="h-[clamp(2.6rem,6vw,4.75rem)] w-auto" />
+        </span>
+      </span>
+      <span className="relative h-px flex-1">
+        <span data-line="r" className="absolute inset-0 origin-right bg-gradient-to-l from-ivory/15 via-gold/50 to-gold" />
+      </span>
+      <span data-side="r" className={side}>
+        Sellers
+      </span>
+    </div>
+  );
+}
 
 /** Oversized, scroll-driven typographic statement: "One connected network". */
 function ConnectedNetwork() {
@@ -21,7 +72,7 @@ function ConnectedNetwork() {
         const st = { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 0.6 } as const;
         gsap.fromTo("[data-row='a']", { xPercent: 6 }, { xPercent: -10, ease: "none", scrollTrigger: st });
         gsap.fromTo("[data-row='b']", { xPercent: -8 }, { xPercent: 6, ease: "none", scrollTrigger: st });
-        gsap.fromTo("[data-star]", { rotate: -45 }, { rotate: 135, ease: "none", scrollTrigger: st });
+        gsap.fromTo("[data-row-star]", { rotate: -45 }, { rotate: 135, ease: "none", scrollTrigger: st });
         gsap.fromTo(
           "[data-sweep]",
           { backgroundPosition: "100% 0%" },
@@ -37,7 +88,7 @@ function ConnectedNetwork() {
   );
 
   return (
-    <div ref={root} className="relative mt-[clamp(5rem,11vw,10rem)] select-none overflow-hidden" aria-hidden="true">
+    <div ref={root} className="relative mt-[clamp(5rem,10vw,9rem)] select-none overflow-hidden" aria-hidden="true">
       <div className="border-y border-line py-[clamp(1.5rem,3vw,3rem)]">
         <div data-row="a" className="flex items-center gap-[3vw] whitespace-nowrap will-change-transform">
           <span className="font-serif text-[clamp(3.4rem,11.2vw,12.75rem)] uppercase leading-[0.86] tracking-[-0.02em] text-outline">
@@ -48,7 +99,7 @@ function ConnectedNetwork() {
           </span>
         </div>
         <div data-row="b" className="mt-[1vw] flex items-center justify-end gap-[3vw] whitespace-nowrap will-change-transform">
-          <span data-star className="inline-block text-gold">
+          <span data-row-star className="inline-block text-gold">
             <LogoMark className="h-[clamp(2.6rem,7.8vw,8.25rem)] w-auto" />
           </span>
           <span
@@ -74,30 +125,24 @@ function ConnectedNetwork() {
 
 export function Introduction() {
   return (
-    <section id="about" aria-labelledby="about-title" className="relative isolate overflow-clip bg-ink pt-[clamp(6rem,14vw,12rem)]">
-      <SectionBackdrop src={BACKDROPS.about} wash={0.5} side="both" />
-      <div className="shell grid gap-y-14 lg:grid-cols-12 lg:gap-x-8">
-        <div className="lg:col-span-7">
-          <Eyebrow index="01">About</Eyebrow>
-          <SplitHeading id="about-title" className="display-lg mt-8 max-w-[15ch] text-ivory">
-            Trade is built on trust. <em className="text-gold">Opportunity</em> is built on connection.
-          </SplitHeading>
-        </div>
+    <section id="about" aria-labelledby="about-title" className="relative isolate overflow-clip bg-ink pt-[clamp(7rem,14vw,12rem)]">
+      <SectionBackdrop src={BACKDROPS.about} wash={0.55} side="both" saturate={0.65} />
+      <div className="shell flex flex-col items-center text-center">
+        <Eyebrow index="01" className="justify-center">
+          The Meeting Point
+        </Eyebrow>
+        <SplitHeading id="about-title" className="display-lg mt-8 max-w-[13ch] text-ivory">
+          Where buyers and sellers <em className="text-gold">meet.</em>
+        </SplitHeading>
 
-        <Reveal stagger={0.12} className="space-y-6 text-[17px] leading-[1.75] text-mist lg:col-span-4 lg:col-start-9 lg:pt-24">
-          <p data-reveal>
-            International commodity markets demand more than access. They require relationships, market understanding
-            and the ability to connect the right counterparties.
+        <MeetingPoint />
+        <p className="sr-only">Ventrion stands between buyers and sellers, bringing them together.</p>
+
+        <Reveal className="mt-[clamp(3.5rem,7vw,6rem)] max-w-[36rem]">
+          <p className="text-[17px] leading-[1.8] text-mist">
+            Ventrion exists to facilitate trade. Through a uniquely extensive network of relationships, we bring the right
+            buyers and the right sellers together, directly and with discretion.
           </p>
-          <p data-reveal>
-            We operate across strategically important markets, facilitating commercial relationships and supporting
-            opportunities in essential energy, agricultural, metals and food commodities.
-          </p>
-          <div data-reveal className="pt-4">
-            <ArrowLink href="/#network" variant="text">
-              Explore our network
-            </ArrowLink>
-          </div>
         </Reveal>
       </div>
 

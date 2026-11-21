@@ -3,7 +3,6 @@
 import { useRef, type CSSProperties } from "react";
 import { gsap, MOTION_QUERIES, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { heroState } from "@/lib/hero-state";
-import { SECTORS } from "@/lib/content";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { HeroVisual } from "./hero/HeroVisual";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
@@ -67,7 +66,7 @@ export function Hero() {
       <div className="shell relative flex min-h-[100svh] flex-col pb-[clamp(1.25rem,3.5vh,2.5rem)] pt-[clamp(6.5rem,15vh,9.5rem)]">
         <div data-hero-fade className="flex items-start justify-between gap-6">
           <p className="hero-fade eyebrow max-w-[18rem] text-gold sm:max-w-none" style={i(0)}>
-            Independent Commodity Consulting &amp; Advisory
+            Global Trade Facilitation
           </p>
           <p className="hero-fade eyebrow hidden text-right text-mist md:block" style={i(1)}>
             Middle East <span className="px-2 text-gold/70">/</span> Central Asia <span className="px-2 text-gold/70">/</span> Asia
@@ -75,53 +74,50 @@ export function Hero() {
         </div>
 
         <div data-hero-copy className="mt-auto pt-[26vh] lg:pt-6">
-          <h1 id="hero-title" className="display-hero max-w-[13.5ch] text-ivory">
+          <h1 id="hero-title" className="display-hero text-ivory">
             <span className="line-mask">
               <span className="hero-line" style={i(0)}>
-                Connecting Markets.
+                Connecting
               </span>
             </span>
             <span className="line-mask">
               <span className="hero-line" style={i(1)}>
-                Moving <em className="text-gold">Essential</em>
-              </span>
-            </span>
-            <span className="line-mask">
-              <span className="hero-line" style={i(2)}>
-                Commodities.
+                Global <em className="text-gold">Markets.</em>
               </span>
             </span>
           </h1>
 
           <div className="mt-9 grid gap-8 lg:mt-10 lg:grid-cols-12 lg:items-end">
-            <p className="hero-fade max-w-[34rem] text-[15px] leading-relaxed text-mist sm:text-lg lg:col-span-5" style={i(2)}>
-              An independent commodities advisory and consulting firm connecting trusted buyers and suppliers across
-              global markets in Oil &amp; Gas, Agriculture, Metals and Perishables.
+            <p className="hero-fade max-w-[30rem] text-[15px] leading-relaxed text-mist sm:text-lg lg:col-span-5" style={i(2)}>
+              <span className="text-[0.86em] font-medium uppercase tracking-[0.2em] text-ivory">Ventrion</span> is the
+              meeting point between buyers and sellers, facilitating trade through a uniquely extensive network.
             </p>
             <div className="hero-fade flex flex-col gap-3 sm:flex-row lg:col-span-7 lg:justify-end" style={i(3)}>
               <ArrowLink href="/#contact" magnetic>
-                Discuss a Requirement
+                Request an Introduction
               </ArrowLink>
-              <ArrowLink href="/#expertise" variant="outline" magnetic>
-                Explore Our Expertise
+              <ArrowLink href="/#network" variant="outline" magnetic>
+                The Network
               </ArrowLink>
             </div>
           </div>
         </div>
 
-        <div data-hero-fade className="hero-fade mt-10 flex items-center justify-between border-t border-line pt-5 lg:mt-10" style={i(4)}>
-          <a href="/#about" className="group flex items-center gap-4" aria-label="Scroll to explore">
-            <span className="scroll-cue" aria-hidden="true" />
-            <span className="eyebrow text-mist transition-colors duration-500 group-hover:text-ivory">Scroll to explore</span>
-          </a>
-          <ul className="eyebrow hidden items-center gap-5 text-mist md:flex" aria-label="Sectors">
-            {SECTORS.map((sector, idx) => (
-              <li key={sector.id} className="flex items-center gap-5">
-                {idx > 0 ? <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold/60" /> : null}
-                {sector.name}
-              </li>
-            ))}
-          </ul>
+        {/* Scroll fade (GSAP) on the wrapper, entrance animation (CSS) on the row: GSAP must not read a mid-animation opacity. */}
+        <div data-hero-fade className="mt-10">
+          <div className="hero-fade flex items-center justify-between border-t border-line pt-5" style={i(4)}>
+            <a href="/#about" className="group flex items-center gap-4" aria-label="Scroll to explore">
+              <span className="scroll-cue" aria-hidden="true" />
+              <span className="eyebrow text-mist transition-colors duration-500 group-hover:text-ivory">Scroll</span>
+            </a>
+            <p className="eyebrow hidden items-center gap-5 text-mist md:flex">
+              Buyers
+              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold/70" />
+              Ventrion
+              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold/70" />
+              Sellers
+            </p>
+          </div>
         </div>
       </div>
     </section>

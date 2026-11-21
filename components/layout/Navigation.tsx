@@ -99,7 +99,7 @@ export function Navigation() {
               className="group hidden items-center gap-3 border border-gold/50 px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ivory transition-colors duration-500 hover:border-gold hover:bg-gold hover:text-ink md:inline-flex"
             >
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gold transition-colors duration-500 group-hover:bg-ink" />
-              Start a Conversation
+              Request an Introduction
             </a>
 
             <button

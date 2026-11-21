@@ -1,6 +1,6 @@
 # Ventrion — website
 
-Single-page marketing site for Ventrion, an international commodity brokerage and advisory firm.
+A short, single-page "digital business card" for Ventrion: the meeting point between buyers and sellers, facilitating trade through an extensive network. Sections: hero, the meeting point, the network (interactive 3D globe), contact.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Three.js / React Three Fiber · Lucide · Zod.
 
@@ -44,12 +44,12 @@ Configure at least one channel (server-side variables, not `NEXT_PUBLIC_`):
 
 ### 3. Legal pages
 
-`app/privacy/page.tsx` and `app/terms/page.tsx` are templates with `[PLACEHOLDERS]` — have them reviewed and completed by your legal advisers.
+`app/privacy/page.tsx` and `app/terms/page.tsx` should be reviewed by your legal advisers. The terms still contain a `[JURISDICTION]` placeholder.
 
 ## Content
 
-- **Copy, markets, sectors, services, process, pillars:** `lib/content.ts`
-- **Imagery:** `assets/images/` (alt text and sources in `lib/media.ts`). Sector and philosophy images are placeholder photography from Pexels (free commercial licence, no attribution required), cropped and colour-graded; replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically).
+- **Navigation, markets, enquiry options:** `lib/content.ts`; section copy lives in `components/sections/*`.
+- **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically).
 - **Hero globe poster:** `assets/images/hero-globe.webp` is a still of the live 3D globe shown instantly while WebGL loads (and kept for reduced-motion / no-WebGL visitors). If you change the globe's look in `components/three/HeroCanvas.tsx`, re-capture it using the component's `capture` mode.
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
 - **Globe data:** `lib/geo/land-points.json` (Natural Earth land via `world-atlas`, run-length encoded).

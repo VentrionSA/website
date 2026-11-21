@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { LogoMark, LogoWordmark } from "@/components/brand/Logo";
-import { NAV_LINKS, SECTORS } from "@/lib/content";
+import { NAV_LINKS } from "@/lib/content";
 import { getMailtoHref, getWhatsAppHref, siteConfig } from "@/lib/site";
 
 function Placeholder({ children }: { children: string }) {
@@ -28,17 +28,16 @@ export function Footer() {
       </div>
       <div className="shell relative pb-10 pt-24 lg:pt-32">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-6">
             <a href="/#top" className="inline-flex items-center gap-4 text-ivory" aria-label="Ventrion — back to top">
               <LogoMark className="h-12 w-auto" />
               <LogoWordmark className="h-[15px] w-auto" />
             </a>
-            <p className="display-sm mt-10 max-w-[20ch] text-ivory/90">
-              Connecting global markets through strategic commodity relationships.
-            </p>
+            <p className="display-sm mt-10 max-w-[20ch] text-ivory/90">Connecting global markets.</p>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-mist">The meeting point between buyers and sellers.</p>
           </div>
 
-          <nav aria-label="Footer" className="lg:col-span-2">
+          <nav aria-label="Footer" className="lg:col-span-2 lg:col-start-8">
             <p className="eyebrow mb-6 text-gold">Navigate</p>
             <ul className="space-y-3.5">
               {NAV_LINKS.map((link) => (
@@ -51,33 +50,7 @@ export function Footer() {
             </ul>
           </nav>
 
-          <div className="lg:col-span-2">
-            <p className="eyebrow mb-6 text-gold">Commodities</p>
-            <ul className="space-y-3.5">
-              {SECTORS.map((sector) => (
-                <li key={sector.id}>
-                  <a href={`/#${sector.id}`} className={linkClass}>
-                    {sector.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-1">
-            <p className="eyebrow mb-6 text-gold">Network</p>
-            <ul className="space-y-3.5">
-              {["Middle East", "Central Asia", "Asia"].map((region) => (
-                <li key={region}>
-                  <a href="/#network" className={linkClass}>
-                    {region}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <p className="eyebrow mb-6 text-gold">Contact</p>
             <ul className="space-y-4 text-sm">
               <li className="flex flex-col gap-1">

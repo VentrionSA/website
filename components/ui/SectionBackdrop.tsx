@@ -5,8 +5,8 @@ import { useRef } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 
 /**
- * Full-bleed photographic background in the style of the commodity panels:
- * the photo stays clearly visible, a directional cream overlay keeps the text
+ * Full-bleed photographic background:
+ * the photo stays clearly visible, a directional dark overlay keeps the text
  * side readable, and the image drifts with a scroll-linked parallax.
  * The parent must be `relative isolate`.
  */
@@ -15,6 +15,7 @@ export function SectionBackdrop({
   position = "50% 50%",
   wash = 0.45,
   side = "left",
+  saturate = 1,
   priority = false,
 }: {
   src: StaticImageData;
@@ -23,6 +24,8 @@ export function SectionBackdrop({
   wash?: number;
   /** Which side carries the text and gets the stronger overlay. */
   side?: "left" | "right" | "both";
+  /** Colour saturation of the photo (1 = original). */
+  saturate?: number;
   priority?: boolean;
 }) {
   const root = useRef<HTMLDivElement>(null);
@@ -67,7 +70,7 @@ export function SectionBackdrop({
             placeholder="blur"
             {...(priority ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
             className="object-cover"
-            style={{ objectPosition: position }}
+            style={{ objectPosition: position, ...(saturate !== 1 ? { filter: `saturate(${saturate})` } : {}) }}
           />
         </div>
         <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} />

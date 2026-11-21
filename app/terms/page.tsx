@@ -9,20 +9,20 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Terms of Use" updated="21 November 2026">
+    <LegalPage eyebrow="Legal" title="Terms of Use" updated="21 November 2026" draft>
       <p>
         These terms govern your use of this website, operated by <strong>Ventrion Company</strong> (“Ventrion”). By
         using the website you agree to these terms.
       </p>
       <h2>Information only</h2>
       <p>
-        Content on this website is provided for general information about our services. It does not constitute an
+        Content on this website is provided for general information about Ventrion. It does not constitute an
         offer, a solicitation, or financial, legal or investment advice, and no contract is formed by submitting an
         enquiry. Any commercial engagement is subject to separate written agreement.
       </p>
       <h2>Market references</h2>
       <p>
-        References to markets, regions and sectors describe the scope of our commercial network and interests. They do
+        References to markets and regions describe the scope of our commercial network and interests. They do
         not represent office locations, guarantees of availability, or endorsements by any third party.
       </p>
       <h2>Intellectual property</h2>

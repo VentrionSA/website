@@ -5,7 +5,7 @@ import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
-import { MARKETS, SECTORS } from "@/lib/content";
+import { MARKETS } from "@/lib/content";
 import { getSiteUrl, isPlaceholder, siteConfig } from "@/lib/site";
 
 const serif = Cormorant_Garamond({
@@ -23,9 +23,8 @@ const sans = Manrope({
 });
 
 const siteUrl = getSiteUrl();
-const title = "Ventrion — International Commodity Brokerage & Advisory";
-const description =
-  "Independent commodity brokerage and advisory connecting buyers and suppliers across the Middle East, Central Asia and Asia — Oil & Gas, Agriculture, Metals and Perishables.";
+const title = "Ventrion — Connecting Global Markets";
+const description = siteConfig.description;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -33,18 +32,13 @@ export const metadata: Metadata = {
   description,
   applicationName: "Ventrion",
   keywords: [
-    "International Commodity Brokerage",
-    "Commodity Advisory",
-    "Commodity Sourcing",
-    "Global Commodity Markets",
-    "Middle East Commodity Brokerage",
-    "Asian Commodity Markets",
-    "Oil and Gas Brokerage",
-    "Fuel Oil, LPG and Bitumen",
-    "Urea Suppliers",
-    "Sugar Trading",
-    "Aluminium and Copper",
-    "Olive Oil Suppliers",
+    "Ventrion",
+    "Trade facilitation",
+    "Buyers and sellers",
+    "International trade network",
+    "Middle East trade",
+    "Central Asia trade",
+    "Asia trade",
   ],
   alternates: { canonical: "/" },
   openGraph: {
@@ -80,14 +74,9 @@ function StructuredData() {
         url: siteUrl,
         logo: `${siteUrl}/brand/ventrion-logo-512.png`,
         description: siteConfig.description,
-        slogan: "Connecting Markets. Moving Essential Commodities.",
+        slogan: "Connecting Global Markets.",
         areaServed: MARKETS.map((m) => ({ "@type": "Country", name: m.name })),
-        knowsAbout: [
-          "Commodity brokerage",
-          "Commodity advisory",
-          "Commodity sourcing",
-          ...SECTORS.flatMap((s) => [s.name, ...s.products]),
-        ],
+        knowsAbout: ["Trade facilitation", "International trade"],
         ...(!isPlaceholder(siteConfig.email)
           ? { contactPoint: { "@type": "ContactPoint", contactType: "sales", email: siteConfig.email } }
           : {}),
