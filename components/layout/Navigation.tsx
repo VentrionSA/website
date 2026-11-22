@@ -55,8 +55,6 @@ export function Navigation() {
   }, [open]);
 
   const solid = scrolled && !open;
-  // Over the hero photograph the bar is transparent with light type.
-  const overHero = isHome && !scrolled && !open;
 
   return (
     <>
@@ -66,7 +64,7 @@ export function Navigation() {
         transition={{ duration: 0.7, ease: EASE }}
         className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-700 ${
           solid ? "border-line bg-ink/75 backdrop-blur-xl" : "border-transparent bg-transparent"
-        } ${overHero ? "theme-dark" : ""}`}
+        }`}
       >
         <div className={`shell flex items-center justify-between transition-[height] duration-700 ${solid ? "h-[68px]" : "h-[84px]"}`}>
           <a href="/#top" className="relative z-10 -m-2 p-2" aria-label="Ventrion — back to top">

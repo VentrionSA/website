@@ -25,29 +25,30 @@ export function Hero() {
   );
 
   return (
-    <section ref={root} id="top" aria-labelledby="hero-title" className="theme-dark relative isolate min-h-[100svh] overflow-hidden bg-ink">
+    <section ref={root} id="top" aria-labelledby="hero-title" className="relative isolate min-h-[100svh] overflow-hidden bg-ink">
       <SectionBackdrop
         src={BACKDROPS.hero}
-        wash={0}
+        wash={0.14}
         side="none"
-        edges={false}
-        sizes="(min-aspect-ratio: 72/25) 100vw, 288svh"
-        objectClassName="object-[46%_50%] lg:object-[22%_50%]"
+        edges="bottom"
+        sizes="(min-aspect-ratio: 181/100) 100vw, 181svh"
+        position="50% 50%"
         priority
       />
-      {/* Minimal shade, only where the words sit, so the photograph stays untouched */}
+      {/* Slight ivory overlay: light across the photograph, deeper only behind the words */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(0deg,rgba(8,14,24,0.74)_0%,rgba(8,14,24,0.5)_45%,rgba(8,14,24,0.3)_66%,rgba(8,14,24,0.32)_100%)] lg:bg-[linear-gradient(90deg,rgba(8,14,24,0.58)_0%,rgba(8,14,24,0.26)_36%,rgba(8,14,24,0)_60%)]"
+        className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(243,238,228,0.42)_0%,rgba(243,238,228,0.6)_26%,rgba(243,238,228,0.6)_80%,rgba(243,238,228,0.3)_100%)] lg:bg-[linear-gradient(90deg,rgba(243,238,228,0.68)_0%,rgba(243,238,228,0.52)_30%,rgba(243,238,228,0.18)_50%,rgba(243,238,228,0)_66%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 hidden h-[46%] bg-[linear-gradient(0deg,rgba(8,14,24,0.5)_0%,rgba(8,14,24,0)_100%)] lg:block"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-20 hidden h-[18%] bg-[linear-gradient(180deg,rgba(243,238,228,0.5)_0%,rgba(243,238,228,0)_100%)] lg:block"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-20 hidden h-[20%] bg-[linear-gradient(180deg,rgba(8,14,24,0.34)_0%,rgba(8,14,24,0)_100%)] lg:block"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 hidden h-[40%] bg-[linear-gradient(0deg,rgba(243,238,228,0.55)_0%,rgba(243,238,228,0)_100%)] lg:block"
       />
+
       {/* Editorial column guides */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
         <div className="shell grid h-full grid-cols-12">
@@ -77,7 +78,7 @@ export function Hero() {
             </span>
             <span className="line-mask">
               <span className="hero-line" style={i(1)}>
-                Global <em className="text-gold-soft">Markets.</em>
+                Global <em className="text-burgundy">Markets.</em>
               </span>
             </span>
           </h1>

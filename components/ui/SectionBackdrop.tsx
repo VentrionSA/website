@@ -29,8 +29,8 @@ export function SectionBackdrop({
   side?: "left" | "right" | "both" | "none";
   /** Colour saturation of the photo (1 = original). */
   saturate?: number;
-  /** Fade the photo into the page colour at the section's top and bottom edges. */
-  edges?: boolean;
+  /** Fade the photo into the page colour at the section's edges (true = both). */
+  edges?: boolean | "top" | "bottom";
   /** Rendered width hint for responsive images (wide panoramas render wider than the viewport). */
   sizes?: string;
   /** Responsive object-position classes; when set, they replace `position`. */
@@ -90,11 +90,11 @@ export function SectionBackdrop({
         {wash > 0 ? <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} /> : null}
         {sideGradient ? <div className={`absolute inset-0 ${sideGradient}`} /> : null}
       </div>
-      {edges ? (
-        <>
-          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ink to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
-        </>
+      {edges === true || edges === "top" ? (
+        <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ink to-transparent" />
+      ) : null}
+      {edges === true || edges === "bottom" ? (
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
       ) : null}
     </div>
   );

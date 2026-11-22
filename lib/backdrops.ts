@@ -1,6 +1,5 @@
 /**
- * Section photography. The hero image (hero-wake.jpg) was supplied by Ventrion,
- * upscaled from 720px; replace it with a larger original when available.
+ * Section photography. The hero image (hero-wake.jpg, 2576px) was supplied by Ventrion.
  * The others are placeholder photography from Pexels (free licence, no
  * attribution required). Replace files in assets/images/backdrops at the same paths.
  */
