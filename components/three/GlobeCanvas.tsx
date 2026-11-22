@@ -69,8 +69,8 @@ const dotFragment = /* glsl */ `
     float rim = smoothstep(-0.05, 0.45, vFacing);
     float lift = max(vFocus, vShimmer * 0.8);
     vec3 col = mix(uGold, uLight, 0.55 + 0.45 * lift);
-    col = mix(col, vec3(1.0, 0.97, 0.9), core * (0.25 + 0.5 * vFocus));
-    col *= 1.35 + 1.1 * lift;
+    col = mix(col, vec3(1.0, 0.95, 0.84), core * (0.18 + 0.27 * vFocus));
+    col *= 1.3 + 0.65 * lift;
     float alpha = max(core, halo) * rim;
     gl_FragColor = vec4(col, alpha);
   }

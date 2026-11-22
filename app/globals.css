@@ -323,6 +323,57 @@
       spin 120s linear infinite;
   }
 
+  /* Principle illustrations: fine gold line drawings that draw themselves */
+  .ill [data-draw] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.8s var(--ease-premium) calc(var(--d, 0) * 1ms);
+  }
+  .ill [data-pop] {
+    opacity: 0;
+    scale: 0.3;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 0.9s ease calc(var(--d, 0) * 1ms),
+      scale 1.1s var(--ease-premium) calc(var(--d, 0) * 1ms);
+  }
+  .ill [data-fade] {
+    opacity: 0;
+    transition: opacity 1.4s ease calc(var(--d, 0) * 1ms);
+  }
+  .ill[data-active="true"] [data-draw] {
+    stroke-dashoffset: 0;
+  }
+  .ill[data-active="true"] [data-pop] {
+    opacity: 1;
+    scale: 1;
+  }
+  .ill[data-active="true"] [data-fade] {
+    opacity: var(--o, 1);
+  }
+  .ill-orbit {
+    transform-box: view-box;
+    transform-origin: 200px 200px;
+    animation: spin 160s linear infinite;
+  }
+  .ill-orbit-fast {
+    animation-duration: 36s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ill [data-draw],
+    .ill [data-pop],
+    .ill [data-fade] {
+      transition: none;
+    }
+    .ill-orbit {
+      animation: none;
+    }
+    .ill-traveller {
+      display: none;
+    }
+  }
+
   /* Scroll indicator */
   .scroll-cue {
     position: relative;

@@ -8,6 +8,7 @@ export type NavLink = { href: string; label: string };
 export const NAV_LINKS: NavLink[] = [
   { href: "/#about", label: "Ventrion" },
   { href: "/#network", label: "Network" },
+  { href: "/#principles", label: "Principles" },
   { href: "/#contact", label: "Contact" },
 ];
 
@@ -55,4 +56,62 @@ export const CONNECTIONS: [number, number][] = [
   [0, 5],
   [3, 7],
   [6, 8],
+];
+
+/* ── Principles of the network ─────────────────────────────────────────── */
+
+export type PrincipleId = "partners" | "local" | "quality" | "accountability";
+
+export type Principle = {
+  id: PrincipleId;
+  numeral: string;
+  title: string;
+  /** Opening sentence, set in the serif. */
+  lead: string;
+  body: string[];
+  /** Closing line, set in gold italic. */
+  closing?: string;
+};
+
+export const PRINCIPLES: Principle[] = [
+  {
+    id: "partners",
+    numeral: "I",
+    title: "Partners We Know",
+    lead: "We prefer established relationships over anonymous service procurement.",
+    body: [
+      "Wherever possible, we work with agents and partners whose operational standards, financial reliability and way of working are already familiar to us. Many of these relationships have developed through years of cooperation.",
+      "This creates something that cannot be achieved simply by searching for a service provider when a shipment appears:",
+    ],
+    closing: "accountability between people who expect to work together again.",
+  },
+  {
+    id: "local",
+    numeral: "II",
+    title: "Local Knowledge, Ventrion Responsibility",
+    lead: "Every market has its own operational realities.",
+    body: [
+      "Port procedures, customs practices, documentation requirements, local transportation conditions and commercial conventions can differ significantly between countries. Our overseas partners provide the local knowledge required to navigate these differences.",
+      "But from the client’s perspective, Ventrion remains responsible for coordinating the operation. The client should not need to manage separate relationships around the world.",
+    ],
+    closing: "We do that for them.",
+  },
+  {
+    id: "quality",
+    numeral: "III",
+    title: "Quality Over Quantity",
+    lead: "We do not measure the strength of our network by the number of agents we can list.",
+    body: [
+      "A large network has little value if the people within it are unknown or unreliable. Our preference is to work with counterparties who understand how we operate and who share our expectations regarding communication, transparency and professional conduct.",
+      "When an operation requires a new partner, we approach that selection carefully.",
+    ],
+    closing: "Because every company acting on behalf of Ventrion also becomes part of the experience we deliver to our client.",
+  },
+  {
+    id: "accountability",
+    numeral: "IV",
+    title: "Global Reach With Personal Accountability",
+    lead: "The purpose of an international network is to make distance less relevant.",
+    body: ["A shipment may be handled thousands of kilometres away, but the relationship with our client remains local and direct."],
+  },
 ];

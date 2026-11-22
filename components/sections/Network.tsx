@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MARKETS, REGIONS } from "@/lib/content";
+import { MARKETS } from "@/lib/content";
 import { useGraphicsTier, useInViewport, useNearViewport, usePrefersReducedMotion } from "@/lib/device";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
@@ -81,23 +81,15 @@ export function Network() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
 
       <div className="shell relative">
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-7">
-            <Eyebrow index="02">The Network</Eyebrow>
-            <SplitHeading id="network-title" className="display-lg mt-8 max-w-[13ch] text-ivory">
-              A uniquely extensive <em className="text-gold">network.</em>
-            </SplitHeading>
-          </div>
-          <Reveal stagger={0.1} className="space-y-4 lg:col-span-4 lg:col-start-9">
-            <p data-reveal className="display-sm text-ivory/90">
-              Nine markets. One network.
-            </p>
-            <p data-reveal className="text-[16px] leading-relaxed text-mist">
-              Relationships spanning the Middle East, Central Asia and Asia give Ventrion the reach to bring buyers and
-              sellers into direct contact.
-            </p>
-          </Reveal>
-        </div>
+        <Eyebrow index="02">The Network</Eyebrow>
+        <Reveal className="mt-10">
+          <p className="display-sm max-w-[30ch] text-balance text-mist">
+            International reach is not created by having thousands of names in a directory.
+          </p>
+        </Reveal>
+        <SplitHeading id="network-title" className="display-xl mt-6 max-w-[16ch] text-balance text-ivory">
+          It is created by knowing <em className="text-gold">who to call.</em>
+        </SplitHeading>
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:items-center lg:gap-8">
           <div ref={globeBox} className="relative mx-auto aspect-square w-full max-w-[760px] lg:col-span-7">
@@ -110,44 +102,33 @@ export function Network() {
               ) : null}
             </div>
             <p className="eyebrow pointer-events-none absolute bottom-3 left-6 text-[9.5px] text-mist/80">
-              {tier === "none" ? "Network map" : "Drag to rotate"}
+              {tier === "none" ? "Select a market" : "Drag to rotate · Select a market"}
             </p>
           </div>
 
-          {/* Country index: hover or tap a name to bring it to the front of the globe */}
-          <div className="border-t border-line lg:col-span-4 lg:col-start-9">
-            {REGIONS.map((region) => (
-              <div key={region} className="border-b border-line py-6">
-                <p className="eyebrow text-gold">{region}</p>
-                <ul className="mt-3 flex flex-wrap items-baseline gap-x-7 gap-y-1.5">
-                  {MARKETS.map((market, i) =>
-                    market.region === region ? (
-                      <li key={market.id}>
-                        <button
-                          type="button"
-                          onClick={() => select(i)}
-                          onMouseEnter={() => hoverMarket(i)}
-                          onMouseLeave={() => hoverMarket(null)}
-                          onFocus={() => hoverMarket(i)}
-                          onBlur={() => hoverMarket(null)}
-                          aria-pressed={i === active}
-                          className={`font-serif text-[1.4rem] leading-tight transition-colors duration-500 sm:text-[1.6rem] ${
-                            i === focus ? "text-gold" : "text-ivory hover:text-gold"
-                          }`}
-                        >
-                          {market.name}
-                        </button>
-                      </li>
-                    ) : null,
-                  )}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <Reveal stagger={0.12} className="lg:col-span-4 lg:col-start-9">
+            <p data-reveal className="font-serif text-[1.45rem] leading-snug text-ivory sm:text-[1.65rem]">
+              Over many years of international logistics activity, Ventrion has developed relationships with experienced
+              agents and service partners across global markets.
+            </p>
+            <p data-reveal className="mt-6 text-[16px] leading-[1.8] text-mist">
+              These relationships allow us to coordinate shipments worldwide while maintaining local knowledge and
+              operational support at origin and destination.
+            </p>
+            <div data-reveal className="mt-10 flex items-center gap-4 border-t border-line pt-6">
+              <span aria-hidden="true" className="relative flex h-2 w-2">
+                <span className="absolute inset-0 animate-ping rounded-full bg-gold/60" />
+                <span className="relative h-2 w-2 rounded-full bg-gold" />
+              </span>
+              <p className="eyebrow text-[10px] text-mist">
+                Now highlighting <span className="ml-1 text-gold">{MARKETS[focus].name}</span>
+              </p>
+            </div>
+          </Reveal>
         </div>
 
-        <p className="mt-6 text-xs leading-relaxed text-mist/70">
-          Markets reflect the reach of our network. They do not indicate office locations.
+        <p className="mt-8 text-xs leading-relaxed text-mist/70">
+          Highlighted markets reflect the reach of our network. They do not indicate office locations.
         </p>
       </div>
     </section>

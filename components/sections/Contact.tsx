@@ -64,7 +64,7 @@ export function Contact() {
       <div className="shell relative grid gap-16 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-32">
-            <Eyebrow index="03">Contact</Eyebrow>
+            <Eyebrow index="04">Contact</Eyebrow>
             <SplitHeading id="contact-title" className="display-lg mt-8 max-w-[11ch] text-ivory">
               Request an <em className="text-gold">introduction.</em>
             </SplitHeading>

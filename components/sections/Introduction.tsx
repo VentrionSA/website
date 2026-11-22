@@ -138,10 +138,13 @@ export function Introduction() {
         <MeetingPoint />
         <p className="sr-only">Ventrion stands between buyers and sellers, bringing them together.</p>
 
-        <Reveal className="mt-[clamp(3.5rem,7vw,6rem)] max-w-[36rem]">
-          <p className="text-[17px] leading-[1.8] text-mist">
-            Ventrion exists to facilitate trade. Through a uniquely extensive network of relationships, we bring the right
-            buyers and the right sellers together, directly and with discretion.
+        <Reveal stagger={0.12} className="mt-[clamp(3.5rem,7vw,6rem)] flex max-w-[44rem] flex-col items-center">
+          <p data-reveal className="display-sm text-ivory">
+            Ventrion endeavours to be a reliable business partner to all of its commercial counterparts.
+          </p>
+          <p data-reveal className="mt-6 max-w-[34rem] text-[17px] leading-[1.8] text-mist">
+            We exist to facilitate trade, bringing the right buyers and the right sellers together, directly and with
+            discretion.
           </p>
         </Reveal>
       </div>
