@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MARKETS } from "@/lib/content";
+import { MARKETS, REGIONS } from "@/lib/content";
 import { useGraphicsTier, useInViewport, useNearViewport, usePrefersReducedMotion } from "@/lib/device";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
@@ -92,7 +92,8 @@ export function Network() {
         </SplitHeading>
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:items-center lg:gap-8">
-          <div ref={globeBox} className="relative mx-auto aspect-square w-full max-w-[760px] lg:col-span-7">
+          <div className="lg:col-span-7">
+          <div ref={globeBox} className="relative mx-auto aspect-square w-full max-w-[760px]">
             <CornerFrame />
             {/* soft shadow grounding the porcelain globe */}
             <div
@@ -109,6 +110,44 @@ export function Network() {
             <p className="eyebrow pointer-events-none absolute bottom-3 left-6 text-[9.5px] text-mist/80">
               {tier === "none" ? "Select a market" : "Drag to rotate · Select a market"}
             </p>
+          </div>
+
+          {/* The markets, listed beneath the globe: hover, tab to or tap a name to bring it forward */}
+          <div className="mx-auto mt-8 grid w-full max-w-[760px] grid-cols-2 gap-x-6 gap-y-7 border-t border-line pt-7 sm:grid-cols-3">
+            {REGIONS.map((region) => (
+              <div key={region} className={region === "Middle East" ? "row-span-2 sm:row-span-1" : ""}>
+                <p className="eyebrow text-[10px] text-gold">{region}</p>
+                <ul className="mt-3 space-y-2">
+                  {MARKETS.map((market, i) =>
+                    market.region === region ? (
+                      <li key={market.id}>
+                        <button
+                          type="button"
+                          onClick={() => select(i)}
+                          onMouseEnter={() => hoverMarket(i)}
+                          onMouseLeave={() => hoverMarket(null)}
+                          onFocus={() => hoverMarket(i)}
+                          onBlur={() => hoverMarket(null)}
+                          aria-pressed={i === active}
+                          className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight transition-colors duration-500 sm:text-[1.25rem] ${
+                            i === focus ? "text-burgundy" : "text-ivory hover:text-burgundy"
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`h-1.5 w-1.5 shrink-0 rounded-full bg-burgundy transition-transform duration-500 ${
+                              i === focus ? "scale-100" : "scale-0 group-hover:scale-100"
+                            }`}
+                          />
+                          {market.name}
+                        </button>
+                      </li>
+                    ) : null,
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
           </div>
 
           <Reveal stagger={0.12} className="lg:col-span-4 lg:col-start-9">

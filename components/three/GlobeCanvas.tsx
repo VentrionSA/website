@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
-import { decodeLandPoints } from "@/lib/geo/points";
 import { MARKETS } from "@/lib/content";
+import countryData from "@/lib/geo/countries.json";
 import { latLonToVector3 } from "./geo";
 
 type Tier = "high" | "low";
@@ -15,167 +15,164 @@ type GlobeProps = {
   onHover: (index: number | null) => void;
   onSelect: (index: number) => void;
   tier: Tier;
-  /** Reduced motion: no flowing dashes, pulses or breathing markers. */
+  /** Reduced motion: no pulsing highlight or breathing markers. */
   calm?: boolean;
 };
 
+type CountryData = { w: number; h: number; countries: { id: string | null; d: string }[] };
+
 const DEG = Math.PI / 180;
 
-/* Porcelain palette: an ivory sphere, ink land, burgundy network, gold hairlines. */
-const PORCELAIN = "#f8f3ea";
-const PORCELAIN_SHADE = "#dcd2c1";
-const PORCELAIN_LIMB = "#c9bda7";
-const INK = "#1c1914";
+/* Cartographic palette on porcelain: ivory sea, stone land, ink borders, burgundy network. */
+const OCEAN = "#f6f1e7";
+const LAND = "#e2d6c2";
+const BORDER = "rgba(28,25,20,0.34)";
+const NETWORK_FILL = "rgba(181,35,54,0.62)";
+const NETWORK_BORDER = "rgba(120,22,36,0.5)";
+const LIMB = "#c9bda7";
 const BURGUNDY = "#b52336";
 const GOLD = "#8d6b3b";
+const PIN = "#fbf7ef";
+/** ID mask encoding: market i is stored as (i + 1) * ID_STEP in the red channel. */
+const ID_STEP = 24;
 
-/* ── Land dots ─────────────────────────────────────────────────────────── */
+/* ── Map textures ──────────────────────────────────────────────────────── */
 
-const dotVertex = /* glsl */ `
-  attribute float aCountry;
-  uniform float uFocus;
-  uniform float uPixelRatio;
-  uniform float uSize;
-  uniform float uView;
-  uniform float uTime;
-  varying float vFacing;
-  varying float vNetwork;
-  varying float vFocus;
-  void main() {
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    vec3 n = normalize(normalMatrix * normalize(position));
-    vFacing = dot(n, normalize(-mv.xyz));
-    vNetwork = step(-0.5, aCountry);
-    vFocus = 1.0 - step(0.5, abs(aCountry - uFocus));
-    // network dots sit slightly larger; the focused market breathes gently
-    float size = mix(1.0, 1.34, vNetwork) + vFocus * (0.16 + 0.1 * sin(uTime * 2.2));
-    gl_PointSize = uSize * uPixelRatio * uView * size * (4.6 / -mv.z);
-    gl_Position = projectionMatrix * mv;
-  }
-`;
-
-const dotFragment = /* glsl */ `
-  uniform vec3 uInk;
-  uniform vec3 uBurgundy;
-  varying float vFacing;
-  varying float vNetwork;
-  varying float vFocus;
-  void main() {
-    float d = length(gl_PointCoord - 0.5);
-    if (d > 0.5) discard;
-    float dotMask = smoothstep(0.5, 0.34, d);
-    float rim = smoothstep(0.0, 0.42, vFacing);
-    vec3 col = mix(uInk, uBurgundy, vNetwork);
-    // the focused market is drawn at full strength; the rest of the network slightly softer
-    float alpha = dotMask * rim * mix(0.42, mix(0.8, 1.0, vFocus), vNetwork);
-    gl_FragColor = vec4(col, alpha);
-    #include <colorspace_fragment>
-  }
-`;
-
-function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; calm: boolean }) {
+/**
+ * Draws an equirectangular map from the Natural Earth country outlines
+ * (lib/geo/countries.json): land, network fills and fine borders, plus a
+ * low-resolution mask recording which network market each texel belongs to,
+ * so the shader can highlight the focused market without redrawing.
+ */
+function useMapTextures(tier: Tier) {
   const gl = useThree((s) => s.gl);
-  const viewHeight = useThree((s) => s.size.height);
-  const { geometry, material } = useMemo(() => {
-    const pts = decodeLandPoints();
-    const positions = new Float32Array(pts.length * 3);
-    const country = new Float32Array(pts.length);
-    const v = new THREE.Vector3();
-    pts.forEach((p, i) => {
-      latLonToVector3(p.lat, p.lon, 1.004, v);
-      positions.set([v.x, v.y, v.z], i * 3);
-      country[i] = p.country;
-    });
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute("aCountry", new THREE.BufferAttribute(country, 1));
-    const mat = new THREE.ShaderMaterial({
-      vertexShader: dotVertex,
-      fragmentShader: dotFragment,
-      transparent: true,
-      depthWrite: false,
-      uniforms: {
-        uFocus: { value: focusIndex },
-        uPixelRatio: { value: Math.min(gl.getPixelRatio(), 2) },
-        uSize: { value: tier === "high" ? 2.75 : 2.55 },
-        uView: { value: 1 },
-        uTime: { value: 0 },
-        uInk: { value: new THREE.Color(INK) },
-        uBurgundy: { value: new THREE.Color(BURGUNDY) },
-      },
-    });
-    return { geometry: geo, material: mat };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const textures = useMemo(() => {
+    const data = countryData as CountryData;
+    const W = tier === "high" ? 4096 : 2048;
+    const H = W / 2;
+    const scale = W / data.w;
+    const paths = data.countries.map((c) => ({
+      index: c.id ? MARKETS.findIndex((m) => m.id === c.id) : -1,
+      path: new Path2D(c.d),
+    }));
+
+    const mapCanvas = document.createElement("canvas");
+    mapCanvas.width = W;
+    mapCanvas.height = H;
+    const ctx = mapCanvas.getContext("2d")!;
+    ctx.fillStyle = OCEAN;
+    ctx.fillRect(0, 0, W, H);
+    ctx.scale(scale, scale);
+    ctx.lineJoin = "round";
+    for (const { index, path } of paths) {
+      ctx.fillStyle = LAND;
+      ctx.fill(path);
+      if (index >= 0) {
+        ctx.fillStyle = NETWORK_FILL;
+        ctx.fill(path);
+      }
+    }
+    ctx.lineWidth = 0.55;
+    ctx.strokeStyle = BORDER;
+    for (const { path } of paths) ctx.stroke(path);
+    ctx.lineWidth = 0.7;
+    ctx.strokeStyle = NETWORK_BORDER;
+    for (const { index, path } of paths) if (index >= 0) ctx.stroke(path);
+
+    const idCanvas = document.createElement("canvas");
+    idCanvas.width = W / 2;
+    idCanvas.height = H / 2;
+    const ictx = idCanvas.getContext("2d")!;
+    ictx.fillStyle = "#000";
+    ictx.fillRect(0, 0, W / 2, H / 2);
+    ictx.scale(scale / 2, scale / 2);
+    for (const { index, path } of paths) {
+      if (index < 0) continue;
+      ictx.fillStyle = `rgb(${(index + 1) * ID_STEP},0,0)`;
+      ictx.fill(path);
+    }
+
+    const map = new THREE.CanvasTexture(mapCanvas);
+    map.colorSpace = THREE.SRGBColorSpace;
+    map.anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
+    const ids = new THREE.CanvasTexture(idCanvas);
+    ids.colorSpace = THREE.NoColorSpace;
+    ids.minFilter = THREE.NearestFilter;
+    ids.magFilter = THREE.NearestFilter;
+    ids.generateMipmaps = false;
+    return { map, ids };
   }, [gl, tier]);
-
-  useEffect(() => {
-    material.uniforms.uFocus.value = focusIndex;
-  }, [focusIndex, material]);
-
-  // Dots keep the same proportion to the globe at every screen size.
-  useEffect(() => {
-    material.uniforms.uView.value = THREE.MathUtils.clamp(viewHeight / 640, 0.4, 1.4);
-  }, [viewHeight, material]);
-
-  useFrame(({ clock }) => {
-    material.uniforms.uTime.value = calm ? 0 : clock.getElapsedTime();
-  });
 
   useEffect(
     () => () => {
-      geometry.dispose();
-      material.dispose();
+      textures.map.dispose();
+      textures.ids.dispose();
     },
-    [geometry, material],
+    [textures],
   );
 
-  return <points geometry={geometry} material={material} />;
+  return textures;
 }
 
-/* ── Porcelain globe body and gold graticule ───────────────────────────── */
+/* ── Globe body: the map on porcelain, with soft light ─────────────────── */
 
 const bodyVertex = /* glsl */ `
+  varying vec2 vUv;
   varying vec3 vN;
   varying vec3 vV;
   void main() {
+    vUv = uv;
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     vN = normalize(normalMatrix * normal);
     vV = normalize(-mv.xyz);
     gl_Position = projectionMatrix * mv;
   }
 `;
+
 const bodyFragment = /* glsl */ `
-  uniform vec3 uBase;
-  uniform vec3 uShade;
+  uniform sampler2D uMap;
+  uniform sampler2D uIds;
+  uniform float uFocus;
+  uniform float uPulse;
+  uniform vec3 uBurgundy;
   uniform vec3 uLimb;
+  varying vec2 vUv;
   varying vec3 vN;
   varying vec3 vV;
   void main() {
+    vec3 albedo = texture2D(uMap, vUv).rgb;
+    // the focused market deepens to full burgundy
+    float id = floor(texture2D(uIds, vUv).r * 255.0 / ${ID_STEP.toFixed(1)} + 0.5) - 1.0;
+    float focus = 1.0 - step(0.5, abs(id - uFocus));
+    albedo = mix(albedo, uBurgundy, focus * uPulse);
+    // wrapped light: the soft, even fall-off of matte porcelain
     vec3 n = normalize(vN);
     vec3 v = normalize(vV);
     vec3 l = normalize(vec3(-0.55, 0.62, 0.58));
-    // wrapped light gives the soft, even fall-off of matte porcelain
     float wrap = dot(n, l) * 0.5 + 0.5;
-    vec3 col = mix(uShade, uBase, smoothstep(0.12, 0.95, wrap));
-    // gentle limb darkening for volume
+    vec3 col = albedo * mix(0.8, 1.03, smoothstep(0.1, 0.95, wrap));
     float facing = max(dot(n, v), 0.0);
-    col = mix(col, uLimb, pow(1.0 - facing, 3.0) * 0.6);
-    // a faint glaze highlight
-    col += pow(max(dot(n, normalize(l + v)), 0.0), 90.0) * 0.2;
+    col = mix(col, uLimb, pow(1.0 - facing, 3.0) * 0.5);
+    col += pow(max(dot(n, normalize(l + v)), 0.0), 90.0) * 0.12;
     gl_FragColor = vec4(col, 1.0);
     #include <colorspace_fragment>
   }
 `;
 
-function GlobeBody() {
+function GlobeBody({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; calm: boolean }) {
+  const { map, ids } = useMapTextures(tier);
+
   const { body, graticule } = useMemo(() => {
     const body = new THREE.ShaderMaterial({
       vertexShader: bodyVertex,
       fragmentShader: bodyFragment,
       uniforms: {
-        uBase: { value: new THREE.Color(PORCELAIN) },
-        uShade: { value: new THREE.Color(PORCELAIN_SHADE) },
-        uLimb: { value: new THREE.Color(PORCELAIN_LIMB) },
+        uMap: { value: null },
+        uIds: { value: null },
+        uFocus: { value: 0 },
+        uPulse: { value: 0.85 },
+        uBurgundy: { value: new THREE.Color(BURGUNDY) },
+        uLimb: { value: new THREE.Color(LIMB) },
       },
     });
     // hairline graticule every 30°
@@ -198,9 +195,22 @@ function GlobeBody() {
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-    const lineMat = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.22, depthWrite: false });
+    const lineMat = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.14, depthWrite: false });
     return { body, graticule: new THREE.LineSegments(geo, lineMat) };
   }, []);
+
+  useEffect(() => {
+    body.uniforms.uMap.value = map;
+    body.uniforms.uIds.value = ids;
+  }, [body, map, ids]);
+
+  useEffect(() => {
+    body.uniforms.uFocus.value = focusIndex;
+  }, [body, focusIndex]);
+
+  useFrame(({ clock }) => {
+    body.uniforms.uPulse.value = calm ? 0.85 : 0.85 + 0.15 * Math.sin(clock.getElapsedTime() * 2.2);
+  });
 
   useEffect(
     () => () => {
@@ -214,7 +224,7 @@ function GlobeBody() {
   return (
     <>
       <mesh material={body}>
-        <sphereGeometry args={[1, 96, 64]} />
+        <sphereGeometry args={[1, 128, 96]} />
       </mesh>
       <primitive object={graticule} />
     </>
@@ -252,7 +262,7 @@ function Marker({
       const phase = calm ? 0.35 : (t * 0.55 + index * 0.21) % 1;
       const s = 1 + phase * (focused ? 2.4 : 1.6);
       ring.current.scale.setScalar(s);
-      (ring.current.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (focused ? 0.9 : 0.5);
+      (ring.current.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (focused ? 0.9 : 0.45);
     }
   });
 
@@ -264,19 +274,17 @@ function Marker({
   return (
     <group ref={group} position={position}>
       <mesh renderOrder={3}>
-        <circleGeometry args={[focused ? 0.017 : 0.012, 24]} />
-        <meshBasicMaterial color={BURGUNDY} toneMapped={false} depthWrite={false} transparent />
+        <circleGeometry args={[focused ? 0.0145 : 0.0105, 24]} />
+        <meshBasicMaterial color={PIN} toneMapped={false} depthWrite={false} transparent />
+      </mesh>
+      <mesh renderOrder={3}>
+        <ringGeometry args={[focused ? 0.0145 : 0.0105, focused ? 0.019 : 0.0135, 32]} />
+        <meshBasicMaterial color={BURGUNDY} toneMapped={false} depthWrite={false} transparent side={THREE.DoubleSide} />
       </mesh>
       <mesh ref={ring} renderOrder={3}>
         <ringGeometry args={[0.02, 0.023, 48]} />
         <meshBasicMaterial color={GOLD} transparent depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
-      {focused ? (
-        <mesh renderOrder={3}>
-          <ringGeometry args={[0.04, 0.0425, 64]} />
-          <meshBasicMaterial color={BURGUNDY} transparent opacity={0.75} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
-        </mesh>
-      ) : null}
       {/* Generous invisible hit area */}
       <mesh
         onPointerOver={(e) => {
@@ -300,70 +308,6 @@ function Marker({
       </mesh>
     </group>
   );
-}
-
-/**
- * Callout offsets for each market's label, in px for a 640px-wide globe (scaled
- * with the globe). The four Gulf markets sit a few pixels apart, so their labels
- * fan out in different directions; north stays up as the globe turns, so the
- * arrangement holds at every rotation.
- */
-const CALLOUTS: Record<string, { dx: number; dy: number; short?: string }> = {
-  "saudi-arabia": { dx: -78, dy: 16 },
-  "united-arab-emirates": { dx: 34, dy: 58, short: "UAE" },
-  qatar: { dx: 64, dy: -22 },
-  bahrain: { dx: -36, dy: -52 },
-  kazakhstan: { dx: 48, dy: -40 },
-  azerbaijan: { dx: -72, dy: -14 },
-  china: { dx: 56, dy: -22 },
-  india: { dx: 58, dy: 10 },
-  indonesia: { dx: -34, dy: 44 },
-};
-
-/** Projects every market to screen space each frame and moves its DOM callout over the canvas. */
-function LabelsTracker({
-  labelRefs,
-  chipRefs,
-  chipWidths,
-}: {
-  labelRefs: MutableRefObject<(HTMLDivElement | null)[]>;
-  chipRefs: MutableRefObject<(HTMLSpanElement | null)[]>;
-  chipWidths: MutableRefObject<number[]>;
-}) {
-  const anchor = useRef<THREE.Group>(null);
-  const v = useMemo(() => new THREE.Vector3(), []);
-  const n = useMemo(() => new THREE.Vector3(), []);
-  const c = useMemo(() => new THREE.Vector3(), []);
-
-  useFrame(({ camera, size }) => {
-    const a = anchor.current;
-    if (!a) return;
-    c.copy(camera.position).normalize();
-    MARKETS.forEach((m, i) => {
-      const el = labelRefs.current[i];
-      if (!el) return;
-      latLonToVector3(m.lat, m.lon, 1.006, v);
-      a.localToWorld(v);
-      const facing = n.copy(v).normalize().dot(c);
-      v.project(camera);
-      const x = (v.x * 0.5 + 0.5) * size.width;
-      const y = (-v.y * 0.5 + 0.5) * size.height;
-      el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
-      el.style.opacity = String(THREE.MathUtils.clamp((facing - 0.28) * 3.2, 0, 1));
-      // Keep the label chip inside the globe's frame (widths are measured once, not per frame).
-      const chip = chipRefs.current[i];
-      const w = chipWidths.current[i];
-      if (chip && w) {
-        const dx = Number(chip.dataset.dx);
-        const left = x + dx - (dx < 0 ? w : 0);
-        const bleed = size.width * 0.04;
-        const shift = left < -bleed ? -bleed - left : left + w > size.width + bleed ? size.width + bleed - (left + w) : 0;
-        chip.style.translate = `${shift.toFixed(1)}px 0`;
-      }
-    });
-  });
-
-  return <group ref={anchor} />;
 }
 
 /* ── Rotation rig ──────────────────────────────────────────────────────── */
@@ -413,25 +357,7 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
   const wrap = useRef<HTMLDivElement>(null);
   const drag = useRef<DragState>({ dx: 0, dragging: false });
   const lastX = useRef(0);
-  const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const chipRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const chipWidths = useRef<number[]>([]);
   const [active, setActive] = useState(false);
-  const [scale, setScale] = useState(1);
-
-  // Callout offsets scale with the globe so small screens stay tidy.
-  useEffect(() => {
-    const el = wrap.current;
-    if (!el) return;
-    const ro = new ResizeObserver(([entry]) => setScale(THREE.MathUtils.clamp(entry.contentRect.width / 640, 0.55, 1.15)));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  // Measure label chips whenever their names or offsets change size.
-  useEffect(() => {
-    chipWidths.current = chipRefs.current.map((chip) => chip?.offsetWidth ?? 0);
-  }, [scale, focusIndex]);
 
   useEffect(() => {
     const el = wrap.current;
@@ -474,48 +400,12 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
         camera={{ position: [0, 0, 4.6], fov: 30, near: 0.1, far: 20 }}
       >
         <Rig focusIndex={focusIndex} drag={drag}>
-          <GlobeBody />
-          <LandDots focusIndex={focusIndex} tier={tier} calm={calm} />
+          <GlobeBody focusIndex={focusIndex} tier={tier} calm={calm} />
           {MARKETS.map((_, i) => (
             <Marker key={i} index={i} focused={i === focusIndex} calm={calm} onHover={onHover} onSelect={onSelect} />
           ))}
-          <LabelsTracker labelRefs={labelRefs} chipRefs={chipRefs} chipWidths={chipWidths} />
         </Rig>
       </Canvas>
-      {MARKETS.map((m, i) => {
-        const callout = CALLOUTS[m.id] ?? { dx: 40, dy: -30 };
-        const dx = callout.dx * scale;
-        const dy = callout.dy * scale;
-        const focused = i === focusIndex;
-        const name = scale < 0.8 && callout.short ? callout.short : m.name;
-        return (
-          <div
-            key={m.id}
-            ref={(el) => {
-              labelRefs.current[i] = el;
-            }}
-            aria-hidden="true"
-            className="pointer-events-none absolute left-0 top-0 z-10 opacity-0 will-change-transform"
-          >
-            <span
-              className={`absolute left-0 top-0 h-px origin-left transition-colors duration-500 ${focused ? "bg-burgundy" : "bg-gold/70"}`}
-              style={{ width: Math.hypot(dx, dy), transform: `rotate(${Math.atan2(dy, dx)}rad)` }}
-            />
-            <span
-              ref={(el) => {
-                chipRefs.current[i] = el;
-              }}
-              data-dx={dx}
-              className={`eyebrow absolute whitespace-nowrap border px-2 py-[3px] text-[9px] tracking-[0.18em] transition-colors duration-500 ${
-                focused ? "border-burgundy/40 bg-ink text-burgundy" : "border-line-strong bg-ink/90 text-ivory/80"
-              }`}
-              style={{ left: dx, top: dy, transform: `translate(${dx < 0 ? "-100%" : "0"}, -50%)` }}
-            >
-              {name}
-            </span>
-          </div>
-        );
-      })}
     </div>
   );
 }

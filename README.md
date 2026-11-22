@@ -51,7 +51,7 @@ Configure at least one channel (server-side variables, not `NEXT_PUBLIC_`):
 - **Navigation, markets and the four principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
 - **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically).
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
-- **Globe data:** `lib/geo/land-points.json` (Natural Earth land via `world-atlas`, run-length encoded).
+- **Globe map:** `lib/geo/countries.json`, country outlines from Natural Earth (via world-atlas, 1:110m with Bahrain from 1:50m) pre-projected to an equirectangular map; network markets are tagged by id. The globe draws it as a texture at runtime.
 
 ## Accessibility & performance notes
 

@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { decodeLandPoints } from "@/lib/geo/points";
+import countryData from "@/lib/geo/countries.json";
 import { MARKETS } from "@/lib/content";
+
+type CountryData = { w: number; h: number; countries: { id: string | null; d: string }[] };
 
 // Crop of the equirectangular world focused on the network.
 const VIEW = { lonMin: 14, lonMax: 146, latMin: -24, latMax: 62 };
@@ -14,8 +16,8 @@ function project(lat: number, lon: number) {
 }
 
 /**
- * Static 2D dotted map used when WebGL is unavailable or reduced motion is
- * requested. Markers remain fully interactive and keyboard accessible.
+ * Static 2D map used when WebGL is unavailable: the same country outlines as the
+ * globe, with the network in burgundy. Markers remain interactive.
  */
 export function FlatMap({
   focusIndex,
@@ -27,11 +29,19 @@ export function FlatMap({
   onSelect: (index: number) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const points = useMemo(() => decodeLandPoints().filter((p) => p.lon >= VIEW.lonMin && p.lon <= VIEW.lonMax && p.lat >= VIEW.latMin && p.lat <= VIEW.latMax), []);
+  const paths = useMemo(
+    () =>
+      (countryData as CountryData).countries.map((c) => ({
+        index: c.id ? MARKETS.findIndex((m) => m.id === c.id) : -1,
+        path: new Path2D(c.d),
+      })),
+    [],
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const data = countryData as CountryData;
     const draw = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
@@ -39,22 +49,34 @@ export function FlatMap({
       canvas.height = Math.round(rect.height * dpr);
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
+      // map data space: x = (lon + 180) / 360 * w, y = (90 - lat) / 180 * h
+      const x0 = ((VIEW.lonMin + 180) / 360) * data.w;
+      const x1 = ((VIEW.lonMax + 180) / 360) * data.w;
+      const y0 = ((90 - VIEW.latMax) / 180) * data.h;
+      const y1 = ((90 - VIEW.latMin) / 180) * data.h;
+      const sx = canvas.width / (x1 - x0);
+      const sy = canvas.height / (y1 - y0);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const r = Math.max(1, rect.width / 520) * dpr;
-      for (const p of points) {
-        const { x, y } = project(p.lat, p.lon);
-        const focus = p.country === focusIndex;
-        ctx.fillStyle = focus ? "rgba(181,35,54,1)" : p.country >= 0 ? "rgba(181,35,54,0.78)" : "rgba(28,25,20,0.3)";
-        ctx.beginPath();
-        ctx.arc((x / 100) * canvas.width, (y / 100) * canvas.height, focus ? r * 1.3 : r, 0, Math.PI * 2);
-        ctx.fill();
+      ctx.setTransform(sx, 0, 0, sy, -x0 * sx, -y0 * sy);
+      for (const { index, path } of paths) {
+        ctx.fillStyle = "#e2d6c2";
+        ctx.fill(path);
+        if (index >= 0) {
+          ctx.fillStyle = index === focusIndex ? "#b52336" : "rgba(181,35,54,0.62)";
+          ctx.fill(path);
+        }
       }
+      ctx.lineJoin = "round";
+      ctx.lineWidth = dpr / sx;
+      ctx.strokeStyle = "rgba(28,25,20,0.34)";
+      for (const { path } of paths) ctx.stroke(path);
     };
     draw();
     const ro = new ResizeObserver(draw);
     ro.observe(canvas);
     return () => ro.disconnect();
-  }, [points, focusIndex]);
+  }, [paths, focusIndex]);
 
   return (
     <div className="absolute inset-0 flex items-center">
@@ -76,12 +98,9 @@ export function FlatMap({
               className="absolute -translate-x-1/2 -translate-y-1/2 p-2"
               style={{ left: `${x}%`, top: `${y}%` }}
             >
-              <span className={`block rounded-full border border-gold ${focused ? "h-4 w-4 bg-gold-soft" : "h-2.5 w-2.5 bg-gold"}`} />
-              {focused ? (
-                <span className="eyebrow absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap bg-ink/85 px-3 py-1.5 text-[10px] text-gold">
-                  {m.name}
-                </span>
-              ) : null}
+              <span
+                className={`block rounded-full border-2 border-burgundy bg-paper transition-transform duration-300 ${focused ? "h-3.5 w-3.5" : "h-2.5 w-2.5"}`}
+              />
             </button>
           );
         })}
