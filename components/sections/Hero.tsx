@@ -26,11 +26,19 @@ export function Hero() {
 
   return (
     <section ref={root} id="top" aria-labelledby="hero-title" className="theme-dark relative isolate min-h-[100svh] overflow-hidden bg-ink">
-      <SectionBackdrop src={BACKDROPS.hero} position="50% 50%" wash={0} side="none" edges={false} priority />
+      <SectionBackdrop
+        src={BACKDROPS.hero}
+        wash={0}
+        side="none"
+        edges={false}
+        sizes="(min-aspect-ratio: 72/25) 100vw, 288svh"
+        objectClassName="object-[46%_50%] lg:object-[22%_50%]"
+        priority
+      />
       {/* Minimal shade, only where the words sit, so the photograph stays untouched */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(0deg,rgba(8,14,24,0.72)_0%,rgba(8,14,24,0.38)_42%,rgba(8,14,24,0.08)_70%,rgba(8,14,24,0.3)_100%)] lg:bg-[linear-gradient(90deg,rgba(8,14,24,0.58)_0%,rgba(8,14,24,0.26)_36%,rgba(8,14,24,0)_60%)]"
+        className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(0deg,rgba(8,14,24,0.74)_0%,rgba(8,14,24,0.5)_45%,rgba(8,14,24,0.3)_66%,rgba(8,14,24,0.32)_100%)] lg:bg-[linear-gradient(90deg,rgba(8,14,24,0.58)_0%,rgba(8,14,24,0.26)_36%,rgba(8,14,24,0)_60%)]"
       />
       <div
         aria-hidden="true"

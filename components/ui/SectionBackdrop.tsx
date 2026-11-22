@@ -17,6 +17,8 @@ export function SectionBackdrop({
   side = "left",
   saturate = 1,
   edges = true,
+  sizes = "100vw",
+  objectClassName,
   priority = false,
 }: {
   src: StaticImageData;
@@ -29,6 +31,10 @@ export function SectionBackdrop({
   saturate?: number;
   /** Fade the photo into the page colour at the section's top and bottom edges. */
   edges?: boolean;
+  /** Rendered width hint for responsive images (wide panoramas render wider than the viewport). */
+  sizes?: string;
+  /** Responsive object-position classes; when set, they replace `position`. */
+  objectClassName?: string;
   priority?: boolean;
 }) {
   const root = useRef<HTMLDivElement>(null);
@@ -70,12 +76,15 @@ export function SectionBackdrop({
             src={src}
             alt=""
             fill
-            sizes="100vw"
+            sizes={sizes}
             quality={85}
             placeholder="blur"
             {...(priority ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
-            className="object-cover"
-            style={{ objectPosition: position, ...(saturate !== 1 ? { filter: `saturate(${saturate})` } : {}) }}
+            className={`object-cover ${objectClassName ?? ""}`}
+            style={{
+              ...(objectClassName ? {} : { objectPosition: position }),
+              ...(saturate !== 1 ? { filter: `saturate(${saturate})` } : {}),
+            }}
           />
         </div>
         {wash > 0 ? <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} /> : null}
