@@ -60,7 +60,7 @@ export function FlatMap({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.setTransform(sx, 0, 0, sy, -x0 * sx, -y0 * sy);
       for (const { index, path } of paths) {
-        ctx.fillStyle = "#e2d6c2";
+        ctx.fillStyle = "#c9d1c5";
         ctx.fill(path);
         if (index >= 0) {
           ctx.fillStyle = index === focusIndex ? "#b52336" : "rgba(181,35,54,0.62)";
@@ -69,7 +69,7 @@ export function FlatMap({
       }
       ctx.lineJoin = "round";
       ctx.lineWidth = dpr / sx;
-      ctx.strokeStyle = "rgba(28,25,20,0.34)";
+      ctx.strokeStyle = "rgba(24,67,53,0.38)";
       for (const { path } of paths) ctx.stroke(path);
     };
     draw();

@@ -23,13 +23,13 @@ type CountryData = { w: number; h: number; countries: { id: string | null; d: st
 
 const DEG = Math.PI / 180;
 
-/* Cartographic palette on porcelain: ivory sea, stone land, ink borders, burgundy network. */
+/* Cartographic palette: ivory sea, sage land (a tint of the #184335 mark), green-ink borders, burgundy network. */
 const OCEAN = "#f4f0e6";
-const LAND = "#e2d6c2";
-const BORDER = "rgba(28,25,20,0.34)";
+const LAND = "#c9d1c5";
+const BORDER = "rgba(24,67,53,0.38)";
 const NETWORK_FILL = "rgba(181,35,54,0.62)";
 const NETWORK_BORDER = "rgba(120,22,36,0.5)";
-const LIMB = "#c9bda7";
+const LIMB = "#c3c5b9";
 const BURGUNDY = "#b52336";
 const GOLD = "#8d6b3b";
 const PIN = "#f4f0e6";

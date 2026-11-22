@@ -112,7 +112,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
               transition={{ delay: 0.7, duration: 0.9, ease: EASE_OUT }}
             >
               <p className="max-w-xs text-sm leading-relaxed text-mist">
-                The meeting point between buyers and sellers.
+                A private trade facilitation group.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a

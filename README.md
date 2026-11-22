@@ -1,6 +1,6 @@
 # Ventrion — website
 
-A single-page "digital business card" for Ventrion: the meeting point between buyers and sellers, facilitating trade through a trusted network. Sections: hero, the meeting point, the network (interactive 3D globe), our principles (four principles with self-drawing line illustrations in `components/sections/principles/`), a closing statement, contact.
+A single-page "digital business card" for Ventrion, a private trade facilitation group working through a trusted network. Sections: hero, private trade facilitation, the network (interactive 3D globe), our principles (four principles with self-drawing line illustrations in `components/sections/principles/`), a closing statement, contact.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Three.js / React Three Fiber · Lucide · Zod.
 

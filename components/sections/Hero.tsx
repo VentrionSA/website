@@ -85,8 +85,9 @@ export function Hero() {
 
           <div className="mt-9 grid gap-8 lg:mt-10 lg:grid-cols-12 lg:items-end">
             <p className="hero-fade max-w-[30rem] text-[15px] leading-relaxed text-ivory/85 sm:text-lg lg:col-span-5" style={i(2)}>
-              <span className="text-[0.86em] font-medium uppercase tracking-[0.2em] text-ivory">Ventrion</span> is the
-              meeting point between buyers and sellers, facilitating trade through a uniquely extensive network.
+              <span className="text-[0.86em] font-medium uppercase tracking-[0.2em] text-ivory">Ventrion</span> is a
+              private trade facilitation group, connecting trusted counterparts through relationships built over many
+              years.
             </p>
             <div className="hero-fade flex flex-col gap-3 sm:flex-row lg:col-span-7 lg:justify-end" style={i(3)}>
               <ArrowLink href="/#contact" magnetic>
@@ -107,11 +108,11 @@ export function Hero() {
               <span className="eyebrow text-ivory/75 transition-colors duration-500 group-hover:text-ivory">Scroll</span>
             </a>
             <p className="eyebrow hidden items-center gap-5 text-ivory/75 md:flex">
-              Buyers
+              Private
               <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold/70" />
-              Ventrion
+              Trusted
               <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold/70" />
-              Sellers
+              Global
             </p>
           </div>
         </div>

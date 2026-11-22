@@ -33,7 +33,8 @@ export const metadata: Metadata = {
   keywords: [
     "Ventrion",
     "Trade facilitation",
-    "Buyers and sellers",
+    "Private trade facilitation",
+    "Trusted trade network",
     "International trade network",
     "Middle East trade",
     "Central Asia trade",

@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Ventrion — Connecting Global Markets",
     short_name: "Ventrion",
-    description: "The meeting point between buyers and sellers.",
+    description: "A private trade facilitation group.",
     start_url: "/",
     display: "standalone",
     background_color: "#f4f0e6",

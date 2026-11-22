@@ -20,7 +20,7 @@ export const siteConfig = {
   legalName: process.env.NEXT_PUBLIC_COMPANY_LEGAL_NAME || "Ventrion Company",
   tagline: "Connecting Global Markets",
   description:
-    "Ventrion is the meeting point between buyers and sellers, facilitating trade through a uniquely extensive network across the Middle East, Central Asia and Asia.",
+    "Ventrion is a private trade facilitation group, connecting trusted counterparts through an established network across the Middle East, Central Asia and Asia.",
 
   /** Business contact details — placeholders until confirmed. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@ventrion.sa",

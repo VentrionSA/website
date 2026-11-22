@@ -9,7 +9,7 @@ import { LogoMark } from "@/components/brand/Logo";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
 
-/** Buyers and sellers drawn together, meeting at the Ventrion star. */
+/** Origin and destination drawn together, coordinated at the Ventrion star. */
 function MeetingPoint() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -37,7 +37,7 @@ function MeetingPoint() {
   return (
     <div ref={root} aria-hidden="true" className="mt-[clamp(3.5rem,7vw,6rem)] flex w-full max-w-5xl items-center gap-3 sm:gap-7">
       <span data-side="l" className={side}>
-        Buyers
+        Origin
       </span>
       <span className="relative h-px flex-1">
         <span data-line="l" className="absolute inset-0 origin-left bg-gradient-to-r from-ivory/15 via-gold/50 to-gold" />
@@ -55,7 +55,7 @@ function MeetingPoint() {
         <span data-line="r" className="absolute inset-0 origin-right bg-gradient-to-l from-ivory/15 via-gold/50 to-gold" />
       </span>
       <span data-side="r" className={side}>
-        Sellers
+        Destination
       </span>
     </div>
   );
@@ -129,22 +129,22 @@ export function Introduction() {
       <SectionBackdrop src={BACKDROPS.about} wash={0.72} side="both" saturate={0.55} />
       <div className="shell flex flex-col items-center text-center">
         <Eyebrow index="01" className="justify-center">
-          The Meeting Point
+          Private Trade Facilitation
         </Eyebrow>
         <SplitHeading id="about-title" className="display-lg mt-8 max-w-[13ch] text-ivory">
-          Where buyers and sellers <em className="text-burgundy">meet.</em>
+          A private network for <em className="text-burgundy">trusted trade.</em>
         </SplitHeading>
 
         <MeetingPoint />
-        <p className="sr-only">Ventrion stands between buyers and sellers, bringing them together.</p>
+        <p className="sr-only">Ventrion coordinates trade between origin and destination.</p>
 
         <Reveal stagger={0.12} className="mt-[clamp(3.5rem,7vw,6rem)] flex max-w-[44rem] flex-col items-center">
           <p data-reveal className="display-sm text-ivory">
             Ventrion endeavours to be a <em className="text-burgundy">reliable business partner</em> to all of its commercial counterparts.
           </p>
           <p data-reveal className="mt-6 max-w-[34rem] text-[17px] leading-[1.8] text-mist">
-            We exist to facilitate trade, bringing the right buyers and the right sellers together, directly and with
-            discretion.
+            We facilitate trade for a private circle of clients and counterparts: directly, discreetly and with
+            personal accountability from origin to destination.
           </p>
         </Reveal>
       </div>

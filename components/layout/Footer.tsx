@@ -36,7 +36,7 @@ export function Footer() {
             <p className="display-sm mt-10 max-w-[20ch] text-ivory/90">
               Connecting global <em className="text-burgundy">markets.</em>
             </p>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-mist">The meeting point between buyers and sellers.</p>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-mist">A private trade facilitation group.</p>
           </div>
 
           <nav aria-label="Footer" className="lg:col-span-2 lg:col-start-8">

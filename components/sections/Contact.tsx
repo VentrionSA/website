@@ -70,7 +70,7 @@ export function Contact() {
             </SplitHeading>
             <Reveal className="mt-8 max-w-md">
               <p className="text-[17px] leading-relaxed text-mist">
-                Whether you are buying or selling, the conversation begins here.
+                Every engagement begins with a private, confidential conversation.
               </p>
             </Reveal>
 
