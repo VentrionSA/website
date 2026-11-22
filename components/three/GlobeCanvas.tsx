@@ -2,12 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
 import { decodeLandPoints } from "@/lib/geo/points";
 import { MARKETS } from "@/lib/content";
 import { latLonToVector3 } from "./geo";
-import { useEngravedMaps } from "./engraved";
 
 type Tier = "high" | "low";
 type DragState = { dx: number; dragging: boolean };
@@ -22,9 +20,15 @@ type GlobeProps = {
 };
 
 const DEG = Math.PI / 180;
-const GOLD = "#c4a779";
-const IVORY = "#f1efe8";
-const GOLD_LIGHT = "#f6e3bb";
+
+/* Porcelain palette: an ivory sphere, ink land, burgundy network, gold hairlines. */
+const PORCELAIN = "#f8f3ea";
+const PORCELAIN_SHADE = "#dcd2c1";
+const PORCELAIN_LIMB = "#c9bda7";
+const INK = "#1c1914";
+const BURGUNDY = "#6d1f2c";
+const BURGUNDY_SOFT = "#9b3a4a";
+const GOLD = "#8d6b3b";
 
 /* ── Land dots ─────────────────────────────────────────────────────────── */
 
@@ -33,51 +37,46 @@ const dotVertex = /* glsl */ `
   uniform float uFocus;
   uniform float uPixelRatio;
   uniform float uSize;
+  uniform float uView;
   uniform float uTime;
   varying float vFacing;
   varying float vNetwork;
   varying float vFocus;
-  varying float vShimmer;
   void main() {
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     vec3 n = normalize(normalMatrix * normalize(position));
     vFacing = dot(n, normalize(-mv.xyz));
     vNetwork = step(-0.5, aCountry);
     vFocus = 1.0 - step(0.5, abs(aCountry - uFocus));
-    // a slow band of light sweeping across every connected country
-    float lon = atan(position.x, position.z);
-    vShimmer = pow(0.5 + 0.5 * sin(uTime * 0.9 - lon * 3.0 + position.y * 2.0), 6.0);
-    float pulse = 1.0 + vFocus * (0.3 + 0.12 * sin(uTime * 2.4)) + vShimmer * 0.2;
-    gl_PointSize = uSize * uPixelRatio * pulse * (4.6 / -mv.z);
+    // network dots sit slightly larger; the focused market breathes gently
+    float size = mix(1.0, 1.34, vNetwork) + vFocus * (0.16 + 0.1 * sin(uTime * 2.2));
+    gl_PointSize = uSize * uPixelRatio * uView * size * (4.6 / -mv.z);
     gl_Position = projectionMatrix * mv;
   }
 `;
 
 const dotFragment = /* glsl */ `
-  uniform vec3 uGold;
-  uniform vec3 uLight;
+  uniform vec3 uInk;
+  uniform vec3 uBurgundy;
+  uniform vec3 uBurgundySoft;
   varying float vFacing;
   varying float vNetwork;
   varying float vFocus;
-  varying float vShimmer;
   void main() {
     float d = length(gl_PointCoord - 0.5);
-    if (d > 0.5 || vNetwork < 0.5) discard;
-    // bright core with a soft halo, so connected countries glow above the engraved surface
-    float core = smoothstep(0.26, 0.12, d);
-    float halo = smoothstep(0.5, 0.18, d) * 0.55;
-    float rim = smoothstep(-0.05, 0.45, vFacing);
-    float lift = max(vFocus, vShimmer * 0.8);
-    vec3 col = mix(uGold, uLight, 0.55 + 0.45 * lift);
-    col = mix(col, vec3(1.0, 0.95, 0.84), core * (0.18 + 0.27 * vFocus));
-    col *= 1.3 + 0.65 * lift;
-    float alpha = max(core, halo) * rim;
+    if (d > 0.5) discard;
+    float dotMask = smoothstep(0.5, 0.34, d);
+    float rim = smoothstep(0.0, 0.42, vFacing);
+    vec3 col = mix(uInk, mix(uBurgundy, uBurgundySoft, vFocus), vNetwork);
+    float alpha = dotMask * rim * mix(0.42, 0.96, vNetwork);
     gl_FragColor = vec4(col, alpha);
+    #include <colorspace_fragment>
   }
 `;
 
 function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; calm: boolean }) {
   const gl = useThree((s) => s.gl);
+  const viewHeight = useThree((s) => s.size.height);
   const { geometry, material } = useMemo(() => {
     const pts = decodeLandPoints();
     const positions = new Float32Array(pts.length * 3);
@@ -96,14 +95,15 @@ function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; 
       fragmentShader: dotFragment,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
       uniforms: {
         uFocus: { value: focusIndex },
         uPixelRatio: { value: Math.min(gl.getPixelRatio(), 2) },
-        uSize: { value: tier === "high" ? 5.4 : 4.8 },
+        uSize: { value: tier === "high" ? 2.75 : 2.55 },
+        uView: { value: 1 },
         uTime: { value: 0 },
-        uGold: { value: new THREE.Color(GOLD) },
-        uLight: { value: new THREE.Color(GOLD_LIGHT) },
+        uInk: { value: new THREE.Color(INK) },
+        uBurgundy: { value: new THREE.Color(BURGUNDY) },
+        uBurgundySoft: { value: new THREE.Color(BURGUNDY_SOFT) },
       },
     });
     return { geometry: geo, material: mat };
@@ -113,6 +113,11 @@ function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; 
   useEffect(() => {
     material.uniforms.uFocus.value = focusIndex;
   }, [focusIndex, material]);
+
+  // Dots keep the same proportion to the globe at every screen size.
+  useEffect(() => {
+    material.uniforms.uView.value = THREE.MathUtils.clamp(viewHeight / 640, 0.4, 1.4);
+  }, [viewHeight, material]);
 
   useFrame(({ clock }) => {
     material.uniforms.uTime.value = calm ? 0 : clock.getElapsedTime();
@@ -129,7 +134,7 @@ function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; 
   return <points geometry={geometry} material={material} />;
 }
 
-/* ── Globe body, atmosphere and graticule ──────────────────────────────── */
+/* ── Porcelain globe body and gold graticule ───────────────────────────── */
 
 const bodyVertex = /* glsl */ `
   varying vec3 vN;
@@ -143,43 +148,39 @@ const bodyVertex = /* glsl */ `
 `;
 const bodyFragment = /* glsl */ `
   uniform vec3 uBase;
-  uniform vec3 uRim;
+  uniform vec3 uShade;
+  uniform vec3 uLimb;
   varying vec3 vN;
   varying vec3 vV;
   void main() {
-    float facing = max(dot(vN, vV), 0.0);
-    float fres = pow(1.0 - facing, 3.0);
-    vec3 light = normalize(vec3(-0.5, 0.6, 0.65));
-    float lambert = max(dot(vN, light), 0.0);
-    vec3 col = uBase * (0.65 + 0.55 * lambert) + uRim * fres * 0.5;
+    vec3 n = normalize(vN);
+    vec3 v = normalize(vV);
+    vec3 l = normalize(vec3(-0.55, 0.62, 0.58));
+    // wrapped light gives the soft, even fall-off of matte porcelain
+    float wrap = dot(n, l) * 0.5 + 0.5;
+    vec3 col = mix(uShade, uBase, smoothstep(0.12, 0.95, wrap));
+    // gentle limb darkening for volume
+    float facing = max(dot(n, v), 0.0);
+    col = mix(col, uLimb, pow(1.0 - facing, 3.0) * 0.6);
+    // a faint glaze highlight
+    col += pow(max(dot(n, normalize(l + v)), 0.0), 90.0) * 0.2;
     gl_FragColor = vec4(col, 1.0);
-  }
-`;
-const haloFragment = /* glsl */ `
-  uniform vec3 uRim;
-  varying vec3 vN;
-  varying vec3 vV;
-  void main() {
-    float facing = dot(vN, vV);
-    float glow = pow(clamp(1.0 + facing * 2.8, 0.0, 1.0), 4.0);
-    gl_FragColor = vec4(uRim, glow * 0.14);
+    #include <colorspace_fragment>
   }
 `;
 
 function GlobeBody() {
-  const { body, halo, graticule } = useMemo(() => {
-    const uniforms = { uBase: { value: new THREE.Color("#121412") }, uRim: { value: new THREE.Color(GOLD) } };
-    const body = new THREE.ShaderMaterial({ vertexShader: bodyVertex, fragmentShader: bodyFragment, uniforms });
-    const halo = new THREE.ShaderMaterial({
+  const { body, graticule } = useMemo(() => {
+    const body = new THREE.ShaderMaterial({
       vertexShader: bodyVertex,
-      fragmentShader: haloFragment,
-      uniforms,
-      side: THREE.BackSide,
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      fragmentShader: bodyFragment,
+      uniforms: {
+        uBase: { value: new THREE.Color(PORCELAIN) },
+        uShade: { value: new THREE.Color(PORCELAIN_SHADE) },
+        uLimb: { value: new THREE.Color(PORCELAIN_LIMB) },
+      },
     });
-    // graticule every 30°
+    // hairline graticule every 30°
     const verts: number[] = [];
     const v = new THREE.Vector3();
     const w = new THREE.Vector3();
@@ -199,33 +200,25 @@ function GlobeBody() {
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-    const lineMat = new THREE.LineBasicMaterial({ color: IVORY, transparent: true, opacity: 0.05, depthWrite: false });
-    return { body, halo, graticule: new THREE.LineSegments(geo, lineMat) };
+    const lineMat = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.22, depthWrite: false });
+    return { body, graticule: new THREE.LineSegments(geo, lineMat) };
   }, []);
 
-  const { bumpTex, roughTex, colorTex } = useEngravedMaps(4096);
-  void body;
-  void graticule;
+  useEffect(
+    () => () => {
+      body.dispose();
+      graticule.geometry.dispose();
+      (graticule.material as THREE.Material).dispose();
+    },
+    [body, graticule],
+  );
+
   return (
     <>
-      <mesh>
-        <sphereGeometry args={[1, 160, 112]} />
-        <meshPhysicalMaterial
-          color="#ffffff"
-          map={colorTex}
-          metalness={1}
-          roughness={0.44}
-          roughnessMap={roughTex}
-          bumpMap={bumpTex}
-          bumpScale={3}
-          clearcoat={0.5}
-          clearcoatRoughness={0.32}
-          envMapIntensity={1.2}
-        />
+      <mesh material={body}>
+        <sphereGeometry args={[1, 96, 64]} />
       </mesh>
-      <mesh material={halo} scale={1.1}>
-        <sphereGeometry args={[1, 64, 64]} />
-      </mesh>
+      <primitive object={graticule} />
     </>
   );
 }
@@ -274,7 +267,7 @@ function Marker({
     <group ref={group} position={position}>
       <mesh renderOrder={3}>
         <circleGeometry args={[focused ? 0.017 : 0.012, 24]} />
-        <meshBasicMaterial color={focused ? "#f3dfb6" : GOLD} toneMapped={false} depthWrite={false} transparent />
+        <meshBasicMaterial color={focused ? BURGUNDY_SOFT : BURGUNDY} toneMapped={false} depthWrite={false} transparent />
       </mesh>
       <mesh ref={ring} renderOrder={3}>
         <ringGeometry args={[0.02, 0.023, 48]} />
@@ -283,7 +276,7 @@ function Marker({
       {focused ? (
         <mesh renderOrder={3}>
           <ringGeometry args={[0.04, 0.0425, 64]} />
-          <meshBasicMaterial color="#f3dfb6" transparent opacity={0.85} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+          <meshBasicMaterial color={BURGUNDY} transparent opacity={0.75} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
         </mesh>
       ) : null}
       {/* Generous invisible hit area */}
@@ -482,13 +475,6 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, 4.6], fov: 30, near: 0.1, far: 20 }}
       >
-        <Environment frames={1} resolution={256} background={false}>
-          <Lightformer form="rect" intensity={3.2} color="#f6e6c6" position={[-5, 4, 4]} scale={[9, 1.6, 1]} target={[0, 0, 0]} />
-          <Lightformer form="rect" intensity={1.6} color="#c4a779" position={[6, -1, 3]} scale={[2.2, 7, 1]} target={[0, 0, 0]} />
-          <Lightformer form="ring" intensity={1.1} color="#ffffff" position={[1, 6, -5]} scale={5} target={[0, 0, 0]} />
-        </Environment>
-        <directionalLight position={[-5, 6, 6]} intensity={1.4} color="#f4e4c4" />
-        <directionalLight position={[6, -2, -5]} intensity={2.4} color="#c4a779" />
         <Rig focusIndex={focusIndex} drag={drag}>
           <GlobeBody />
           <LandDots focusIndex={focusIndex} tier={tier} calm={calm} />
@@ -522,8 +508,8 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
                 chipRefs.current[i] = el;
               }}
               data-dx={dx}
-              className={`eyebrow absolute whitespace-nowrap px-2 py-[3px] text-[9px] tracking-[0.18em] transition-colors duration-500 ${
-                focused ? "bg-ink text-burgundy" : "bg-ink/85 text-ivory/85"
+              className={`eyebrow absolute whitespace-nowrap border px-2 py-[3px] text-[9px] tracking-[0.18em] transition-colors duration-500 ${
+                focused ? "border-burgundy/40 bg-ink text-burgundy" : "border-line-strong bg-ink/90 text-ivory/80"
               }`}
               style={{ left: dx, top: dy, transform: `translate(${dx < 0 ? "-100%" : "0"}, -50%)` }}
             >

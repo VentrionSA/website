@@ -94,6 +94,11 @@ export function Network() {
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:items-center lg:gap-8">
           <div ref={globeBox} className="relative mx-auto aspect-square w-full max-w-[760px] lg:col-span-7">
             <CornerFrame />
+            {/* soft shadow grounding the porcelain globe */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-[85%] h-[7%] w-[58%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(28,25,20,0.2),transparent)] blur-md"
+            />
             <div className="absolute inset-[4%]">
               {tier === "none" ? (
                 <FlatMap focusIndex={focus} onHover={hoverMarket} onSelect={select} />
@@ -118,11 +123,11 @@ export function Network() {
             </p>
             <div data-reveal className="mt-10 flex items-center gap-4 border-t border-line pt-6">
               <span aria-hidden="true" className="relative flex h-2 w-2">
-                <span className="absolute inset-0 animate-ping rounded-full bg-gold/60" />
-                <span className="relative h-2 w-2 rounded-full bg-gold" />
+                <span className="absolute inset-0 animate-ping rounded-full bg-burgundy/50" />
+                <span className="relative h-2 w-2 rounded-full bg-burgundy" />
               </span>
               <p className="eyebrow text-[10px] text-mist">
-                Now highlighting <span className="ml-1 text-gold">{MARKETS[focus].name}</span>
+                Now highlighting <span className="ml-1 text-burgundy">{MARKETS[focus].name}</span>
               </p>
             </div>
           </Reveal>

@@ -44,7 +44,7 @@ export function FlatMap({
       for (const p of points) {
         const { x, y } = project(p.lat, p.lon);
         const focus = p.country === focusIndex;
-        ctx.fillStyle = focus ? "rgba(148,113,63,1)" : p.country >= 0 ? "rgba(148,113,63,0.6)" : "rgba(34,30,24,0.12)";
+        ctx.fillStyle = focus ? "rgba(155,58,74,1)" : p.country >= 0 ? "rgba(109,31,44,0.85)" : "rgba(28,25,20,0.3)";
         ctx.beginPath();
         ctx.arc((x / 100) * canvas.width, (y / 100) * canvas.height, focus ? r * 1.3 : r, 0, Math.PI * 2);
         ctx.fill();
