@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { Emphasis } from "@/components/ui/Emphasis";
 
 export function LegalPage({
   eyebrow,
@@ -22,7 +23,9 @@ export function LegalPage({
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-32">
             <Eyebrow>{eyebrow}</Eyebrow>
-            <h1 className="display-lg mt-8 text-ivory">{title}</h1>
+            <h1 className="display-lg mt-8 text-ivory">
+              <Emphasis text={title} />
+            </h1>
             <p className="mt-6 text-sm text-mist">Last updated: {updated}</p>
             <Link href="/" className="link-draw mt-10 inline-flex text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory hover:text-gold">
               ← Back to home

@@ -82,7 +82,7 @@ export function Hero() {
             </span>
             <span className="line-mask">
               <span className="hero-line" style={i(1)}>
-                Global <em className="text-gold">Markets.</em>
+                Global <em className="text-burgundy">Markets.</em>
               </span>
             </span>
           </h1>

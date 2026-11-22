@@ -32,7 +32,7 @@ function ContactRow({
       <span className="flex flex-col">
         <span className="eyebrow text-[10px] text-mist">{label}</span>
         {href ? (
-          <span className="mt-1 text-[15px] text-ivory transition-colors duration-500 group-hover:text-gold">{value}</span>
+          <span className="mt-1 text-[15px] text-ivory transition-colors duration-500 group-hover:text-burgundy">{value}</span>
         ) : (
           <span className="mt-1 font-mono text-[12px] text-mist/60" title="Placeholder — configure in lib/site.ts">
             {placeholder}
@@ -66,7 +66,7 @@ export function Contact() {
           <div className="lg:sticky lg:top-32">
             <Eyebrow index="04">Contact</Eyebrow>
             <SplitHeading id="contact-title" className="display-lg mt-8 max-w-[11ch] text-ivory">
-              Request an <em className="text-gold">introduction.</em>
+              Request an <em className="text-burgundy">introduction.</em>
             </SplitHeading>
             <Reveal className="mt-8 max-w-md">
               <p className="text-[17px] leading-relaxed text-mist">

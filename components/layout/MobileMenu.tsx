@@ -118,7 +118,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                 <a
                   href="/#contact"
                   onClick={(event) => go(event, "/#contact")}
-                  className="inline-flex items-center justify-between gap-4 bg-gold px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-ink"
+                  className="inline-flex items-center justify-between gap-4 bg-burgundy px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-ink"
                 >
                   Request an Introduction
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />

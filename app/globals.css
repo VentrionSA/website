@@ -16,6 +16,9 @@
   --color-gold: #8d6b3b;
   --color-gold-soft: #77592f;
   --color-gold-deep: #6b522c;
+  /* Burgundy: the accent for emphasis (italic headline words, primary buttons) */
+  --color-burgundy: #6d1f2c;
+  --color-burgundy-soft: #8c3442;
   --color-olive: #6f6c4f;
   --color-earth: #8b7356;
   --color-line: rgb(28 25 20 / 0.13);
@@ -74,8 +77,8 @@
   }
 
   ::selection {
-    background-color: rgb(196 167 121 / 0.35);
-    color: var(--color-ivory);
+    background-color: var(--color-burgundy);
+    color: var(--color-ink);
   }
 
   :focus-visible {
@@ -459,7 +462,7 @@
   }
   .field-input:focus {
     outline: none;
-    border-bottom-color: var(--color-gold);
+    border-bottom-color: var(--color-burgundy);
   }
   .field-input[aria-invalid="true"] {
     border-bottom-color: var(--color-alert);

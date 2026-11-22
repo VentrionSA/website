@@ -84,11 +84,11 @@ export function Network() {
         <Eyebrow index="02">The Network</Eyebrow>
         <Reveal className="mt-10">
           <p className="display-sm max-w-[30ch] text-balance text-mist">
-            International reach is not created by having thousands of names in a directory.
+            <em className="text-burgundy">International reach</em> is not created by having thousands of names in a directory.
           </p>
         </Reveal>
         <SplitHeading id="network-title" className="display-xl mt-6 max-w-[16ch] text-balance text-ivory">
-          It is created by knowing <em className="text-gold">who to call.</em>
+          It is created by knowing <em className="text-burgundy">who to call.</em>
         </SplitHeading>
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:items-center lg:gap-8">
@@ -108,7 +108,8 @@ export function Network() {
 
           <Reveal stagger={0.12} className="lg:col-span-4 lg:col-start-9">
             <p data-reveal className="font-serif text-[1.45rem] leading-snug text-ivory sm:text-[1.65rem]">
-              Over many years of international logistics activity, Ventrion has developed relationships with experienced
+              Over many years of international logistics activity, Ventrion has developed{" "}
+              <em className="text-burgundy">relationships</em> with experienced
               agents and service partners across global markets.
             </p>
             <p data-reveal className="mt-6 text-[16px] leading-[1.8] text-mist">

@@ -40,7 +40,10 @@ export function Closing() {
           <LogoMark className="h-14 w-auto sm:h-16" />
         </span>
         <SplitHeading id="closing-title" className="display-xl mt-12 max-w-[17ch] text-balance text-ivory">
-          Our clients deal with Ventrion. <em className="mt-2 block text-gold">We coordinate the world around them.</em>
+          Our clients deal with Ventrion.{" "}
+          <span className="mt-2 block">
+            We coordinate the world <em className="text-burgundy">around them.</em>
+          </span>
         </SplitHeading>
         <Reveal className="mt-12" delay={0.2}>
           <ArrowLink href="/#contact" magnetic>

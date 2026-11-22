@@ -10,9 +10,9 @@ const base =
   "group relative inline-flex select-none items-center justify-center gap-4 overflow-hidden whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.24em] transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-gold px-7 py-[1.05rem] text-ink hover:bg-ivory",
-  outline: "border border-line-strong px-7 py-[1rem] text-ivory hover:border-gold hover:text-gold",
-  text: "link-draw py-1 text-ivory hover:text-gold",
+  primary: "bg-burgundy px-7 py-[1.05rem] text-ink hover:bg-ivory",
+  outline: "border border-line-strong px-7 py-[1rem] text-ivory hover:border-burgundy hover:text-burgundy",
+  text: "link-draw py-1 text-ivory hover:text-burgundy",
 };
 
 type Props = {

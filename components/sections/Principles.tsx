@@ -5,11 +5,12 @@ import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 import { PRINCIPLES, type PrincipleId } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
+import { Emphasis } from "@/components/ui/Emphasis";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
 import { PrincipleIllustration } from "./principles/Illustrations";
 
-/** "Trust does." in oversized gold italic, filled by a sweep of light as it scrolls into view. */
+/** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
 function TrustStatement() {
   const ref = useRef<HTMLHeadingElement>(null);
 
@@ -18,7 +19,7 @@ function TrustStatement() {
       const mm = gsap.matchMedia();
       mm.add(MOTION_QUERIES.motion, () => {
         gsap.fromTo(
-          ref.current,
+          "[data-trust-sweep]",
           { backgroundPosition: "100% 0%" },
           {
             backgroundPosition: "0% 0%",
@@ -35,18 +36,24 @@ function TrustStatement() {
     <h2
       ref={ref}
       id="principles-title"
-      className="mt-5 px-[0.08em] pb-[0.14em] font-serif text-[clamp(4.2rem,13vw,13rem)] italic leading-[0.95] tracking-[-0.02em]"
-      style={{
-        backgroundImage: "linear-gradient(90deg, #8d6b3b 0%, #b08a52 48%, transparent 52%, transparent 100%)",
-        backgroundSize: "210% 100%",
-        backgroundPosition: "0% 0%",
-        WebkitBackgroundClip: "text",
-        backgroundClip: "text",
-        color: "transparent",
-        WebkitTextStroke: "1px rgba(141,107,59,0.55)",
-      }}
+      className="mt-5 font-serif text-[clamp(4.2rem,13vw,13rem)] leading-[0.95] tracking-[-0.02em] text-ivory"
     >
-      Trust does.
+      <span
+        data-trust-sweep
+        className="mr-[-0.04em] inline-block pb-[0.14em] pl-[0.04em] pr-[0.06em] italic"
+        style={{
+          backgroundImage: "linear-gradient(90deg, #6d1f2c 0%, #8c3442 48%, transparent 52%, transparent 100%)",
+          backgroundSize: "210% 100%",
+          backgroundPosition: "0% 0%",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          color: "transparent",
+          WebkitTextStroke: "1px rgba(109,31,44,0.5)",
+        }}
+      >
+        Trust
+      </span>{" "}
+      does.
     </h2>
   );
 }
@@ -107,7 +114,9 @@ export function Principles() {
             Our Principles
           </Eyebrow>
           <Reveal className="mt-10">
-            <p className="display-md max-w-[24ch] text-balance text-mist">But network size alone is not what matters to us.</p>
+            <p className="display-md max-w-[24ch] text-balance text-mist">
+              But <em className="text-burgundy">network size alone</em> is not what matters to us.
+            </p>
           </Reveal>
           <TrustStatement />
         </div>
@@ -157,10 +166,10 @@ export function Principles() {
                     {principle.numeral}
                   </p>
                   <h3 data-reveal className="display-md mt-5 max-w-[16ch] text-ivory">
-                    {principle.title}
+                    <Emphasis text={principle.title} />
                   </h3>
                   <p data-reveal className="mt-7 max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">
-                    {principle.lead}
+                    <Emphasis text={principle.lead} />
                   </p>
                   {principle.body.map((paragraph) => (
                     <p key={paragraph.slice(0, 24)} data-reveal className="mt-5 max-w-[34rem] text-[16px] leading-[1.8] text-mist">

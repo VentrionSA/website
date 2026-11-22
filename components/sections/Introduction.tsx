@@ -132,7 +132,7 @@ export function Introduction() {
           The Meeting Point
         </Eyebrow>
         <SplitHeading id="about-title" className="display-lg mt-8 max-w-[13ch] text-ivory">
-          Where buyers and sellers <em className="text-gold">meet.</em>
+          Where buyers and sellers <em className="text-burgundy">meet.</em>
         </SplitHeading>
 
         <MeetingPoint />
@@ -140,7 +140,7 @@ export function Introduction() {
 
         <Reveal stagger={0.12} className="mt-[clamp(3.5rem,7vw,6rem)] flex max-w-[44rem] flex-col items-center">
           <p data-reveal className="display-sm text-ivory">
-            Ventrion endeavours to be a reliable business partner to all of its commercial counterparts.
+            Ventrion endeavours to be a <em className="text-burgundy">reliable business partner</em> to all of its commercial counterparts.
           </p>
           <p data-reveal className="mt-6 max-w-[34rem] text-[17px] leading-[1.8] text-mist">
             We exist to facilitate trade, bringing the right buyers and the right sellers together, directly and with

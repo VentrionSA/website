@@ -82,7 +82,7 @@ export function Navigation() {
                       href={link.href}
                       aria-current={isActive ? "true" : undefined}
                       className={`link-draw text-[11px] font-medium uppercase tracking-[0.22em] transition-colors duration-500 ${
-                        isActive ? "text-gold" : "text-ivory/80 hover:text-ivory"
+                        isActive ? "text-burgundy" : "text-ivory/80 hover:text-ivory"
                       }`}
                     >
                       {link.label}
@@ -96,9 +96,9 @@ export function Navigation() {
           <div className="relative z-10 flex items-center gap-3">
             <a
               href="/#contact"
-              className="group hidden items-center gap-3 border border-gold/50 px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ivory transition-colors duration-500 hover:border-gold hover:bg-gold hover:text-ink md:inline-flex"
+              className="group hidden items-center gap-3 border border-gold/50 px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ivory transition-colors duration-500 hover:border-burgundy hover:bg-burgundy hover:text-ink md:inline-flex"
             >
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gold transition-colors duration-500 group-hover:bg-ink" />
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-burgundy transition-colors duration-500 group-hover:bg-ink" />
               Request an Introduction
             </a>
 
