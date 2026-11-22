@@ -1,10 +1,9 @@
 "use client";
 
 import { useRef, type CSSProperties } from "react";
-import { gsap, MOTION_QUERIES, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { heroState } from "@/lib/hero-state";
+import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 import { ArrowLink } from "@/components/ui/ArrowLink";
-import { HeroVisual } from "./hero/HeroVisual";
+import { HeroEarth } from "./hero/HeroEarth";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
 
@@ -21,21 +20,7 @@ export function Hero() {
         gsap.to("[data-hero-copy]", { yPercent: -16, autoAlpha: 0.1, ease: "none", scrollTrigger: st });
         gsap.to("[data-hero-visual]", { yPercent: 12, ease: "none", scrollTrigger: st });
         gsap.to("[data-hero-fade]", { autoAlpha: 0, ease: "none", scrollTrigger: { ...st, end: "35% top" } });
-        ScrollTrigger.create({
-          ...st,
-          onUpdate: (self) => {
-            heroState.progress = self.progress;
-          },
-        });
       });
-
-      const onMove = (event: PointerEvent) => {
-        if (event.pointerType !== "mouse") return;
-        heroState.pointerX = (event.clientX / window.innerWidth) * 2 - 1;
-        heroState.pointerY = (event.clientY / window.innerHeight) * 2 - 1;
-      };
-      window.addEventListener("pointermove", onMove, { passive: true });
-      return () => window.removeEventListener("pointermove", onMove);
     },
     { scope: root },
   );
@@ -57,10 +42,6 @@ export function Hero() {
         </div>
       </div>
 
-      {/* 3D armillary sphere */}
-      <div data-hero-visual aria-hidden="true" className="absolute inset-0 -z-10 opacity-80 lg:left-[30%] lg:opacity-100">
-        <HeroVisual />
-      </div>
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[55%] bg-gradient-to-t from-ink via-ink/70 to-transparent lg:h-[45%]" />
 
       <div className="shell relative flex min-h-[100svh] flex-col pb-[clamp(1.25rem,3.5vh,2.5rem)] pt-[clamp(6.5rem,15vh,9.5rem)]">
@@ -73,7 +54,19 @@ export function Hero() {
           </p>
         </div>
 
-        <div data-hero-copy className="mt-auto pt-[26vh] lg:pt-6">
+        {/* The Earth: in the flow on small screens, to the right of the headline on large ones.
+            Scroll parallax (GSAP) on the outer wrapper, entrance (CSS) on the inner one. */}
+        <div
+          data-hero-visual
+          aria-hidden="true"
+          className="pointer-events-none flex flex-1 items-center justify-center py-7 lg:absolute lg:bottom-[17%] lg:left-[46%] lg:right-0 lg:top-[12%] lg:py-0"
+        >
+          <div className="hero-fade" style={i(1)}>
+            <HeroEarth className="w-[min(62vw,34svh)] sm:w-[min(56vw,38svh)] lg:w-[min(52vh,38vw,600px)]" />
+          </div>
+        </div>
+
+        <div data-hero-copy className="mt-auto lg:pt-6">
           <h1 id="hero-title" className="display-hero text-ivory">
             <span className="line-mask">
               <span className="hero-line" style={i(0)}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
@@ -311,27 +311,65 @@ function Marker({
   );
 }
 
-/** Projects the focused marker to screen space and positions a DOM label over the canvas. */
-function LabelTracker({ focusIndex, labelRef }: { focusIndex: number; labelRef: RefObject<HTMLDivElement | null> }) {
+/**
+ * Callout offsets for each market's label, in px for a 640px-wide globe (scaled
+ * with the globe). The four Gulf markets sit a few pixels apart, so their labels
+ * fan out in different directions; north stays up as the globe turns, so the
+ * arrangement holds at every rotation.
+ */
+const CALLOUTS: Record<string, { dx: number; dy: number; short?: string }> = {
+  "saudi-arabia": { dx: -78, dy: 16 },
+  "united-arab-emirates": { dx: 34, dy: 58, short: "UAE" },
+  qatar: { dx: 64, dy: -22 },
+  bahrain: { dx: -36, dy: -52 },
+  kazakhstan: { dx: 48, dy: -40 },
+  azerbaijan: { dx: -72, dy: -14 },
+  china: { dx: 56, dy: -22 },
+  india: { dx: 58, dy: 10 },
+  indonesia: { dx: -34, dy: 44 },
+};
+
+/** Projects every market to screen space each frame and moves its DOM callout over the canvas. */
+function LabelsTracker({
+  labelRefs,
+  chipRefs,
+  chipWidths,
+}: {
+  labelRefs: MutableRefObject<(HTMLDivElement | null)[]>;
+  chipRefs: MutableRefObject<(HTMLSpanElement | null)[]>;
+  chipWidths: MutableRefObject<number[]>;
+}) {
   const anchor = useRef<THREE.Group>(null);
   const v = useMemo(() => new THREE.Vector3(), []);
   const n = useMemo(() => new THREE.Vector3(), []);
   const c = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(({ camera, size }) => {
-    const el = labelRef.current;
     const a = anchor.current;
-    if (!el || !a) return;
-    const m = MARKETS[focusIndex];
-    latLonToVector3(m.lat, m.lon, 1.006, v);
-    a.localToWorld(v);
-    n.copy(v).normalize();
-    const facing = n.dot(c.copy(camera.position).normalize());
-    v.project(camera);
-    const x = (v.x * 0.5 + 0.5) * size.width;
-    const y = (-v.y * 0.5 + 0.5) * size.height;
-    el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
-    el.style.opacity = String(THREE.MathUtils.clamp((facing - 0.3) * 3, 0, 1));
+    if (!a) return;
+    c.copy(camera.position).normalize();
+    MARKETS.forEach((m, i) => {
+      const el = labelRefs.current[i];
+      if (!el) return;
+      latLonToVector3(m.lat, m.lon, 1.006, v);
+      a.localToWorld(v);
+      const facing = n.copy(v).normalize().dot(c);
+      v.project(camera);
+      const x = (v.x * 0.5 + 0.5) * size.width;
+      const y = (-v.y * 0.5 + 0.5) * size.height;
+      el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+      el.style.opacity = String(THREE.MathUtils.clamp((facing - 0.28) * 3.2, 0, 1));
+      // Keep the label chip inside the globe's frame (widths are measured once, not per frame).
+      const chip = chipRefs.current[i];
+      const w = chipWidths.current[i];
+      if (chip && w) {
+        const dx = Number(chip.dataset.dx);
+        const left = x + dx - (dx < 0 ? w : 0);
+        const bleed = size.width * 0.04;
+        const shift = left < -bleed ? -bleed - left : left + w > size.width + bleed ? size.width + bleed - (left + w) : 0;
+        chip.style.translate = `${shift.toFixed(1)}px 0`;
+      }
+    });
   });
 
   return <group ref={anchor} />;
@@ -384,8 +422,25 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
   const wrap = useRef<HTMLDivElement>(null);
   const drag = useRef<DragState>({ dx: 0, dragging: false });
   const lastX = useRef(0);
-  const labelRef = useRef<HTMLDivElement>(null);
+  const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const chipRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const chipWidths = useRef<number[]>([]);
   const [active, setActive] = useState(false);
+  const [scale, setScale] = useState(1);
+
+  // Callout offsets scale with the globe so small screens stay tidy.
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setScale(THREE.MathUtils.clamp(entry.contentRect.width / 640, 0.55, 1.15)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Measure label chips whenever their names or offsets change size.
+  useEffect(() => {
+    chipWidths.current = chipRefs.current.map((chip) => chip?.offsetWidth ?? 0);
+  }, [scale, focusIndex]);
 
   useEffect(() => {
     const el = wrap.current;
@@ -440,15 +495,43 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
           {MARKETS.map((_, i) => (
             <Marker key={i} index={i} focused={i === focusIndex} calm={calm} onHover={onHover} onSelect={onSelect} />
           ))}
-          <LabelTracker focusIndex={focusIndex} labelRef={labelRef} />
+          <LabelsTracker labelRefs={labelRefs} chipRefs={chipRefs} chipWidths={chipWidths} />
         </Rig>
       </Canvas>
-      <div ref={labelRef} aria-hidden="true" className="pointer-events-none absolute left-0 top-0 z-10 opacity-0 will-change-transform">
-        <div className="flex -translate-x-1/2 -translate-y-[calc(100%+8px)] flex-col items-center gap-2">
-          <span className="eyebrow whitespace-nowrap bg-ink/80 px-3 py-1.5 text-[10px] text-gold backdrop-blur-sm">{MARKETS[focusIndex].name}</span>
-          <span className="h-4 w-px bg-gold/70" />
-        </div>
-      </div>
+      {MARKETS.map((m, i) => {
+        const callout = CALLOUTS[m.id] ?? { dx: 40, dy: -30 };
+        const dx = callout.dx * scale;
+        const dy = callout.dy * scale;
+        const focused = i === focusIndex;
+        const name = scale < 0.8 && callout.short ? callout.short : m.name;
+        return (
+          <div
+            key={m.id}
+            ref={(el) => {
+              labelRefs.current[i] = el;
+            }}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-0 top-0 z-10 opacity-0 will-change-transform"
+          >
+            <span
+              className={`absolute left-0 top-0 h-px origin-left transition-colors duration-500 ${focused ? "bg-burgundy" : "bg-gold/70"}`}
+              style={{ width: Math.hypot(dx, dy), transform: `rotate(${Math.atan2(dy, dx)}rad)` }}
+            />
+            <span
+              ref={(el) => {
+                chipRefs.current[i] = el;
+              }}
+              data-dx={dx}
+              className={`eyebrow absolute whitespace-nowrap px-2 py-[3px] text-[9px] tracking-[0.18em] transition-colors duration-500 ${
+                focused ? "bg-ink text-burgundy" : "bg-ink/85 text-ivory/85"
+              }`}
+              style={{ left: dx, top: dy, transform: `translate(${dx < 0 ? "-100%" : "0"}, -50%)` }}
+            >
+              {name}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

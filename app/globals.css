@@ -268,25 +268,51 @@
     animation-delay: calc(0.55s + var(--i, 0) * 0.12s);
   }
 
-  /* Hero globe poster — sized and placed to match the live 3D camera exactly.
-     Live camera: fov 30° at distance 9 → 4.823 world units per container height.
-     Poster: 7.2 world units square → 7.2 / 4.823 = 149.28% of container height. */
-  .hero-stage {
-    container-type: size;
+  /* Hero Earth. The video frame is square; the planet's disc has a radius of
+     97.27% of half the frame, so a soft radial mask trims it cleanly. */
+  .earth-video {
+    -webkit-mask-image: radial-gradient(circle closest-side at 50% 50%, #000 96.5%, transparent 97.15%);
+    mask-image: radial-gradient(circle closest-side at 50% 50%, #000 96.5%, transparent 97.15%);
   }
-  .hero-poster {
+  .earth-shadow {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 149.28cqh;
-    height: 149.28cqh;
-    max-width: none;
-    transform: translate(-50%, -50%);
+    left: 14%;
+    right: 14%;
+    bottom: -6%;
+    height: 10%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(28 25 20 / 0.3), transparent);
+    filter: blur(8px);
   }
-  @container (aspect-ratio < 0.95) {
-    /* portrait layout: the scene scales to 0.66 and lifts by 0.95 units */
-    .hero-poster {
-      transform: translate(-50%, calc(-50% - 19.7cqh)) scale(0.66);
+  .earth-atmosphere {
+    position: absolute;
+    inset: 1.6%;
+    border-radius: 50%;
+    box-shadow:
+      0 0 36px 3px rgb(86 128 214 / 0.24),
+      0 0 110px 18px rgb(86 128 214 / 0.1);
+  }
+  .earth-orbit {
+    position: absolute;
+    inset: -6.5%;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--color-gold) 42%, transparent);
+    animation: spin 54s linear infinite;
+  }
+  .earth-orbit-dot {
+    position: absolute;
+    top: -3.5px;
+    left: 50%;
+    width: 7px;
+    height: 7px;
+    margin-left: -3.5px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-gold) 16%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .earth-orbit {
+      animation: none;
     }
   }
 

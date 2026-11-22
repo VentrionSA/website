@@ -40,24 +40,6 @@ export const MARKETS: Market[] = [
 
 export const REGIONS: Region[] = ["Middle East", "Central Asia & Caspian", "Asia"];
 
-/** Network connections drawn as arcs between markets (indices into MARKETS). */
-export const CONNECTIONS: [number, number][] = [
-  [1, 7],
-  [1, 6],
-  [1, 8],
-  [0, 4],
-  [0, 7],
-  [2, 6],
-  [2, 8],
-  [3, 5],
-  [5, 4],
-  [4, 6],
-  [7, 8],
-  [0, 5],
-  [3, 7],
-  [6, 8],
-];
-
 /* ── Principles of the network ─────────────────────────────────────────── */
 
 export type PrincipleId = "partners" | "local" | "quality" | "accountability";
