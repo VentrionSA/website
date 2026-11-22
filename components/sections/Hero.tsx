@@ -61,11 +61,11 @@ export function Hero() {
       
       <div className="shell relative flex min-h-[100svh] flex-col pb-[clamp(1.25rem,3.5vh,2.5rem)] pt-[clamp(6.5rem,15vh,9.5rem)]">
         <div data-hero-fade className="flex items-start justify-between gap-6">
-          <p className="hero-fade eyebrow max-w-[18rem] text-gold sm:max-w-none" style={i(0)}>
+          <p className="hero-fade eyebrow max-w-[18rem] text-burgundy sm:max-w-none" style={i(0)}>
             Global Trade Facilitation
           </p>
           <p className="hero-fade eyebrow hidden text-right text-ivory/75 md:block" style={i(1)}>
-            Middle East <span className="px-2 text-gold/70">/</span> Central Asia <span className="px-2 text-gold/70">/</span> Asia
+            Middle East <span className="px-2 text-burgundy/70">/</span> Central Asia <span className="px-2 text-burgundy/70">/</span> Asia
           </p>
         </div>
 

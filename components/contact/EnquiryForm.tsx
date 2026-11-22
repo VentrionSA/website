@@ -129,7 +129,7 @@ export function EnquiryForm() {
   const label = (name: EnquiryField, text: string) => (
     <label htmlFor={id(name)} className="eyebrow block text-[10px] text-mist">
       {text}
-      <span className="text-gold"> *</span>
+      <span className="text-burgundy"> *</span>
     </label>
   );
 
@@ -143,7 +143,7 @@ export function EnquiryForm() {
         role="status"
         aria-live="polite"
       >
-        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-gold text-gold">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-burgundy text-burgundy">
           <Check className="h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
         </span>
         <h3 className="display-md mt-8 text-ivory">Thank you. Your enquiry has been received.</h3>
@@ -152,7 +152,7 @@ export function EnquiryForm() {
         </p>
         {reference ? (
           <p className="eyebrow mt-8 text-[10px] text-mist">
-            Reference <span className="ml-2 font-mono text-[12px] normal-case tracking-normal text-gold">{reference}</span>
+            Reference <span className="ml-2 font-mono text-[12px] normal-case tracking-normal text-burgundy">{reference}</span>
           </p>
         ) : null}
         <button
@@ -162,7 +162,7 @@ export function EnquiryForm() {
             setReference("");
             startedAt.current = Date.now();
           }}
-          className="link-draw mt-10 self-start text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory hover:text-gold"
+          className="link-draw mt-10 self-start text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory hover:text-burgundy"
         >
           Submit another enquiry
         </button>
@@ -227,7 +227,7 @@ export function EnquiryForm() {
               <div>
                 <p>{serverMessage}</p>
                 {whatsapp ? (
-                  <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="link-draw mt-3 inline-flex text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">
+                  <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="link-draw mt-3 inline-flex text-[11px] font-semibold uppercase tracking-[0.2em] text-burgundy">
                     Continue on WhatsApp
                   </a>
                 ) : null}
@@ -239,7 +239,7 @@ export function EnquiryForm() {
 
       <div className="mt-10 flex flex-col-reverse gap-6 sm:flex-row sm:items-center sm:justify-between">
         <p id={id("form-note")} className="max-w-sm text-[12px] leading-relaxed text-mist/80">
-          Fields marked <span className="text-gold">*</span> are required. Your details are used only to respond to this
+          Fields marked <span className="text-burgundy">*</span> are required. Your details are used only to respond to this
           enquiry — see our{" "}
           <a href="/privacy" className="underline decoration-line-strong underline-offset-4 hover:text-ivory">
             Privacy Policy

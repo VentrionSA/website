@@ -5,15 +5,15 @@ export function Eyebrow({
   index,
   children,
   className = "",
-  tone = "gold",
+  tone = "accent",
 }: {
   index?: string;
   children: ReactNode;
   className?: string;
-  tone?: "gold" | "mist";
+  tone?: "accent" | "mist";
 }) {
   return (
-    <p className={`eyebrow flex items-center gap-4 ${tone === "gold" ? "text-gold" : "text-mist"} ${className}`}>
+    <p className={`eyebrow flex items-center gap-4 ${tone === "accent" ? "text-burgundy" : "text-mist"} ${className}`}>
       {index ? <span className="tabular-nums">{index}</span> : null}
       <span aria-hidden="true" className="h-px w-10 bg-current opacity-60" />
       <span>{children}</span>

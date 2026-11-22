@@ -27,7 +27,7 @@ export function LegalPage({
               <Emphasis text={title} />
             </h1>
             <p className="mt-6 text-sm text-mist">Last updated: {updated}</p>
-            <Link href="/" className="link-draw mt-10 inline-flex text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory hover:text-gold">
+            <Link href="/" className="link-draw mt-10 inline-flex text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory hover:text-burgundy">
               ← Back to home
             </Link>
           </div>

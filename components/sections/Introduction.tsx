@@ -106,13 +106,13 @@ function ConnectedNetwork() {
             data-sweep
             className="font-serif text-[clamp(3.4rem,11.2vw,12.75rem)] uppercase italic leading-[0.86] tracking-[-0.02em]"
             style={{
-              backgroundImage: "linear-gradient(90deg, #8d6b3b 0%, #b08a52 48%, transparent 52%, transparent 100%)",
+              backgroundImage: "linear-gradient(90deg, #b52336 0%, #b52336 48%, transparent 52%, transparent 100%)",
               backgroundSize: "210% 100%",
               backgroundPosition: "0% 0%",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
-              WebkitTextStroke: "1px rgba(141,107,59,0.55)",
+              WebkitTextStroke: "1px rgba(181,35,54,0.5)",
             }}
           >
             Network

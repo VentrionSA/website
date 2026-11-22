@@ -40,7 +40,7 @@ export function Footer() {
           </div>
 
           <nav aria-label="Footer" className="lg:col-span-2 lg:col-start-8">
-            <p className="eyebrow mb-6 text-gold">Navigate</p>
+            <p className="eyebrow mb-6 text-burgundy">Navigate</p>
             <ul className="space-y-3.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
@@ -53,7 +53,7 @@ export function Footer() {
           </nav>
 
           <div className="lg:col-span-3">
-            <p className="eyebrow mb-6 text-gold">Contact</p>
+            <p className="eyebrow mb-6 text-burgundy">Contact</p>
             <ul className="space-y-4 text-sm">
               <li className="flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-[0.24em] text-mist">Email</span>

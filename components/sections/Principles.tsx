@@ -144,7 +144,7 @@ export function Principles() {
                 ))}
               </div>
               <p className="eyebrow mx-auto mt-4 w-full max-w-[440px] text-mist" aria-hidden="true">
-                <span className="text-gold">{PRINCIPLES[active].numeral}</span>
+                <span className="text-burgundy">{PRINCIPLES[active].numeral}</span>
                 <span className="px-2">/</span>IV
               </p>
             </div>
@@ -162,7 +162,7 @@ export function Principles() {
               >
                 <InlineIllustration id={principle.id} />
                 <Reveal stagger={0.1}>
-                  <p data-reveal className="eyebrow text-gold">
+                  <p data-reveal className="eyebrow text-burgundy">
                     {principle.numeral}
                   </p>
                   <h3 data-reveal className="display-md mt-5 max-w-[16ch] text-ivory">
@@ -177,7 +177,7 @@ export function Principles() {
                     </p>
                   ))}
                   {principle.closing ? (
-                    <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-gold sm:text-[1.5rem]">
+                    <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-burgundy sm:text-[1.5rem]">
                       {principle.closing}
                     </p>
                   ) : null}

@@ -116,7 +116,7 @@ export function Network() {
           <div className="mx-auto mt-8 grid w-full max-w-[760px] grid-cols-2 gap-x-6 gap-y-7 border-t border-line pt-7 sm:grid-cols-3">
             {REGIONS.map((region) => (
               <div key={region} className={region === "Middle East" ? "row-span-2 sm:row-span-1" : ""}>
-                <p className="eyebrow text-[10px] text-gold">{region}</p>
+                <p className="eyebrow text-[10px] text-burgundy">{region}</p>
                 <ul className="mt-3 space-y-2">
                   {MARKETS.map((market, i) =>
                     market.region === region ? (

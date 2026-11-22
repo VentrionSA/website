@@ -96,7 +96,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                       exit={{ y: "110%", transition: { duration: 0.4, ease: EASE } }}
                       transition={{ delay: 0.28 + i * 0.07, duration: 1, ease: EASE_OUT }}
                     >
-                      <span className="eyebrow w-6 text-gold">0{i + 1}</span>
+                      <span className="eyebrow w-6 text-burgundy">0{i + 1}</span>
                       <span className="display-md">{link.label}</span>
                     </motion.a>
                   </li>
