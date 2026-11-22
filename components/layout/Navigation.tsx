@@ -55,6 +55,8 @@ export function Navigation() {
   }, [open]);
 
   const solid = scrolled && !open;
+  // Over the hero photograph the bar is transparent with light type.
+  const overHero = isHome && !scrolled && !open;
 
   return (
     <>
@@ -64,7 +66,7 @@ export function Navigation() {
         transition={{ duration: 0.7, ease: EASE }}
         className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-700 ${
           solid ? "border-line bg-ink/75 backdrop-blur-xl" : "border-transparent bg-transparent"
-        }`}
+        } ${overHero ? "theme-dark" : ""}`}
       >
         <div className={`shell flex items-center justify-between transition-[height] duration-700 ${solid ? "h-[68px]" : "h-[84px]"}`}>
           <a href="/#top" className="relative z-10 -m-2 p-2" aria-label="Ventrion — back to top">
@@ -96,9 +98,9 @@ export function Navigation() {
           <div className="relative z-10 flex items-center gap-3">
             <a
               href="/#contact"
-              className="group hidden items-center gap-3 border border-gold/50 px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ivory transition-colors duration-500 hover:border-burgundy hover:bg-burgundy hover:text-ink md:inline-flex"
+              className="group hidden items-center gap-3 border border-gold/50 px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ivory transition-colors duration-500 hover:border-burgundy hover:bg-burgundy hover:text-paper md:inline-flex"
             >
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-burgundy transition-colors duration-500 group-hover:bg-ink" />
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-burgundy transition-colors duration-500 group-hover:bg-paper" />
               Request an Introduction
             </a>
 

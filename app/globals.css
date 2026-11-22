@@ -19,6 +19,9 @@
   /* Burgundy: the accent for emphasis (italic headline words, primary buttons) */
   --color-burgundy: #6d1f2c;
   --color-burgundy-soft: #8c3442;
+  /* Theme-independent: light text on burgundy or photos; dark button hover */
+  --color-paper: #f3eee4;
+  --color-onyx: #1c1914;
   --color-olive: #6f6c4f;
   --color-earth: #8b7356;
   --color-line: rgb(28 25 20 / 0.13);

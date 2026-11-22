@@ -249,7 +249,7 @@ export function EnquiryForm() {
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="group inline-flex items-center justify-center gap-4 bg-burgundy px-8 py-[1.1rem] text-[11px] font-semibold uppercase tracking-[0.24em] text-ink transition-colors duration-500 hover:bg-ivory disabled:cursor-wait disabled:opacity-70"
+          className="group inline-flex items-center justify-center gap-4 bg-burgundy px-8 py-[1.1rem] text-[11px] font-semibold uppercase tracking-[0.24em] text-paper transition-colors duration-500 hover:bg-onyx disabled:cursor-wait disabled:opacity-70"
         >
           {status === "submitting" ? (
             <>

@@ -11,7 +11,7 @@ export default function NotFound() {
         <p className="mt-6 max-w-md text-mist">The page you are looking for may have moved. Let us take you back.</p>
         <Link
           href="/"
-          className="mt-12 inline-flex items-center gap-4 bg-burgundy px-7 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-ink transition-colors duration-500 hover:bg-ivory"
+          className="mt-12 inline-flex items-center gap-4 bg-burgundy px-7 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-paper transition-colors duration-500 hover:bg-onyx"
         >
           Return home
         </Link>

@@ -16,16 +16,19 @@ export function SectionBackdrop({
   wash = 0.45,
   side = "left",
   saturate = 1,
+  edges = true,
   priority = false,
 }: {
   src: StaticImageData;
   position?: string;
   /** 0–1: base cream wash across the whole photo. */
   wash?: number;
-  /** Which side carries the text and gets the stronger overlay. */
-  side?: "left" | "right" | "both";
+  /** Which side carries the text and gets the stronger overlay ("none" for no side overlay). */
+  side?: "left" | "right" | "both" | "none";
   /** Colour saturation of the photo (1 = original). */
   saturate?: number;
+  /** Fade the photo into the page colour at the section's top and bottom edges. */
+  edges?: boolean;
   priority?: boolean;
 }) {
   const root = useRef<HTMLDivElement>(null);
@@ -50,7 +53,9 @@ export function SectionBackdrop({
   );
 
   const sideGradient =
-    side === "both"
+    side === "none"
+      ? ""
+      : side === "both"
       ? "bg-[radial-gradient(70%_80%_at_50%_50%,transparent_0%,var(--color-ink)_100%)] opacity-70"
       : side === "left"
         ? "bg-gradient-to-r from-ink via-ink/75 to-ink/10"
@@ -73,11 +78,15 @@ export function SectionBackdrop({
             style={{ objectPosition: position, ...(saturate !== 1 ? { filter: `saturate(${saturate})` } : {}) }}
           />
         </div>
-        <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} />
-        <div className={`absolute inset-0 ${sideGradient}`} />
+        {wash > 0 ? <div className="absolute inset-0 bg-ink" style={{ opacity: wash }} /> : null}
+        {sideGradient ? <div className={`absolute inset-0 ${sideGradient}`} /> : null}
       </div>
-      <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ink to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
+      {edges ? (
+        <>
+          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-ink to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink to-transparent" />
+        </>
+      ) : null}
     </div>
   );
 }
