@@ -6,10 +6,10 @@
 @theme {
   /* Ivory theme. Token names are historical: "ink" is the page background
      (ivory) and "ivory" is the text colour (deep ink). */
-  --color-ink: #f3eee4;
-  --color-coal: #eee8dc;
-  --color-graphite: #ebe4d6;
-  --color-smoke: #e1d8c7;
+  --color-ink: #f4f0e6;
+  --color-coal: #efeade;
+  --color-graphite: #ece6d8;
+  --color-smoke: #e2dac9;
   --color-ivory: #1c1914;
   --color-mist: #5c564b;
   --color-ash: #857d6f;
@@ -21,7 +21,7 @@
   /* The Ventrion star mark, wherever it appears */
   --color-mark: #184335;
   /* Theme-independent: light text on burgundy or photos; dark button hover */
-  --color-paper: #f3eee4;
+  --color-paper: #f4f0e6;
   --color-onyx: #1c1914;
   --color-olive: #6f6c4f;
   --color-earth: #8b7356;
@@ -48,14 +48,14 @@
   --color-coal: #141514;
   --color-graphite: #191b19;
   --color-smoke: #232522;
-  --color-ivory: #f1efe8;
+  --color-ivory: #f4f0e6;
   --color-mist: #a6a69e;
   --color-ash: #6f706a;
   --color-gold: #c4a779;
   --color-gold-soft: #dcc8a2;
   --color-gold-deep: #8f7650;
-  --color-line: rgb(241 239 232 / 0.12);
-  --color-line-strong: rgb(241 239 232 / 0.22);
+  --color-line: rgb(244 240 230 / 0.12);
+  --color-line-strong: rgb(244 240 230 / 0.22);
   color: var(--color-ivory);
 }
 

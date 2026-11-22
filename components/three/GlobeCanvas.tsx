@@ -24,7 +24,7 @@ type CountryData = { w: number; h: number; countries: { id: string | null; d: st
 const DEG = Math.PI / 180;
 
 /* Cartographic palette on porcelain: ivory sea, stone land, ink borders, burgundy network. */
-const OCEAN = "#f6f1e7";
+const OCEAN = "#f4f0e6";
 const LAND = "#e2d6c2";
 const BORDER = "rgba(28,25,20,0.34)";
 const NETWORK_FILL = "rgba(181,35,54,0.62)";
@@ -32,7 +32,7 @@ const NETWORK_BORDER = "rgba(120,22,36,0.5)";
 const LIMB = "#c9bda7";
 const BURGUNDY = "#b52336";
 const GOLD = "#8d6b3b";
-const PIN = "#fbf7ef";
+const PIN = "#f4f0e6";
 /** ID mask encoding: market i is stored as (i + 1) * ID_STEP in the red channel. */
 const ID_STEP = 24;
 

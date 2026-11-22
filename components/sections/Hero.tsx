@@ -38,15 +38,15 @@ export function Hero() {
       {/* Slight ivory overlay: light across the photograph, deeper only behind the words */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(243,238,228,0.42)_0%,rgba(243,238,228,0.6)_26%,rgba(243,238,228,0.6)_80%,rgba(243,238,228,0.3)_100%)] lg:bg-[linear-gradient(90deg,rgba(243,238,228,0.68)_0%,rgba(243,238,228,0.52)_30%,rgba(243,238,228,0.18)_50%,rgba(243,238,228,0)_66%)]"
+        className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(244,240,230,0.42)_0%,rgba(244,240,230,0.6)_26%,rgba(244,240,230,0.6)_80%,rgba(244,240,230,0.3)_100%)] lg:bg-[linear-gradient(90deg,rgba(244,240,230,0.68)_0%,rgba(244,240,230,0.52)_30%,rgba(244,240,230,0.18)_50%,rgba(244,240,230,0)_66%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-20 hidden h-[18%] bg-[linear-gradient(180deg,rgba(243,238,228,0.5)_0%,rgba(243,238,228,0)_100%)] lg:block"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-20 hidden h-[18%] bg-[linear-gradient(180deg,rgba(244,240,230,0.5)_0%,rgba(244,240,230,0)_100%)] lg:block"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 hidden h-[40%] bg-[linear-gradient(0deg,rgba(243,238,228,0.55)_0%,rgba(243,238,228,0)_100%)] lg:block"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 hidden h-[40%] bg-[linear-gradient(0deg,rgba(244,240,230,0.55)_0%,rgba(244,240,230,0)_100%)] lg:block"
       />
 
       {/* Editorial column guides */}

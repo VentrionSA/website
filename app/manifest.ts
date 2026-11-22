@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "The meeting point between buyers and sellers.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f3eee4",
-    theme_color: "#f3eee4",
+    background_color: "#f4f0e6",
+    theme_color: "#f4f0e6",
     icons: [
       { src: "/icon.svg", type: "image/svg+xml", sizes: "any" },
       { src: "/brand/ventrion-icon-512.png", type: "image/png", sizes: "512x512" },
