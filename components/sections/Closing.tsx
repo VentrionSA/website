@@ -36,7 +36,7 @@ export function Closing() {
     >
       <SectionBackdrop src={BACKDROPS.closing} wash={0.55} side="both" saturate={0.55} />
       <div className="shell relative flex flex-col items-center text-center">
-        <span data-closing-star className="inline-block text-gold">
+        <span data-closing-star className="inline-block text-mark">
           <LogoMark className="h-14 w-auto sm:h-16" />
         </span>
         <SplitHeading id="closing-title" className="display-xl mt-12 max-w-[17ch] text-balance text-ivory">

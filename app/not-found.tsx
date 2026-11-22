@@ -4,7 +4,7 @@ import { LogoMark } from "@/components/brand/Logo";
 export default function NotFound() {
   return (
     <main id="main" className="relative flex min-h-[100svh] items-center overflow-hidden bg-ink">
-      <LogoMark className="pointer-events-none absolute -right-[10vw] top-1/2 h-[80vh] w-auto -translate-y-1/2 text-ivory/[0.035]" />
+      <LogoMark className="pointer-events-none absolute -right-[10vw] top-1/2 h-[80vh] w-auto -translate-y-1/2 text-mark/[0.05]" />
       <div className="shell relative">
         <p className="eyebrow text-gold">Error 404</p>
         <h1 className="display-xl mt-8 max-w-[12ch] text-ivory">This route does not <em className="text-burgundy">exist.</em></h1>

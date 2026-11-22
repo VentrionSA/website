@@ -81,7 +81,7 @@ export function Preloader() {
           {/* glowing core */}
           <span aria-hidden="true" className="preloader-glow absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-soft" />
           {/* faint full mark + the mark revealed by a conic sweep tied to progress */}
-          <LogoMark className="absolute inset-0 h-full w-full text-ivory/[0.08]" />
+          <LogoMark className="absolute inset-0 h-full w-full text-mark/[0.12]" />
           <div
             className="preloader-mark absolute inset-0"
             style={{
@@ -89,7 +89,7 @@ export function Preloader() {
               maskImage: `conic-gradient(from 0deg, #000 ${progress * 3.6}deg, transparent ${progress * 3.6}deg)`,
             }}
           >
-            <LogoMark className="h-full w-full text-gold-soft" />
+            <LogoMark className="h-full w-full text-mark" />
           </div>
         </div>
         <div className="mt-7 text-ivory transition-[opacity,letter-spacing] duration-700" style={{ opacity: Math.min(1, Math.max(0, (progress - 35) / 40)) }}>

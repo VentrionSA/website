@@ -47,7 +47,7 @@ function MeetingPoint() {
           data-star-glow
           className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(220,200,162,0.35),transparent_68%)]"
         />
-        <span data-star className="relative text-gold-soft">
+        <span data-star className="relative text-mark">
           <LogoMark className="h-[clamp(2.6rem,6vw,4.75rem)] w-auto" />
         </span>
       </span>
@@ -99,7 +99,7 @@ function ConnectedNetwork() {
           </span>
         </div>
         <div data-row="b" className="mt-[1vw] flex items-center justify-end gap-[3vw] whitespace-nowrap will-change-transform">
-          <span data-row-star className="inline-block text-gold">
+          <span data-row-star className="inline-block text-mark">
             <LogoMark className="h-[clamp(2.6rem,7.8vw,8.25rem)] w-auto" />
           </span>
           <span

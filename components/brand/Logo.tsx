@@ -42,7 +42,7 @@ export function LogoLockup({ className = "", markClassName = "h-8 w-auto", wordC
 }) {
   return (
     <span className={`inline-flex items-center gap-3 text-ivory ${className}`}>
-      <LogoMark className={markClassName} />
+      <LogoMark className={`text-mark ${markClassName}`} />
       <LogoWordmark className={wordClassName} />
       <span className="sr-only">Ventrion</span>
     </span>

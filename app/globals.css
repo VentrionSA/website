@@ -18,6 +18,8 @@
   --color-gold-deep: #6b522c;
   /* Burgundy: the accent for emphasis (italic headline words, primary buttons) */
   --color-burgundy: #b52336;
+  /* The Ventrion star mark, wherever it appears */
+  --color-mark: #184335;
   /* Theme-independent: light text on burgundy or photos; dark button hover */
   --color-paper: #f3eee4;
   --color-onyx: #1c1914;

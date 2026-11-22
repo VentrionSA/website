@@ -20,7 +20,7 @@ function Star({ x, y, size, delay }: { x: number; y: number; size: number; delay
   const s = size / MARK_W;
   return (
     <g data-pop style={d(delay)}>
-      <path d={MARK_PATH} fill="currentColor" transform={`translate(${x - size / 2} ${y - (MARK_H * s) / 2}) scale(${s})`} />
+      <path d={MARK_PATH} className="fill-mark" transform={`translate(${x - size / 2} ${y - (MARK_H * s) / 2}) scale(${s})`} />
     </g>
   );
 }
