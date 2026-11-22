@@ -42,13 +42,13 @@ function TrustStatement() {
         data-trust-sweep
         className="mr-[-0.04em] inline-block pb-[0.14em] pl-[0.04em] pr-[0.06em] italic"
         style={{
-          backgroundImage: "linear-gradient(90deg, #6d1f2c 0%, #8c3442 48%, transparent 52%, transparent 100%)",
+          backgroundImage: "linear-gradient(90deg, #b52336 0%, #b52336 48%, transparent 52%, transparent 100%)",
           backgroundSize: "210% 100%",
           backgroundPosition: "0% 0%",
           WebkitBackgroundClip: "text",
           backgroundClip: "text",
           color: "transparent",
-          WebkitTextStroke: "1px rgba(109,31,44,0.5)",
+          WebkitTextStroke: "1px rgba(181,35,54,0.5)",
         }}
       >
         Trust

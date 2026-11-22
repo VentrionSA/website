@@ -26,8 +26,7 @@ const PORCELAIN = "#f8f3ea";
 const PORCELAIN_SHADE = "#dcd2c1";
 const PORCELAIN_LIMB = "#c9bda7";
 const INK = "#1c1914";
-const BURGUNDY = "#6d1f2c";
-const BURGUNDY_SOFT = "#9b3a4a";
+const BURGUNDY = "#b52336";
 const GOLD = "#8d6b3b";
 
 /* ── Land dots ─────────────────────────────────────────────────────────── */
@@ -58,7 +57,6 @@ const dotVertex = /* glsl */ `
 const dotFragment = /* glsl */ `
   uniform vec3 uInk;
   uniform vec3 uBurgundy;
-  uniform vec3 uBurgundySoft;
   varying float vFacing;
   varying float vNetwork;
   varying float vFocus;
@@ -67,8 +65,9 @@ const dotFragment = /* glsl */ `
     if (d > 0.5) discard;
     float dotMask = smoothstep(0.5, 0.34, d);
     float rim = smoothstep(0.0, 0.42, vFacing);
-    vec3 col = mix(uInk, mix(uBurgundy, uBurgundySoft, vFocus), vNetwork);
-    float alpha = dotMask * rim * mix(0.42, 0.96, vNetwork);
+    vec3 col = mix(uInk, uBurgundy, vNetwork);
+    // the focused market is drawn at full strength; the rest of the network slightly softer
+    float alpha = dotMask * rim * mix(0.42, mix(0.8, 1.0, vFocus), vNetwork);
     gl_FragColor = vec4(col, alpha);
     #include <colorspace_fragment>
   }
@@ -103,7 +102,6 @@ function LandDots({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier; 
         uTime: { value: 0 },
         uInk: { value: new THREE.Color(INK) },
         uBurgundy: { value: new THREE.Color(BURGUNDY) },
-        uBurgundySoft: { value: new THREE.Color(BURGUNDY_SOFT) },
       },
     });
     return { geometry: geo, material: mat };
@@ -267,7 +265,7 @@ function Marker({
     <group ref={group} position={position}>
       <mesh renderOrder={3}>
         <circleGeometry args={[focused ? 0.017 : 0.012, 24]} />
-        <meshBasicMaterial color={focused ? BURGUNDY_SOFT : BURGUNDY} toneMapped={false} depthWrite={false} transparent />
+        <meshBasicMaterial color={BURGUNDY} toneMapped={false} depthWrite={false} transparent />
       </mesh>
       <mesh ref={ring} renderOrder={3}>
         <ringGeometry args={[0.02, 0.023, 48]} />
