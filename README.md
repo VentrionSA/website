@@ -50,7 +50,6 @@ Configure at least one channel (server-side variables, not `NEXT_PUBLIC_`):
 
 - **Navigation, markets and the four principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
 - **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically).
-- **Hero Earth:** `public/media/earth.webm` and `earth.mp4` (a looping video converted from the supplied animated GIF, which was 25 MB) with a transparent still frame, `assets/images/earth-poster.webp`, shown first. The square video is trimmed to the planet's disc by a soft CSS mask (`.earth-video` in `app/globals.css`).
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
 - **Globe data:** `lib/geo/land-points.json` (Natural Earth land via `world-atlas`, run-length encoded).
 

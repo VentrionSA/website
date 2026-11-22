@@ -3,7 +3,6 @@
 import { useRef, type CSSProperties } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 import { ArrowLink } from "@/components/ui/ArrowLink";
-import { HeroEarth } from "./hero/HeroEarth";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
 
@@ -27,12 +26,7 @@ export function Hero() {
 
   return (
     <section ref={root} id="top" aria-labelledby="hero-title" className="relative isolate min-h-[100svh] overflow-hidden bg-ink">
-      <SectionBackdrop src={BACKDROPS.hero} position="50% 60%" wash={0.58} side="left" saturate={0.6} priority />
-      {/* Atmosphere */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20">
-        <div className="absolute inset-0 bg-[radial-gradient(50%_55%_at_50%_30%,rgba(196,167,121,0.11),transparent_72%)] lg:bg-[radial-gradient(42%_60%_at_66%_46%,rgba(196,167,121,0.12),transparent_72%)]" />
-              </div>
-
+      <SectionBackdrop src={BACKDROPS.hero} position="50% 62%" wash={0.12} side="left" saturate={1} priority />
       {/* Editorial column guides */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
         <div className="shell grid h-full grid-cols-12">
@@ -42,7 +36,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[55%] bg-gradient-to-t from-ink via-ink/70 to-transparent lg:h-[45%]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[34%] bg-gradient-to-t from-ink/90 via-ink/45 to-transparent lg:h-[24%]" />
 
       <div className="shell relative flex min-h-[100svh] flex-col pb-[clamp(1.25rem,3.5vh,2.5rem)] pt-[clamp(6.5rem,15vh,9.5rem)]">
         <div data-hero-fade className="flex items-start justify-between gap-6">
@@ -52,18 +46,6 @@ export function Hero() {
           <p className="hero-fade eyebrow hidden text-right text-mist md:block" style={i(1)}>
             Middle East <span className="px-2 text-gold/70">/</span> Central Asia <span className="px-2 text-gold/70">/</span> Asia
           </p>
-        </div>
-
-        {/* The Earth: in the flow on small screens, to the right of the headline on large ones.
-            Scroll parallax (GSAP) on the outer wrapper, entrance (CSS) on the inner one. */}
-        <div
-          data-hero-visual
-          aria-hidden="true"
-          className="pointer-events-none flex flex-1 items-center justify-center py-7 lg:absolute lg:bottom-[17%] lg:left-[46%] lg:right-0 lg:top-[12%] lg:py-0"
-        >
-          <div className="hero-fade" style={i(1)}>
-            <HeroEarth className="w-[min(62vw,34svh)] sm:w-[min(56vw,38svh)] lg:w-[min(52vh,38vw,600px)]" />
-          </div>
         </div>
 
         <div data-hero-copy className="mt-auto lg:pt-6">
