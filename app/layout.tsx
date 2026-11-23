@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Cormorant_Garamond, Manrope, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navigation } from "@/components/layout/Navigation";
@@ -15,6 +15,14 @@ const serif = Cormorant_Garamond({
   display: "swap",
 });
 
+// Text serif with optical sizes: the navigation, hero details and the hero strip.
+const textSerif = Source_Serif_4({
+  subsets: ["latin"],
+  axes: ["opsz"],
+  variable: "--font-source",
+  display: "swap",
+});
+
 const sans = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
@@ -22,7 +30,7 @@ const sans = Manrope({
 });
 
 const siteUrl = getSiteUrl();
-const title = "Ventrion — Connecting Global Markets";
+const title = "Ventrion — Connecting markets. Moving opportunity.";
 const description = siteConfig.description;
 
 export const metadata: Metadata = {
@@ -74,7 +82,7 @@ function StructuredData() {
         url: siteUrl,
         logo: `${siteUrl}/brand/ventrion-logo-512.png`,
         description: siteConfig.description,
-        slogan: "Connecting Global Markets.",
+        slogan: "Connecting markets. Moving opportunity.",
         areaServed: MARKETS.map((m) => ({ "@type": "Country", name: m.name })),
         knowsAbout: ["Trade facilitation", "International trade"],
         ...(!isPlaceholder(siteConfig.email)
@@ -102,7 +110,7 @@ function StructuredData() {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${serif.variable} ${textSerif.variable} ${sans.variable}`} suppressHydrationWarning>
       <body>
         <a href="#main" className="skip-link">
           Skip to content

@@ -1,5 +1,6 @@
 /**
- * Section photography. The hero image (hero-wake.jpg, 2576px) was supplied by Ventrion.
+ * Section photography. The hero image (hero-wake.jpg) is the wake from Ventrion's own
+ * hero design, cleaned of its type and set to the page ivory.
  * The others are placeholder photography from Pexels (free licence, no
  * attribution required). Replace files in assets/images/backdrops at the same paths.
  */
@@ -11,7 +12,7 @@ import vessel from "@/assets/images/backdrops/vessel.jpg";
 import expertise from "@/assets/images/backdrops/expertise.jpg";
 
 export const BACKDROPS = {
-  /** A ship's wake on open water under a clear sky */
+  /** A ship's wake on misted green water, running to the top right */
   hero,
   /** Vessel above the clouds */
   about: approach,

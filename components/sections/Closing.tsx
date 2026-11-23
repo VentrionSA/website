@@ -17,10 +17,11 @@ export function Closing() {
     () => {
       const mm = gsap.matchMedia();
       mm.add(MOTION_QUERIES.motion, () => {
+        // Upright throughout, exactly as the logo: the star only grows into place.
         gsap.fromTo(
           "[data-closing-star]",
-          { rotate: -90, scale: 0.7 },
-          { rotate: 45, scale: 1, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "center center", scrub: 0.8 } },
+          { scale: 0.7, autoAlpha: 0.4 },
+          { scale: 1, autoAlpha: 1, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "center center", scrub: 0.8 } },
         );
       });
     },

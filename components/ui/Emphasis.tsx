@@ -1,6 +1,7 @@
 /**
  * Renders headline copy where *starred* words become the house emphasis:
- * serif italic in burgundy. e.g. "Partners We *Know*".
+ * serif italic in burgundy. e.g. "Principals We *Know*". Pass a className
+ * (e.g. "text-ivory") for a quieter green emphasis.
  */
 export function Emphasis({ text, className = "text-burgundy" }: { text: string; className?: string }) {
   const parts = text.split(/(\*[^*]+\*)/g).filter(Boolean);

@@ -17,7 +17,7 @@ function project(lat: number, lon: number) {
 
 /**
  * Static 2D map used when WebGL is unavailable: the same country outlines as the
- * globe, with the network in burgundy. Markers remain interactive.
+ * globe, with the network in green and the focused market in burgundy. Markers remain interactive.
  */
 export function FlatMap({
   focusIndex,
@@ -63,7 +63,7 @@ export function FlatMap({
         ctx.fillStyle = "#c9d1c5";
         ctx.fill(path);
         if (index >= 0) {
-          ctx.fillStyle = index === focusIndex ? "#b52336" : "rgba(181,35,54,0.62)";
+          ctx.fillStyle = index === focusIndex ? "#b52336" : "#5b796c";
           ctx.fill(path);
         }
       }
@@ -99,7 +99,7 @@ export function FlatMap({
               style={{ left: `${x}%`, top: `${y}%` }}
             >
               <span
-                className={`block rounded-full border-2 border-burgundy bg-paper transition-transform duration-300 ${focused ? "h-3.5 w-3.5" : "h-2.5 w-2.5"}`}
+                className={`block rounded-full border-2 bg-paper transition-transform duration-300 ${focused ? "h-3.5 w-3.5 border-burgundy" : "h-2.5 w-2.5 border-mark"}`}
               />
             </button>
           );

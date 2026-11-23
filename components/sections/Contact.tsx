@@ -26,13 +26,13 @@ function ContactRow({
 }) {
   const inner = (
     <>
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-line-strong transition-colors duration-500 group-hover:border-gold">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-line-strong transition-colors duration-500 group-hover:border-mark">
         {icon}
       </span>
       <span className="flex flex-col">
         <span className="eyebrow text-[10px] text-mist">{label}</span>
         {href ? (
-          <span className="mt-1 text-[15px] text-ivory transition-colors duration-500 group-hover:text-burgundy">{value}</span>
+          <span className="mt-1 text-[15px] text-ivory decoration-mark/40 underline-offset-4 group-hover:underline">{value}</span>
         ) : (
           <span className="mt-1 font-mono text-[12px] text-mist/60" title="Placeholder — configure in lib/site.ts">
             {placeholder}
@@ -59,7 +59,7 @@ export function Contact() {
       <SectionBackdrop src={BACKDROPS.contact} wash={0.66} side="left" saturate={0.55} />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_50%_at_15%_20%,rgba(196,167,121,0.08),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_50%_at_15%_20%,rgba(24,67,53,0.05),transparent_70%)]"
       />
       <div className="shell relative grid gap-16 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-5">
@@ -92,7 +92,7 @@ export function Contact() {
               <div data-reveal>
                 <ContactRow
                   href={mail}
-                  icon={<Mail className="h-4 w-4 text-gold" strokeWidth={1.5} aria-hidden="true" />}
+                  icon={<Mail className="h-4 w-4 text-mark" strokeWidth={1.5} aria-hidden="true" />}
                   label="Email"
                   value={siteConfig.email}
                   placeholder="[CONTACT_EMAIL]"

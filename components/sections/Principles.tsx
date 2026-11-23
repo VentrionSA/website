@@ -115,7 +115,7 @@ export function Principles() {
           </Eyebrow>
           <Reveal className="mt-10">
             <p className="display-md max-w-[24ch] text-balance text-mist">
-              But <em className="text-burgundy">network size alone</em> is not what matters to us.
+              But <em className="text-ivory">network size alone</em> is not what matters to us.
             </p>
           </Reveal>
           <TrustStatement />
@@ -139,12 +139,12 @@ export function Principles() {
                 {PRINCIPLES.map((principle, i) => (
                   <span
                     key={principle.id}
-                    className={`h-px flex-1 transition-colors duration-700 ${i <= active ? "bg-gold" : "bg-line-strong"}`}
+                    className={`h-px flex-1 transition-colors duration-700 ${i <= active ? "bg-mark" : "bg-line-strong"}`}
                   />
                 ))}
               </div>
               <p className="eyebrow mx-auto mt-4 w-full max-w-[440px] text-mist" aria-hidden="true">
-                <span className="text-burgundy">{PRINCIPLES[active].numeral}</span>
+                <span className="text-ivory">{PRINCIPLES[active].numeral}</span>
                 <span className="px-2">/</span>IV
               </p>
             </div>
@@ -162,14 +162,14 @@ export function Principles() {
               >
                 <InlineIllustration id={principle.id} />
                 <Reveal stagger={0.1}>
-                  <p data-reveal className="eyebrow text-burgundy">
+                  <p data-reveal className="eyebrow text-ivory">
                     {principle.numeral}
                   </p>
                   <h3 data-reveal className="display-md mt-5 max-w-[16ch] text-ivory">
                     <Emphasis text={principle.title} />
                   </h3>
                   <p data-reveal className="mt-7 max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">
-                    <Emphasis text={principle.lead} />
+                    <Emphasis text={principle.lead} className="text-ivory" />
                   </p>
                   {principle.body.map((paragraph) => (
                     <p key={paragraph.slice(0, 24)} data-reveal className="mt-5 max-w-[34rem] text-[16px] leading-[1.8] text-mist">
@@ -177,7 +177,7 @@ export function Principles() {
                     </p>
                   ))}
                   {principle.closing ? (
-                    <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-burgundy sm:text-[1.5rem]">
+                    <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-ivory sm:text-[1.5rem]">
                       {principle.closing}
                     </p>
                   ) : null}

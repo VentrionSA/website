@@ -1,13 +1,18 @@
 "use client";
 
-import { useRef, type CSSProperties } from "react";
+import Image from "next/image";
+import { Fragment, useRef, type CSSProperties } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
-import { ArrowLink } from "@/components/ui/ArrowLink";
-import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
+import { HERO_REGIONS } from "@/lib/content";
 
 const i = (n: number) => ({ "--i": n }) as CSSProperties;
 
+/**
+ * The opening view, built to Ventrion's hero design: the wake on ivory, the
+ * words in Ventrion green on the misted side, a single burgundy call to action,
+ * and the regions set in a band beneath the photograph.
+ */
 export function Hero() {
   const root = useRef<HTMLElement>(null);
 
@@ -16,106 +21,93 @@ export function Hero() {
       const mm = gsap.matchMedia();
       mm.add(MOTION_QUERIES.motion, () => {
         const st = { trigger: root.current, start: "top top", end: "bottom top", scrub: true } as const;
-        gsap.to("[data-hero-copy]", { yPercent: -16, autoAlpha: 0.1, ease: "none", scrollTrigger: st });
-        gsap.to("[data-hero-visual]", { yPercent: 12, ease: "none", scrollTrigger: st });
-        gsap.to("[data-hero-fade]", { autoAlpha: 0, ease: "none", scrollTrigger: { ...st, end: "35% top" } });
+        gsap.to("[data-hero-media]", { yPercent: 9, scale: 1.04, ease: "none", scrollTrigger: st });
+        gsap.to("[data-hero-copy]", { yPercent: -12, autoAlpha: 0.15, ease: "none", scrollTrigger: st });
       });
     },
     { scope: root },
   );
 
   return (
-    <section ref={root} id="top" aria-labelledby="hero-title" className="relative isolate min-h-[100svh] overflow-hidden bg-ink">
-      <SectionBackdrop
-        src={BACKDROPS.hero}
-        wash={0.14}
-        side="none"
-        edges="bottom"
-        sizes="(min-aspect-ratio: 181/100) 100vw, 181svh"
-        position="50% 50%"
-        priority
-      />
-      {/* Slight ivory overlay: light across the photograph, deeper only behind the words */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(244,240,230,0.42)_0%,rgba(244,240,230,0.6)_26%,rgba(244,240,230,0.6)_80%,rgba(244,240,230,0.3)_100%)] lg:bg-[linear-gradient(90deg,rgba(244,240,230,0.68)_0%,rgba(244,240,230,0.52)_30%,rgba(244,240,230,0.18)_50%,rgba(244,240,230,0)_66%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-20 hidden h-[18%] bg-[linear-gradient(180deg,rgba(244,240,230,0.5)_0%,rgba(244,240,230,0)_100%)] lg:block"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 hidden h-[40%] bg-[linear-gradient(0deg,rgba(244,240,230,0.55)_0%,rgba(244,240,230,0)_100%)] lg:block"
-      />
-
-      {/* Editorial column guides */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
-        <div className="shell grid h-full grid-cols-12">
-          {[0, 3, 6, 9].map((col) => (
-            <div key={col} className="h-full border-l border-ivory/[0.035]" style={{ gridColumnStart: col + 1 }} />
-          ))}
+    <section ref={root} id="top" aria-labelledby="hero-title" className="relative isolate flex min-h-[100svh] flex-col bg-ink">
+      {/* The wake */}
+      <div className="relative isolate flex min-h-[34rem] flex-1 flex-col overflow-hidden">
+        <div data-hero-media aria-hidden="true" className="absolute inset-0 -z-20 origin-top will-change-transform">
+          <Image
+            src={BACKDROPS.hero}
+            alt=""
+            fill
+            priority
+            quality={88}
+            placeholder="blur"
+            sizes="(min-aspect-ratio: 195/100) 100vw, 180svh"
+            className="object-cover object-[74%_50%] md:object-[80%_50%] lg:object-right"
+          />
         </div>
-      </div>
+        <div aria-hidden="true" className="hero-veil absolute inset-0 -z-10" />
 
-      
-      <div className="shell relative flex min-h-[100svh] flex-col pb-[clamp(1.25rem,3.5vh,2.5rem)] pt-[clamp(6.5rem,15vh,9.5rem)]">
-        <div data-hero-fade className="flex items-start justify-between gap-6">
-          <p className="hero-fade eyebrow max-w-[18rem] text-burgundy sm:max-w-none" style={i(0)}>
-            Global Trade Facilitation
-          </p>
-          <p className="hero-fade eyebrow hidden text-right text-ivory/75 md:block" style={i(1)}>
-            Middle East <span className="px-2 text-burgundy/70">/</span> Central Asia <span className="px-2 text-burgundy/70">/</span> Asia
-          </p>
-        </div>
-
-        <div data-hero-copy className="mt-auto lg:pt-6">
-          <h1 id="hero-title" className="display-hero text-ivory">
-            <span className="line-mask">
-              <span className="hero-line" style={i(0)}>
-                Connecting
-              </span>
-            </span>
-            <span className="line-mask">
-              <span className="hero-line" style={i(1)}>
-                Global <em className="text-burgundy">Markets.</em>
-              </span>
-            </span>
-          </h1>
-
-          <div className="mt-9 grid gap-8 lg:mt-10 lg:grid-cols-12 lg:items-end">
-            <p className="hero-fade max-w-[30rem] text-[15px] leading-relaxed text-ivory/85 sm:text-lg lg:col-span-5" style={i(2)}>
-              <span className="text-[0.86em] font-medium uppercase tracking-[0.2em] text-ivory">Ventrion</span> is a
-              private trade facilitation group, connecting trusted counterparts through relationships built over many
-              years.
+        <div className="shell relative flex flex-1 flex-col justify-start pb-16 pt-[clamp(7.5rem,19svh,10.5rem)] lg:justify-center lg:pb-[5.5vw] lg:pt-[5.5vw]">
+          <div data-hero-copy className="lg:pl-[0.72vw]">
+            <p
+              className="hero-fade font-text text-[11.5px] font-medium uppercase leading-none tracking-[0.2em] text-ivory md:text-[13px] lg:text-[clamp(12px,1.027vw,18px)]"
+              style={i(0)}
+            >
+              Ventrion <span aria-hidden="true">/</span>
+              <span className="sr-only">,</span> Global Commerce
             </p>
-            <div className="hero-fade flex flex-col gap-3 sm:flex-row lg:col-span-7 lg:justify-end" style={i(3)}>
-              <ArrowLink href="/#contact" magnetic>
-                Request an Introduction
-              </ArrowLink>
-              <ArrowLink href="/#network" variant="outline" magnetic>
-                The Network
-              </ArrowLink>
+
+            <h1
+              id="hero-title"
+              className="mt-6 font-serif text-[min(11.6vw,4.2rem)] font-semibold leading-[0.897] tracking-[-0.033em] text-ivory md:text-[3.8rem] lg:mt-[1.3vw] lg:text-[min(6.02vw,11.6svh)]"
+            >
+              <span className="line-mask">
+                <span className="hero-line" style={i(0)}>
+                  Connecting markets.
+                </span>
+              </span>
+              <span className="line-mask">
+                <span className="hero-line" style={i(1)}>
+                  Moving opportunity.
+                </span>
+              </span>
+            </h1>
+
+            <p
+              className="hero-fade mt-6 max-w-[34rem] font-text text-[17px] leading-[1.25] tracking-[0.02em] text-ivory md:text-[20px] lg:mt-[1.86vw] lg:max-w-none lg:text-[clamp(18px,1.741vw,31px)] lg:leading-[1.2]"
+              style={i(2)}
+            >
+              Private trade facilitation, directly between principals.
+            </p>
+
+            <div className="hero-fade mt-9 lg:mt-[3.03vw]" style={i(3)}>
+              <a
+                href="/#contact"
+                className="inline-flex h-[52px] items-center bg-burgundy px-7 font-text text-[17px] tracking-[0.01em] text-paper transition-colors duration-500 hover:bg-burgundy-deep lg:h-[clamp(48px,3.35vw,58px)] lg:px-[clamp(24px,1.94vw,34px)] lg:text-[clamp(17px,1.384vw,24px)]"
+              >
+                Start a conversation
+              </a>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Scroll fade (GSAP) on the wrapper, entrance animation (CSS) on the row: GSAP must not read a mid-animation opacity. */}
-        <div data-hero-fade className="mt-10">
-          <div className="hero-fade flex items-center justify-between border-t border-line pt-5" style={i(4)}>
-            <a href="/#about" className="group flex items-center gap-4" aria-label="Scroll to explore">
-              <span className="scroll-cue" aria-hidden="true" />
-              <span className="eyebrow text-ivory/75 transition-colors duration-500 group-hover:text-ivory">Scroll</span>
-            </a>
-            <p className="eyebrow hidden items-center gap-5 text-ivory/75 md:flex">
-              Private
-              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold/70" />
-              Trusted
-              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold/70" />
-              Global
-            </p>
-          </div>
-        </div>
+      {/* The regions, in a band beneath the photograph */}
+      <div className="relative flex h-[clamp(4.25rem,9svh,6rem)] items-center justify-center bg-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.7)]">
+        <p className="flex items-center gap-[clamp(0.85rem,3.8vw,4rem)] font-text text-[11.5px] font-medium uppercase leading-none tracking-[0.16em] text-ivory sm:text-[13px] lg:text-[clamp(14px,1.473vw,25px)] lg:tracking-[0.145em]">
+          <span aria-hidden="true" className="hidden h-px w-[6.9vw] bg-mark/45 sm:block" />
+          {HERO_REGIONS.map((region, n) => (
+            <Fragment key={region}>
+              {n > 0 ? (
+                <>
+                  <span aria-hidden="true" className="h-4 w-px bg-mark/70 lg:h-[1.8vw]" />
+                  <span className="sr-only">, </span>
+                </>
+              ) : null}
+              <span className="-mr-[0.145em] whitespace-nowrap">{region}</span>
+            </Fragment>
+          ))}
+          <span aria-hidden="true" className="hidden h-px w-[6.9vw] bg-mark/45 sm:block" />
+        </p>
       </div>
     </section>
   );

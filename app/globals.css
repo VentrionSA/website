@@ -4,33 +4,32 @@
    Ventrion design tokens
    ────────────────────────────────────────────────────────────── */
 @theme {
-  /* Ivory theme. Token names are historical: "ink" is the page background
-     (ivory) and "ivory" is the text colour (deep ink). */
+  /* Ivory and green. Token names are historical: "ink" is the page background
+     (ivory) and "ivory" is the text colour (deep Ventrion green). Green leads;
+     burgundy is kept for the pop: primary buttons, headline emphasis, the
+     focused market on the globe. */
   --color-ink: #f4f0e6;
   --color-coal: #efeade;
   --color-graphite: #ece6d8;
   --color-smoke: #e2dac9;
-  --color-ivory: #1c1914;
-  --color-mist: #5c564b;
-  --color-ash: #857d6f;
-  --color-gold: #8d6b3b;
-  --color-gold-soft: #77592f;
-  --color-gold-deep: #6b522c;
-  /* Burgundy: the accent for emphasis (italic headline words, primary buttons) */
+  --color-ivory: #123b30;
+  --color-mist: #4f6359;
+  --color-ash: #6f8077;
+  /* Burgundy: the accent (primary buttons, italic headline words) */
   --color-burgundy: #b52336;
-  /* The Ventrion star mark, wherever it appears */
+  --color-burgundy-deep: #96192a;
+  /* The Ventrion green: the star mark, ornaments and fine lines */
   --color-mark: #184335;
-  /* Theme-independent: light text on burgundy or photos; dark button hover */
+  /* Theme-independent light text on burgundy, green or photos */
   --color-paper: #f4f0e6;
-  --color-onyx: #1c1914;
-  --color-olive: #6f6c4f;
-  --color-earth: #8b7356;
-  --color-line: rgb(28 25 20 / 0.13);
-  --color-line-strong: rgb(28 25 20 / 0.26);
+  --color-line: rgb(24 67 53 / 0.15);
+  --color-line-strong: rgb(24 67 53 / 0.3);
   --color-alert: #a8502f;
   --color-whatsapp: #25d366;
 
   --font-serif: var(--font-display), "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  /* Text serif for the navigation, hero details and the hero strip */
+  --font-text: var(--font-source), "Source Serif 4", Georgia, "Times New Roman", serif;
   --font-sans: var(--font-manrope), "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
@@ -42,23 +41,6 @@
 /* ──────────────────────────────────────────────────────────────
    Base
    ────────────────────────────────────────────────────────────── */
-/* Optional dark palette for any element that needs it */
-.theme-dark {
-  --color-ink: #101110;
-  --color-coal: #141514;
-  --color-graphite: #191b19;
-  --color-smoke: #232522;
-  --color-ivory: #f4f0e6;
-  --color-mist: #a6a69e;
-  --color-ash: #6f706a;
-  --color-gold: #c4a779;
-  --color-gold-soft: #dcc8a2;
-  --color-gold-deep: #8f7650;
-  --color-line: rgb(244 240 230 / 0.12);
-  --color-line-strong: rgb(244 240 230 / 0.22);
-  color: var(--color-ivory);
-}
-
 @layer base {
   html {
     background-color: var(--color-ink);
@@ -81,12 +63,12 @@
   }
 
   ::selection {
-    background-color: var(--color-burgundy);
-    color: var(--color-ink);
+    background-color: var(--color-mark);
+    color: var(--color-paper);
   }
 
   :focus-visible {
-    outline: 1px solid var(--color-gold);
+    outline: 1px solid var(--color-mark);
     outline-offset: 4px;
   }
 
@@ -184,11 +166,6 @@
   -webkit-text-stroke: 1px color-mix(in srgb, var(--color-ivory) 28%, transparent);
 }
 
-@utility text-outline-gold {
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in srgb, var(--color-gold) 60%, transparent);
-}
-
 @utility line-mask {
   display: block;
   overflow: hidden;
@@ -224,8 +201,8 @@
     top: 1rem;
     z-index: 100;
     transform: translateY(-200%);
-    background: var(--color-gold);
-    color: var(--color-ink);
+    background: var(--color-mark);
+    color: var(--color-paper);
     padding: 0.75rem 1.25rem;
     font-size: 0.75rem;
     letter-spacing: 0.2em;
@@ -256,9 +233,34 @@
     transition: transform 0.6s var(--ease-premium);
   }
   .link-draw:hover::after,
-  .link-draw:focus-visible::after {
+  .link-draw:focus-visible::after,
+  .link-draw[aria-current="true"]::after {
     transform: scaleX(1);
     transform-origin: left;
+  }
+
+  /* Hero veil: an ivory wash that keeps the words legible wherever the crop brings
+     the water under them. At the design's wide proportions the photograph's own
+     mist does the work, so on wide screens the veil is off. */
+  .hero-veil {
+    background: linear-gradient(
+      180deg,
+      rgb(244 240 230 / 0.94) 0%,
+      rgb(244 240 230 / 0.86) 42%,
+      rgb(244 240 230 / 0.4) 62%,
+      rgb(244 240 230 / 0) 80%
+    );
+  }
+  @media (min-width: 1024px) {
+    .hero-veil {
+      background: linear-gradient(90deg, rgb(244 240 230 / 0.85) 0%, rgb(244 240 230 / 0.55) 30%, rgb(244 240 230 / 0) 54%);
+      opacity: 0;
+    }
+  }
+  @media (min-width: 1024px) and (max-aspect-ratio: 17/10) {
+    .hero-veil {
+      opacity: 1;
+    }
   }
 
   /* Hero entrance — CSS-driven so it paints before JS hydrates */
@@ -288,12 +290,9 @@
     opacity: 0;
     transition: transform 0.5s var(--ease-premium), opacity 0.4s ease;
   }
+  /* The star settles in upright, exactly as the logo; it never turns. */
   .preloader-mark {
-    animation: preloader-spin 1.4s var(--ease-premium) backwards;
-  }
-  .preloader-glow {
-    box-shadow: 0 0 30px 10px rgb(220 200 162 / 0.55), 0 0 80px 30px rgb(196 167 121 / 0.25);
-    animation: preloader-pulse 1.1s ease-in-out infinite alternate;
+    animation: preloader-settle 1.4s var(--ease-premium) backwards;
   }
   /* Hold the hero entrance until the curtain lifts */
   body:has(#preloader) .hero-line,
@@ -301,14 +300,12 @@
     animation-play-state: paused;
   }
 
-  /* Floating brand mark in the page footer */
+  /* Floating brand mark in the page footer: drifts, always upright */
   .float-mark {
-    animation:
-      float-bob 9s ease-in-out infinite alternate,
-      spin 120s linear infinite;
+    animation: float-bob 9s ease-in-out infinite alternate;
   }
 
-  /* Principle illustrations: fine gold line drawings that draw themselves */
+  /* Principle illustrations: fine green line drawings that draw themselves */
   .ill [data-draw] {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
@@ -342,9 +339,6 @@
     transform-origin: 200px 200px;
     animation: spin 160s linear infinite;
   }
-  .ill-orbit-fast {
-    animation-duration: 36s;
-  }
   @media (prefers-reduced-motion: reduce) {
     .ill [data-draw],
     .ill [data-pop],
@@ -357,68 +351,6 @@
     .ill-traveller {
       display: none;
     }
-  }
-
-  /* Scroll indicator */
-  .scroll-cue {
-    position: relative;
-    width: 1px;
-    height: 3.25rem;
-    overflow: hidden;
-    background: color-mix(in srgb, var(--color-ivory) 14%, transparent);
-  }
-  .scroll-cue::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--color-gold);
-    animation: scroll-cue 2.6s var(--ease-cinematic) infinite;
-  }
-
-  /* WhatsApp floating button pulse */
-  .wa-pulse::before,
-  .wa-pulse::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    border: 1px solid rgb(37 211 102 / 0.55);
-    animation: wa-pulse 3.2s var(--ease-premium) infinite;
-  }
-  .wa-pulse::after {
-    animation-delay: 1.6s;
-  }
-
-  html[data-menu="open"] .wa-float {
-    visibility: hidden;
-  }
-
-  /* Flowing dashes for SVG network lines */
-  .dash-flow {
-    stroke-dasharray: 2 10;
-    animation: dash-flow 6s linear infinite;
-  }
-  .spin-slow {
-    animation: spin 60s linear infinite;
-    transform-origin: center;
-    transform-box: fill-box;
-  }
-
-  /* Capability diagram micro-animations */
-  .glyph-pulse {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: glyph-pulse 3.2s var(--ease-premium) infinite;
-  }
-  .glyph-travel {
-    offset-rotate: 0deg;
-    animation: glyph-travel 5.5s var(--ease-cinematic) infinite;
-  }
-  .glyph-scan {
-    animation: glyph-scan 3.6s ease-in-out infinite alternate;
-  }
-  .glyph-blink {
-    animation: glyph-blink 2.8s ease-in-out infinite;
   }
 
   /* Form controls */
@@ -444,7 +376,7 @@
   }
   .field-input:focus {
     outline: none;
-    border-bottom-color: var(--color-burgundy);
+    border-bottom-color: var(--color-mark);
   }
   .field-input[aria-invalid="true"] {
     border-bottom-color: var(--color-alert);
@@ -462,36 +394,6 @@
     min-height: 8.5rem;
   }
 
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid var(--color-line-strong);
-    padding: 0.6rem 1rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-mist);
-    cursor: pointer;
-    user-select: none;
-    transition:
-      color 0.35s var(--ease-premium),
-      border-color 0.35s var(--ease-premium),
-      background-color 0.35s var(--ease-premium);
-  }
-  .chip:hover {
-    color: var(--color-ivory);
-    border-color: color-mix(in srgb, var(--color-ivory) 40%, transparent);
-  }
-  input:checked + .chip {
-    color: var(--color-ink);
-    background-color: var(--color-gold);
-    border-color: var(--color-gold);
-  }
-  input:focus-visible + .chip {
-    outline: 1px solid var(--color-gold);
-    outline-offset: 3px;
-  }
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -517,36 +419,6 @@
   }
 }
 
-@keyframes scroll-cue {
-  0% {
-    transform: translateY(-100%);
-  }
-  55% {
-    transform: translateY(0%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-@keyframes wa-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  70%,
-  100% {
-    transform: scale(1.65);
-    opacity: 0;
-  }
-}
-
-@keyframes dash-flow {
-  to {
-    stroke-dashoffset: -120;
-  }
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -564,23 +436,14 @@
   }
 }
 
-@keyframes preloader-spin {
+@keyframes preloader-settle {
   from {
-    transform: rotate(-60deg) scale(0.85);
-  }
-  to {
-    transform: rotate(0deg) scale(1);
-  }
-}
-
-@keyframes preloader-pulse {
-  from {
-    opacity: 0.6;
-    scale: 0.85;
+    opacity: 0;
+    transform: scale(0.85);
   }
   to {
     opacity: 1;
-    scale: 1.15;
+    transform: scale(1);
   }
 }
 
@@ -590,51 +453,6 @@
   }
   to {
     translate: 0 18px;
-  }
-}
-
-@keyframes glyph-pulse {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.9;
-  }
-  100% {
-    transform: scale(1.7);
-    opacity: 0;
-  }
-}
-
-@keyframes glyph-travel {
-  0% {
-    offset-distance: 0%;
-    opacity: 0;
-  }
-  12%,
-  88% {
-    opacity: 1;
-  }
-  100% {
-    offset-distance: 100%;
-    opacity: 0;
-  }
-}
-
-@keyframes glyph-scan {
-  from {
-    transform: translateY(-34px);
-  }
-  to {
-    transform: translateY(34px);
-  }
-}
-
-@keyframes glyph-blink {
-  0%,
-  100% {
-    opacity: 0.25;
-  }
-  50% {
-    opacity: 1;
   }
 }
 

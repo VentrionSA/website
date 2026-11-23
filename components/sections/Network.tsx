@@ -15,7 +15,7 @@ const loadGlobe = () => import("@/components/three/GlobeCanvas");
 const GlobeCanvas = dynamic(loadGlobe, { ssr: false });
 
 function CornerFrame() {
-  const corner = "absolute h-5 w-5 border-gold/40";
+  const corner = "absolute h-5 w-5 border-mark/35";
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
       <span className={`${corner} left-0 top-0 border-l border-t`} />
@@ -76,15 +76,15 @@ export function Network() {
       <SectionBackdrop src={BACKDROPS.network} wash={0.74} side="both" saturate={0.4} />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_40%_at_32%_58%,rgba(196,167,121,0.08),transparent_72%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_40%_at_32%_58%,rgba(24,67,53,0.05),transparent_72%)]"
       />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-mark/25 to-transparent" />
 
       <div className="shell relative">
         <Eyebrow index="02">The Network</Eyebrow>
         <Reveal className="mt-10">
           <p className="display-sm max-w-[30ch] text-balance text-mist">
-            <em className="text-burgundy">International reach</em> is not created by having thousands of names in a directory.
+            <em className="text-ivory">International reach</em> is not created by having thousands of names in a directory.
           </p>
         </Reveal>
         <SplitHeading id="network-title" className="display-xl mt-6 max-w-[16ch] text-balance text-ivory">
@@ -98,7 +98,7 @@ export function Network() {
             {/* soft shadow grounding the porcelain globe */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-[85%] h-[7%] w-[58%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(28,25,20,0.2),transparent)] blur-md"
+              className="pointer-events-none absolute left-1/2 top-[85%] h-[7%] w-[58%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(24,67,53,0.18),transparent)] blur-md"
             />
             <div className="absolute inset-[4%]">
               {tier === "none" ? (
@@ -116,7 +116,7 @@ export function Network() {
           <div className="mx-auto mt-8 grid w-full max-w-[760px] grid-cols-2 gap-x-6 gap-y-7 border-t border-line pt-7 sm:grid-cols-3">
             {REGIONS.map((region) => (
               <div key={region} className={region === "Middle East" ? "row-span-2 sm:row-span-1" : ""}>
-                <p className="eyebrow text-[10px] text-burgundy">{region}</p>
+                <p className="eyebrow text-[10px] text-mist">{region}</p>
                 <ul className="mt-3 space-y-2">
                   {MARKETS.map((market, i) =>
                     market.region === region ? (
@@ -129,8 +129,8 @@ export function Network() {
                           onFocus={() => hoverMarket(i)}
                           onBlur={() => hoverMarket(null)}
                           aria-pressed={i === active}
-                          className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight transition-colors duration-500 sm:text-[1.25rem] ${
-                            i === focus ? "text-burgundy" : "text-ivory hover:text-burgundy"
+                          className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight text-ivory transition-opacity duration-500 sm:text-[1.25rem] ${
+                            i === focus ? "italic" : "opacity-80 hover:opacity-100"
                           }`}
                         >
                           <span
@@ -152,13 +152,10 @@ export function Network() {
 
           <Reveal stagger={0.12} className="lg:col-span-4 lg:col-start-9">
             <p data-reveal className="font-serif text-[1.45rem] leading-snug text-ivory sm:text-[1.65rem]">
-              Over many years of international logistics activity, Ventrion has developed{" "}
-              <em className="text-burgundy">relationships</em> with experienced
-              agents and service partners across global markets.
+              Ventrion is connected directly to the <em className="text-ivory">principals.</em>
             </p>
             <p data-reveal className="mt-6 text-[16px] leading-[1.8] text-mist">
-              These relationships allow us to coordinate shipments worldwide while maintaining local knowledge and
-              operational support at origin and destination.
+              Not to a chain of intermediaries. Every introduction is made between the decision-makers themselves.
             </p>
             <div data-reveal className="mt-10 flex items-center gap-4 border-t border-line pt-6">
               <span aria-hidden="true" className="relative flex h-2 w-2">
@@ -166,7 +163,7 @@ export function Network() {
                 <span className="relative h-2 w-2 rounded-full bg-burgundy" />
               </span>
               <p className="eyebrow text-[10px] text-mist">
-                Now highlighting <span className="ml-1 text-burgundy">{MARKETS[focus].name}</span>
+                Now highlighting <span className="ml-1 text-ivory">{MARKETS[focus].name}</span>
               </p>
             </div>
           </Reveal>

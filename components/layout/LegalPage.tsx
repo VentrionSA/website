@@ -27,14 +27,14 @@ export function LegalPage({
               <Emphasis text={title} />
             </h1>
             <p className="mt-6 text-sm text-mist">Last updated: {updated}</p>
-            <Link href="/" className="link-draw mt-10 inline-flex text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory hover:text-burgundy">
+            <Link href="/" className="link-draw mt-10 inline-flex text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory">
               ← Back to home
             </Link>
           </div>
         </div>
         <article className="legal-copy max-w-2xl space-y-6 text-[16px] leading-[1.8] text-mist lg:col-span-7 lg:col-start-6 [&_h2]:mt-12 [&_h2]:font-serif [&_h2]:text-3xl [&_h2]:text-ivory [&_li]:ml-5 [&_li]:list-disc [&_strong]:text-ivory">
           {draft ? (
-            <p className="border border-gold/30 bg-gold/[0.05] p-5 text-sm text-ivory/85">
+            <p className="border border-mark/25 bg-mark/[0.04] p-5 text-sm text-ivory/85">
               This page is awaiting final details. Bracketed items are placeholders.
             </p>
           ) : null}

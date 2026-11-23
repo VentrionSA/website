@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Ventrion — Connecting Global Markets",
+    name: "Ventrion — Connecting markets. Moving opportunity.",
     short_name: "Ventrion",
     description: "A private trade facilitation group.",
     start_url: "/",

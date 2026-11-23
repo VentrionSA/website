@@ -3,7 +3,7 @@ import { MARK_PATH } from "@/components/brand/logo-paths";
 import type { PrincipleId } from "@/lib/content";
 
 /*
- * Fine gold line drawings, one per principle. Elements marked data-draw,
+ * Fine green line drawings, one per principle. Elements marked data-draw,
  * data-pop and data-fade animate in (CSS, see .ill in globals.css) when the
  * root svg has data-active="true"; --d is the delay in ms, --o a target opacity.
  */
@@ -16,11 +16,18 @@ const MARK_H = 767;
 const polar = (r: number, deg: number): [number, number] => [C + r * Math.cos(deg * DEG), C + r * Math.sin(deg * DEG)];
 const d = (ms: number, o?: number) => ({ "--d": ms, ...(o !== undefined ? { "--o": o } : {}) }) as CSSProperties;
 
+/** The Ventrion star, exactly as the logo: same path, same fill rule, always upright. */
 function Star({ x, y, size, delay }: { x: number; y: number; size: number; delay: number }) {
   const s = size / MARK_W;
   return (
     <g data-pop style={d(delay)}>
-      <path d={MARK_PATH} className="fill-mark" transform={`translate(${x - size / 2} ${y - (MARK_H * s) / 2}) scale(${s})`} />
+      <path
+        d={MARK_PATH}
+        fillRule="evenodd"
+        stroke="none"
+        className="fill-mark"
+        transform={`translate(${x - size / 2} ${y - (MARK_H * s) / 2}) scale(${s})`}
+      />
     </g>
   );
 }
@@ -38,7 +45,7 @@ function Frame({ active, label, children }: { active: boolean; label: string; ch
   return (
     <svg
       viewBox="0 0 400 400"
-      className="ill h-full w-full overflow-visible text-gold"
+      className="ill h-full w-full overflow-visible text-mark"
       data-active={active ? "true" : "false"}
       aria-hidden="true"
       data-label={label}
@@ -52,9 +59,9 @@ function Frame({ active, label, children }: { active: boolean; label: string; ch
   );
 }
 
-/* I. Partners we know: growth rings of long cooperation, partners held by firm lines. */
+/* I. Principals we know: growth rings of long cooperation, direct lines to each principal. */
 const RINGS = [58, 96, 134, 170];
-const PARTNERS: [number, number][] = [
+const PRINCIPALS: [number, number][] = [
   [96, -62],
   [134, -10],
   [170, 34],
@@ -64,16 +71,16 @@ const PARTNERS: [number, number][] = [
   [170, 258],
 ];
 
-function Partners({ active }: { active: boolean }) {
-  const nodes = PARTNERS.map(([r, a]) => polar(r, a));
+function Principals({ active }: { active: boolean }) {
+  const nodes = PRINCIPALS.map(([r, a]) => polar(r, a));
   return (
-    <Frame active={active} label="Partners we know">
+    <Frame active={active} label="Principals we know">
       <g className="ill-orbit">
         {RINGS.map((r, i) => (
           <circle key={r} cx={C} cy={C} r={r} pathLength={1} data-draw style={d(i * 160)} strokeOpacity={0.22 + i * 0.05} />
         ))}
         {nodes.map(([x, y], i) => {
-          const [sx, sy] = polar(26, PARTNERS[i][1]);
+          const [sx, sy] = polar(26, PRINCIPALS[i][1]);
           return <line key={`l${i}`} x1={sx} y1={sy} x2={x} y2={y} pathLength={1} data-draw style={d(700 + i * 110)} strokeOpacity={0.6} />;
         })}
         {[
@@ -147,7 +154,7 @@ function Local({ active }: { active: boolean }) {
   );
 }
 
-/* III. Quality over quantity: a directory of anonymous dots, a few chosen partners. */
+/* III. Quality over quantity: a directory of anonymous dots, a few chosen counterparts. */
 const GRID: [number, number][] = [];
 for (let c = 0; c <= 10; c++) for (let r = 0; r <= 10; r++) if (!(c === 5 && r === 5)) GRID.push([50 + c * 30, 50 + r * 30]);
 const CHOSEN: [number, number][] = [
@@ -214,9 +221,7 @@ function Accountability({ active }: { active: boolean }) {
         );
       })}
       <circle cx={C} cy={C} r={64} pathLength={1} data-draw style={d(700)} strokeOpacity={0.75} />
-      <g className="ill-orbit ill-orbit-fast">
-        <Star x={C} y={C - 64} size={26} delay={1300} />
-      </g>
+      <Star x={C} y={C - 64} size={26} delay={1300} />
       <g data-pop style={d(1500)}>
         <circle cx={C} cy={C} r={14} strokeOpacity={0.6} />
         <circle cx={C} cy={C} r={5} stroke="none" className="fill-ivory" />
@@ -226,7 +231,7 @@ function Accountability({ active }: { active: boolean }) {
 }
 
 const ILLUSTRATIONS: Record<PrincipleId, (props: { active: boolean }) => ReactNode> = {
-  partners: Partners,
+  principals: Principals,
   local: Local,
   quality: Quality,
   accountability: Accountability,

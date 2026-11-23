@@ -8,9 +8,9 @@ const MIN_MS = 1150; // fast, but long enough to read as intentional
 const MAX_MS = 2600; // never hold people back on a slow connection
 
 /**
- * Homepage loading screen: the Ventrion star draws itself in a circular sweep
- * around a glowing centre while a 0–100% counter and hairline progress bar run,
- * then the curtain lifts. Rendered on the server so it paints instantly.
+ * Homepage loading screen: the Ventrion star, upright and exactly as the logo,
+ * is revealed by a circular sweep while a 0–100% counter and hairline progress
+ * bar run, then the curtain lifts. Rendered on the server so it paints instantly.
  */
 export function Preloader() {
   const [progress, setProgress] = useState(0);
@@ -78,8 +78,6 @@ export function Preloader() {
     >
       <div className="preloader-inner flex flex-col items-center">
         <div className="relative h-28 w-28 sm:h-32 sm:w-32">
-          {/* glowing core */}
-          <span aria-hidden="true" className="preloader-glow absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-soft" />
           {/* faint full mark + the mark revealed by a conic sweep tied to progress */}
           <LogoMark className="absolute inset-0 h-full w-full text-mark/[0.12]" />
           <div
@@ -100,7 +98,7 @@ export function Preloader() {
       <p className="eyebrow absolute bottom-7 left-1/2 -translate-x-1/2 text-[10px] tabular-nums text-mist">
         Loading {pct}%
       </p>
-      <span aria-hidden="true" className="absolute bottom-0 left-0 h-px bg-gold" style={{ width: `${progress}%` }} />
+      <span aria-hidden="true" className="absolute bottom-0 left-0 h-px bg-mark" style={{ width: `${progress}%` }} />
     </div>
   );
 }

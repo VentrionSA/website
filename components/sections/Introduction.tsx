@@ -25,8 +25,8 @@ function MeetingPoint() {
           .fromTo("[data-line='r']", { scaleX: 0 }, { scaleX: 1 }, 0)
           .fromTo("[data-side='l']", { x: -24, autoAlpha: 0.25 }, { x: 0, autoAlpha: 1 }, 0)
           .fromTo("[data-side='r']", { x: 24, autoAlpha: 0.25 }, { x: 0, autoAlpha: 1 }, 0)
-          .fromTo("[data-star]", { rotate: -135, scale: 0.55, autoAlpha: 0.3 }, { rotate: 0, scale: 1, autoAlpha: 1 }, 0.25)
-          .fromTo("[data-star-glow]", { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1 }, 0.55);
+          // The star arrives upright, exactly as the logo: it scales in, it never turns.
+          .fromTo("[data-star]", { scale: 0.55, autoAlpha: 0.3 }, { scale: 1, autoAlpha: 1 }, 0.25);
       });
     },
     { scope: root },
@@ -40,19 +40,15 @@ function MeetingPoint() {
         Origin
       </span>
       <span className="relative h-px flex-1">
-        <span data-line="l" className="absolute inset-0 origin-left bg-gradient-to-r from-ivory/15 via-gold/50 to-gold" />
+        <span data-line="l" className="absolute inset-0 origin-left bg-gradient-to-r from-mark/10 via-mark/45 to-mark" />
       </span>
       <span className="relative flex flex-col items-center">
-        <span
-          data-star-glow
-          className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(220,200,162,0.35),transparent_68%)]"
-        />
         <span data-star className="relative text-mark">
           <LogoMark className="h-[clamp(2.6rem,6vw,4.75rem)] w-auto" />
         </span>
       </span>
       <span className="relative h-px flex-1">
-        <span data-line="r" className="absolute inset-0 origin-right bg-gradient-to-l from-ivory/15 via-gold/50 to-gold" />
+        <span data-line="r" className="absolute inset-0 origin-right bg-gradient-to-l from-mark/10 via-mark/45 to-mark" />
       </span>
       <span data-side="r" className={side}>
         Destination
@@ -72,7 +68,6 @@ function ConnectedNetwork() {
         const st = { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 0.6 } as const;
         gsap.fromTo("[data-row='a']", { xPercent: 6 }, { xPercent: -10, ease: "none", scrollTrigger: st });
         gsap.fromTo("[data-row='b']", { xPercent: -8 }, { xPercent: 6, ease: "none", scrollTrigger: st });
-        gsap.fromTo("[data-row-star]", { rotate: -45 }, { rotate: 135, ease: "none", scrollTrigger: st });
         gsap.fromTo(
           "[data-sweep]",
           { backgroundPosition: "100% 0%" },
@@ -106,13 +101,13 @@ function ConnectedNetwork() {
             data-sweep
             className="font-serif text-[clamp(3.4rem,11.2vw,12.75rem)] uppercase italic leading-[0.86] tracking-[-0.02em]"
             style={{
-              backgroundImage: "linear-gradient(90deg, #b52336 0%, #b52336 48%, transparent 52%, transparent 100%)",
+              backgroundImage: "linear-gradient(90deg, #184335 0%, #184335 48%, transparent 52%, transparent 100%)",
               backgroundSize: "210% 100%",
               backgroundPosition: "0% 0%",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
-              WebkitTextStroke: "1px rgba(181,35,54,0.5)",
+              WebkitTextStroke: "1px rgba(24,67,53,0.5)",
             }}
           >
             Network
@@ -140,7 +135,7 @@ export function Introduction() {
 
         <Reveal stagger={0.12} className="mt-[clamp(3.5rem,7vw,6rem)] flex max-w-[44rem] flex-col items-center">
           <p data-reveal className="display-sm text-ivory">
-            Ventrion endeavours to be a <em className="text-burgundy">reliable business partner</em> to all of its commercial counterparts.
+            Ventrion endeavours to be a <em className="text-ivory">reliable business partner</em> to all of its commercial counterparts.
           </p>
           <p data-reveal className="mt-6 max-w-[34rem] text-[17px] leading-[1.8] text-mist">
             We facilitate trade for a private circle of clients and counterparts: directly, discreetly and with

@@ -4,16 +4,13 @@ import { useEffect, useRef, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { NAV_LINKS } from "@/lib/content";
-import { getWhatsAppHref } from "@/lib/site";
 import { scrollToId, startScroll, stopScroll } from "@/lib/scroll";
-import { WhatsAppIcon } from "@/components/ui/icons";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const whatsapp = getWhatsAppHref();
 
   useEffect(() => {
     if (!open) return;
@@ -80,7 +77,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_85%_10%,rgba(196,167,121,0.12),transparent_70%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_85%_10%,rgba(24,67,53,0.06),transparent_70%)]"
           />
           <div className="shell relative flex h-full flex-col overflow-y-auto pb-[calc(2rem+env(safe-area-inset-bottom))] pt-28">
             <nav aria-label="Mobile">
@@ -96,8 +93,8 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                       exit={{ y: "110%", transition: { duration: 0.4, ease: EASE } }}
                       transition={{ delay: 0.28 + i * 0.07, duration: 1, ease: EASE_OUT }}
                     >
-                      <span className="eyebrow w-6 text-burgundy">0{i + 1}</span>
-                      <span className="display-md">{link.label}</span>
+                      <span className="eyebrow w-6 text-mist">0{i + 1}</span>
+                      <span className="display-md text-ivory">{link.label}</span>
                     </motion.a>
                   </li>
                 ))}
@@ -114,25 +111,14 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
               <p className="max-w-xs text-sm leading-relaxed text-mist">
                 A private trade facilitation group.
               </p>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="/#contact"
-                  onClick={(event) => go(event, "/#contact")}
-                  className="inline-flex items-center justify-between gap-4 bg-burgundy px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-paper"
-                >
-                  Request an Introduction
-                  <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-                </a>
-                <a
-                  href={whatsapp ?? "/#contact"}
-                  onClick={whatsapp ? undefined : (event) => go(event, "/#contact")}
-                  {...(whatsapp ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="inline-flex items-center justify-between gap-4 border border-line-strong px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-ivory"
-                >
-                  WhatsApp
-                  <WhatsAppIcon className="h-4 w-4 text-whatsapp" />
-                </a>
-              </div>
+              <a
+                href="/#contact"
+                onClick={(event) => go(event, "/#contact")}
+                className="inline-flex items-center justify-between gap-4 bg-burgundy px-6 py-4 font-text text-[17px] text-paper"
+              >
+                Start a conversation
+                <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+              </a>
             </motion.div>
           </div>
         </motion.div>

@@ -18,7 +18,7 @@ export const siteConfig = {
   name: "Ventrion",
   /** Registered legal entity name, shown in the copyright line. */
   legalName: process.env.NEXT_PUBLIC_COMPANY_LEGAL_NAME || "Ventrion Company",
-  tagline: "Connecting Global Markets",
+  tagline: "Connecting markets. Moving opportunity.",
   description:
     "Ventrion is a private trade facilitation group, connecting trusted counterparts through an established network across the Middle East, Central Asia and Asia.",
 

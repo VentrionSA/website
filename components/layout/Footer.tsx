@@ -33,14 +33,14 @@ export function Footer() {
               <LogoMark className="h-12 w-auto text-mark" />
               <LogoWordmark className="h-[15px] w-auto" />
             </a>
-            <p className="display-sm mt-10 max-w-[20ch] text-ivory/90">
-              Connecting global <em className="text-burgundy">markets.</em>
+            <p className="display-sm mt-10 max-w-[22ch] text-ivory">
+              Connecting markets. Moving <em className="text-burgundy">opportunity.</em>
             </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-mist">A private trade facilitation group.</p>
           </div>
 
           <nav aria-label="Footer" className="lg:col-span-2 lg:col-start-8">
-            <p className="eyebrow mb-6 text-burgundy">Navigate</p>
+            <p className="eyebrow mb-6 text-ivory">Navigate</p>
             <ul className="space-y-3.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
@@ -53,7 +53,7 @@ export function Footer() {
           </nav>
 
           <div className="lg:col-span-3">
-            <p className="eyebrow mb-6 text-burgundy">Contact</p>
+            <p className="eyebrow mb-6 text-ivory">Contact</p>
             <ul className="space-y-4 text-sm">
               <li className="flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-[0.24em] text-mist">Email</span>

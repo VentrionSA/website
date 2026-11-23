@@ -23,15 +23,16 @@ type CountryData = { w: number; h: number; countries: { id: string | null; d: st
 
 const DEG = Math.PI / 180;
 
-/* Cartographic palette: ivory sea, sage land (a tint of the #184335 mark), green-ink borders, burgundy network. */
+/* Cartographic palette: ivory sea, sage land (a tint of the #184335 mark), green-ink borders,
+   the network in a deeper Ventrion green. Burgundy is the pop: only the focused market. */
 const OCEAN = "#f4f0e6";
 const LAND = "#c9d1c5";
 const BORDER = "rgba(24,67,53,0.38)";
-const NETWORK_FILL = "rgba(181,35,54,0.62)";
-const NETWORK_BORDER = "rgba(120,22,36,0.5)";
+const NETWORK_FILL = "#5b796c";
+const NETWORK_BORDER = "rgba(16,48,38,0.55)";
 const LIMB = "#c3c5b9";
 const BURGUNDY = "#b52336";
-const GOLD = "#8d6b3b";
+const GREEN = "#184335";
 const PIN = "#f4f0e6";
 /** ID mask encoding: market i is stored as (i + 1) * ID_STEP in the red channel. */
 const ID_STEP = 24;
@@ -195,7 +196,7 @@ function GlobeBody({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier;
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-    const lineMat = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.14, depthWrite: false });
+    const lineMat = new THREE.LineBasicMaterial({ color: GREEN, transparent: true, opacity: 0.12, depthWrite: false });
     return { body, graticule: new THREE.LineSegments(geo, lineMat) };
   }, []);
 
@@ -279,11 +280,11 @@ function Marker({
       </mesh>
       <mesh renderOrder={3}>
         <ringGeometry args={[focused ? 0.0145 : 0.0105, focused ? 0.019 : 0.0135, 32]} />
-        <meshBasicMaterial color={BURGUNDY} toneMapped={false} depthWrite={false} transparent side={THREE.DoubleSide} />
+        <meshBasicMaterial color={focused ? BURGUNDY : GREEN} toneMapped={false} depthWrite={false} transparent side={THREE.DoubleSide} />
       </mesh>
       <mesh ref={ring} renderOrder={3}>
         <ringGeometry args={[0.02, 0.023, 48]} />
-        <meshBasicMaterial color={GOLD} transparent depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={focused ? BURGUNDY : GREEN} transparent depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       {/* Generous invisible hit area */}
       <mesh
