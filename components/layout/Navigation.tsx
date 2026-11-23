@@ -70,14 +70,14 @@ export function Navigation() {
       >
         <div
           className={`shell flex items-center justify-between ${morph} ${
-            solid ? "h-[68px]" : "h-[clamp(84px,7vw,124px)]"
+            solid ? "h-[68px]" : "h-[clamp(84px,7.5vw,128px)]"
           }`}
         >
           <a href="/#top" className="relative z-10 -m-2 p-2" aria-label="Ventrion, Global Commerce — back to top">
             <LogoLockup
               tagline
               className={`${morph} ${solid ? "gap-3" : "gap-3 lg:gap-[1.14vw]"}`}
-              markClassName={`w-auto ${morph} ${solid ? "h-[30px]" : "h-[38px] lg:h-[clamp(44px,4.07vw,70px)]"}`}
+              markClassName={`w-auto ${morph} ${solid ? "h-[30px]" : "h-[38px] lg:h-[clamp(44px,4.2vw,72px)]"}`}
               wordClassName={`h-auto ${morph} ${solid ? "w-[104px]" : "w-[118px] lg:w-[clamp(132px,12.3vw,212px)]"}`}
               taglineClassName={`${morph} ${
                 solid ? "mt-0 max-h-0 opacity-0" : "mt-[0.95em] max-h-[2em] text-[7px] opacity-100 lg:text-[clamp(7px,0.623vw,10.75px)]"
@@ -85,7 +85,7 @@ export function Navigation() {
             />
           </a>
 
-          <nav aria-label="Primary" className={`hidden lg:-mr-[0.9vw] lg:block ${morph} ${solid ? "" : "-translate-y-[0.55vw]"}`}>
+          <nav aria-label="Primary" className={`hidden lg:-mr-[0.9vw] lg:block ${morph} ${solid ? "" : "-translate-y-[0.8vw]"}`}>
             <ul className="flex items-center gap-[clamp(2.25rem,4.3vw,4.5rem)]">
               {NAV_LINKS.map((link) => {
                 const id = link.href.replace("/#", "");
