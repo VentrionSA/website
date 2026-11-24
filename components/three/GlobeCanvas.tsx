@@ -397,6 +397,21 @@ export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
+  // Two-finger horizontal swipes on a trackpad turn the globe too (vertical scrolling stays with the page).
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || Math.abs(event.deltaX) < 1 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      event.stopPropagation(); // keep the smooth-scroller from nudging the page
+      drag.current.dx -= event.deltaX * (event.deltaMode === 1 ? 16 : 1);
+      onInteract?.();
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [onInteract]);
+
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
@@ -444,7 +459,11 @@ export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect
       }}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
-      onLostPointerCapture={() => {
+      onLostPointerCapture={(e) => {
+        // Only our own capture ending counts. On touch screens the canvas holds the
+        // finger first and loses it the moment the drag starts; that event bubbles
+        // up here and must not cancel the drag.
+        if (e.target !== e.currentTarget) return;
         drag.current.dragging = false;
         drag.current.pressed = false;
       }}
