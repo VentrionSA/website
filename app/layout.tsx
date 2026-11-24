@@ -4,6 +4,7 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
+import { InvestorPortalProvider } from "@/components/portal/InvestorPortal";
 import { MARKETS } from "@/lib/content";
 import { getSiteUrl, isPlaceholder, siteConfig } from "@/lib/site";
 
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
   keywords: [
     "Ventrion",
     "Trade facilitation",
-    "Private trade facilitation",
+    "Independent trade facilitation",
     "Trusted trade network",
     "International trade network",
     "Middle East trade",
@@ -116,9 +117,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <SmoothScroll>
-          <Navigation />
-          {children}
-          <Footer />
+          <InvestorPortalProvider>
+            <Navigation />
+            {children}
+            <Footer />
+          </InvestorPortalProvider>
         </SmoothScroll>
         <div className="grain" aria-hidden="true" />
         <StructuredData />

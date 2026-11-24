@@ -9,7 +9,7 @@ import { LogoMark } from "@/components/brand/Logo";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
 
-/** Origin and destination drawn together, coordinated at the Ventrion star. */
+/** Origin and destination drawn together, connected at the Ventrion star. */
 function MeetingPoint() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -124,22 +124,21 @@ export function Introduction() {
       <SectionBackdrop src={BACKDROPS.about} wash={0.72} side="both" saturate={0.55} />
       <div className="shell flex flex-col items-center text-center">
         <Eyebrow index="01" className="justify-center">
-          Private Trade Facilitation
+          Independent Trade Facilitation
         </Eyebrow>
         <SplitHeading id="about-title" className="display-lg mt-8 max-w-[13ch] text-ivory">
           A private network for <em className="text-burgundy">trusted trade.</em>
         </SplitHeading>
 
         <MeetingPoint />
-        <p className="sr-only">Ventrion coordinates trade between origin and destination.</p>
+        <p className="sr-only">Ventrion connects origin and destination.</p>
 
         <Reveal stagger={0.12} className="mt-[clamp(3.5rem,7vw,6rem)] flex max-w-[44rem] flex-col items-center">
           <p data-reveal className="display-sm text-ivory">
             Ventrion endeavours to be a <em className="text-ivory">reliable business partner</em> to all of its commercial counterparts.
           </p>
           <p data-reveal className="mt-6 max-w-[34rem] text-[17px] leading-[1.8] text-mist">
-            We facilitate trade for a private circle of clients and counterparts: directly, discreetly and with
-            personal accountability from origin to destination.
+            We facilitate trade for a private circle of clients and counterparts: directly and discreetly.
           </p>
         </Reveal>
       </div>

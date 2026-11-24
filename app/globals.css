@@ -300,6 +300,11 @@
     animation-play-state: paused;
   }
 
+  /* Investor portal: the light that runs along the header rule while the session opens */
+  .portal-scan {
+    animation: portal-scan 1.5s var(--ease-cinematic) infinite;
+  }
+
   /* Floating brand mark in the page footer: drifts, always upright */
   .float-mark {
     animation: float-bob 9s ease-in-out infinite alternate;
@@ -444,6 +449,15 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes portal-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
   }
 }
 

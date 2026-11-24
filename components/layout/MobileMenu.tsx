@@ -2,15 +2,19 @@
 
 import { useEffect, useRef, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, KeyRound, Phone } from "lucide-react";
 import { NAV_LINKS } from "@/lib/content";
+import { getCallAction } from "@/lib/site";
 import { scrollToId, startScroll, stopScroll } from "@/lib/scroll";
+import { useInvestorPortal } from "@/components/portal/InvestorPortal";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const portal = useInvestorPortal();
+  const call = getCallAction();
 
   useEffect(() => {
     if (!open) return;
@@ -109,16 +113,34 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
               transition={{ delay: 0.7, duration: 0.9, ease: EASE_OUT }}
             >
               <p className="max-w-xs text-sm leading-relaxed text-mist">
-                A private trade facilitation group.
+                An independent trade facilitation company.
               </p>
-              <a
-                href="/#contact"
-                onClick={(event) => go(event, "/#contact")}
-                className="inline-flex items-center justify-between gap-4 bg-burgundy px-6 py-4 font-text text-[17px] text-paper"
-              >
-                Start a conversation
-                <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-              </a>
+              <div className="flex flex-col gap-3">
+                <a
+                  href={call.href}
+                  className="inline-flex items-center justify-between gap-4 bg-burgundy px-6 py-4 font-text text-[17px] text-paper"
+                >
+                  <span className="flex items-center gap-3">
+                    <Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                    {call.isPhone ? `${call.label} · ${call.detail}` : call.label}
+                  </span>
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    window.setTimeout(portal.open, 320);
+                  }}
+                  className="inline-flex items-center justify-between gap-4 border border-line-strong px-6 py-4 font-text text-[17px] text-ivory"
+                >
+                  <span className="flex items-center gap-3">
+                    <KeyRound className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                    Track your investment
+                  </span>
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                </button>
+              </div>
             </motion.div>
           </div>
         </motion.div>

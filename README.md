@@ -1,6 +1,6 @@
 # Ventrion — website
 
-A single-page "digital business card" for Ventrion, a private trade facilitation group working through a trusted network. Sections: hero, private trade facilitation, the network (interactive 3D globe), our principles (four principles with self-drawing line illustrations in `components/sections/principles/`), a closing statement, contact.
+A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (interactive 3D globe), our principles (four principles with self-drawing line illustrations in `components/sections/principles/`), a closing statement, contact.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Three.js / React Three Fiber · Lucide · Zod.
 
@@ -21,26 +21,25 @@ Values still in `[BRACKETS]` are treated as “not configured”. Set them in **
 
 | Variable | Example | Used for |
 | --- | --- | --- |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | `+9665XXXXXXXX` | Contact section and mobile menu (`wa.me` link with a pre-filled message) |
+| `NEXT_PUBLIC_CONTACT_PHONE` | `+966 5X XXX XXXX` | The "Call Ventrion" buttons (contact section, closing, mobile menu, portal) and the footer |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | `+9665XXXXXXXX` | Contact section and footer (`wa.me` link with a pre-filled message); hidden until set |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | defaults to `info@ventrion.sa` | Contact section, footer, structured data |
-| `NEXT_PUBLIC_COMPANY_LEGAL_NAME` | `Ventrion …` | Copyright line |
+| `NEXT_PUBLIC_COMPANY_LEGAL_NAME` | `Ventrion Company` | Privacy policy and terms |
 | `NEXT_PUBLIC_SITE_URL` | `https://www.yourdomain.com` | Canonical URLs, sitemap, Open Graph (falls back to the Vercel URL) |
 
-Until the WhatsApp number is set, WhatsApp buttons scroll to the enquiry form instead.
+Until the telephone number is set, the call buttons read "Request a call" and open an email to Ventrion asking for a call back.
 
-### 2. Enquiry form delivery
+### 2. Investor portal ("Track your investment")
 
-`POST /api/enquiry` validates every field (Zod), applies spam protection (honeypot, minimum fill time, per-IP rate limit, same-origin check) and **only reports success when a delivery channel accepted the enquiry**. With nothing configured it returns a clear “not yet connected” message — it never fakes success.
+Opened from the header, the mobile menu, the contact section, the footer, or a link to `/#track`. The visitor's Investor ID is hashed on their device (SHA-256) and only the fingerprint is sent to `POST /api/investor`, which looks it up in the server-side `INVESTOR_REGISTRY` variable (JSON, see `lib/investor.ts`). With no registry, every ID is answered "could not verify"; nothing is ever shown as verified without a record.
 
-Configure at least one channel (server-side variables, not `NEXT_PUBLIC_`):
+Issue an ID for a client:
 
-| Variable | Notes |
-| --- | --- |
-| `RESEND_API_KEY` | API key from [resend.com](https://resend.com) |
-| `ENQUIRY_TO_EMAIL` | Recipient(s), comma-separated |
-| `ENQUIRY_FROM_EMAIL` | Sender on a domain verified in Resend, e.g. `Ventrion Website <enquiries@yourdomain.com>` |
-| `ENQUIRY_WEBHOOK_URL` | Optional: also/alternatively POST enquiries as JSON (CRM, Slack, Zapier, Make…) |
-| `ENQUIRY_WEBHOOK_SECRET` | Optional: sent as `Authorization: Bearer …` to the webhook |
+```bash
+node scripts/investor.mjs new "Client name"
+```
+
+Give the printed Investor ID to the client privately, add the printed entry to `INVESTOR_REGISTRY` in Vercel (Production), then redeploy. Update `status`, `stage`, `updated`, `note` and `timeline` there as the engagement progresses.
 
 ### 3. Legal pages
 
@@ -57,4 +56,4 @@ Configure at least one channel (server-side variables, not `NEXT_PUBLIC_`):
 
 - Respects `prefers-reduced-motion` (no smooth scroll, no scroll animations, static 3D fallbacks).
 - WebGL scenes are lazy-loaded, pause when off-screen, and fall back to CSS/2D versions when WebGL is unavailable or the device is low-powered.
-- Keyboard-accessible navigation, mobile menu (focus trap, Escape to close), market selector and form.
+- Keyboard-accessible navigation, mobile menu and investor portal (focus trap, Escape to close), and market selector.

@@ -6,9 +6,8 @@ import { PRINCIPLES, type PrincipleId } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
-import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
-import { BACKDROPS } from "@/lib/backdrops";
 import { PrincipleIllustration } from "./principles/Illustrations";
+import { TrustEagles } from "./principles/TrustEagles";
 
 /** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
 function TrustStatement() {
@@ -106,7 +105,6 @@ export function Principles() {
 
   return (
     <section id="principles" aria-labelledby="principles-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
-      <SectionBackdrop src={BACKDROPS.principles} wash={0.9} side="both" saturate={0.3} position="50% 70%" />
 
       <div className="shell relative">
         <div className="flex flex-col items-center text-center">
@@ -118,7 +116,10 @@ export function Principles() {
               But <em className="text-ivory">network size alone</em> is not what matters to us.
             </p>
           </Reveal>
-          <TrustStatement />
+          <TrustEagles />
+          <div className="relative -mt-[clamp(2.5rem,11vw,9.5rem)]">
+            <TrustStatement />
+          </div>
         </div>
 
         <div className="mt-[clamp(4rem,9vw,8rem)] lg:grid lg:grid-cols-12 lg:gap-8">

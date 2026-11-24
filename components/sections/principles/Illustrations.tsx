@@ -101,7 +101,7 @@ function Principals({ active }: { active: boolean }) {
   );
 }
 
-/* II. Local knowledge, Ventrion responsibility: two local markets, one coordinated passage. */
+/* II. Local knowledge, trusted guidance: two local markets, joined through the Ventrion star. */
 const ORIGIN: [number, number] = [95, 270];
 const DEST: [number, number] = [305, 270];
 const ARC = "M95 222 Q200 34 305 222";
@@ -118,7 +118,7 @@ function localDots([cx, cy]: [number, number]) {
 
 function Local({ active }: { active: boolean }) {
   return (
-    <Frame active={active} label="Local knowledge, Ventrion responsibility">
+    <Frame active={active} label="Local knowledge, trusted guidance">
       {[ORIGIN, DEST].map(([x, y], i) => (
         <g key={i}>
           <circle cx={x} cy={y} r={48} pathLength={1} data-draw style={d(i * 200)} strokeOpacity={0.6} />

@@ -35,9 +35,14 @@ export function Network() {
   const reduce = usePrefersReducedMotion();
   const [active, setActive] = useState(0);
   const [hover, setHover] = useState<number | null>(null);
+  const [listHover, setListHover] = useState<number | null>(null);
   const lastInteraction = useRef(0);
   const hoverRef = useRef<number | null>(null);
+  // Highlighted in burgundy: anything hovered, otherwise the selection.
   const focus = hover ?? active;
+  // Faced by the globe: the selection, or a name hovered in the list. Hovering a
+  // marker on the globe itself only highlights it, so the globe never moves under the pointer.
+  const orient = listHover ?? active;
 
   useEffect(() => {
     hoverRef.current = hover;
@@ -69,6 +74,17 @@ export function Network() {
   const hoverMarket = useCallback((index: number | null) => {
     lastInteraction.current = Date.now();
     setHover(index);
+  }, []);
+
+  const hoverListItem = useCallback((index: number | null) => {
+    lastInteraction.current = Date.now();
+    setHover(index);
+    setListHover(index);
+  }, []);
+
+  // Dragging the globe hands it to the visitor: the tour stays paused for half a minute.
+  const interact = useCallback(() => {
+    lastInteraction.current = Date.now() + 18_000;
   }, []);
 
   return (
@@ -104,7 +120,15 @@ export function Network() {
               {tier === "none" ? (
                 <FlatMap focusIndex={focus} onHover={hoverMarket} onSelect={select} />
               ) : tier !== "pending" && near ? (
-                <GlobeCanvas focusIndex={focus} onHover={hoverMarket} onSelect={select} tier={tier} calm={reduce} />
+                <GlobeCanvas
+                  focusIndex={focus}
+                  orientIndex={orient}
+                  onHover={hoverMarket}
+                  onSelect={select}
+                  onInteract={interact}
+                  tier={tier}
+                  calm={reduce}
+                />
               ) : null}
             </div>
             <p className="eyebrow pointer-events-none absolute bottom-3 left-6 text-[9.5px] text-mist/80">
@@ -124,10 +148,10 @@ export function Network() {
                         <button
                           type="button"
                           onClick={() => select(i)}
-                          onMouseEnter={() => hoverMarket(i)}
-                          onMouseLeave={() => hoverMarket(null)}
-                          onFocus={() => hoverMarket(i)}
-                          onBlur={() => hoverMarket(null)}
+                          onMouseEnter={() => hoverListItem(i)}
+                          onMouseLeave={() => hoverListItem(null)}
+                          onFocus={() => hoverListItem(i)}
+                          onBlur={() => hoverListItem(null)}
                           aria-pressed={i === active}
                           className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight text-ivory transition-opacity duration-500 sm:text-[1.25rem] ${
                             i === focus ? "italic" : "opacity-80 hover:opacity-100"

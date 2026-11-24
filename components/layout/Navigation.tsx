@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { usePathname } from "next/navigation";
+import { KeyRound } from "lucide-react";
 import { LogoLockup } from "@/components/brand/Logo";
+import { PortalTrigger } from "@/components/portal/InvestorPortal";
 import { NAV_LINKS } from "@/lib/content";
 import { MobileMenu } from "./MobileMenu";
 
@@ -104,10 +106,23 @@ export function Navigation() {
                   </li>
                 );
               })}
+              <li className="flex items-center gap-[clamp(2.25rem,4.3vw,4.5rem)]">
+                <span aria-hidden="true" className="h-5 w-px bg-mark/30" />
+                <PortalTrigger className="link-draw flex items-center gap-2 font-text text-[clamp(15px,1.12vw,19px)] tracking-[0.025em] text-ivory opacity-90 transition-opacity duration-500 hover:opacity-100">
+                  <KeyRound className="h-[0.95em] w-[0.95em]" strokeWidth={1.5} aria-hidden="true" />
+                  Track your investment
+                </PortalTrigger>
+              </li>
             </ul>
           </nav>
 
-          <div className="relative z-10 flex items-center gap-3 lg:hidden">
+          <div className="relative z-10 flex items-center gap-1 lg:hidden">
+            <PortalTrigger
+              label="Track your investment"
+              className="flex h-11 w-11 items-center justify-center text-ivory transition-opacity hover:opacity-80"
+            >
+              <KeyRound className="h-[18px] w-[18px]" strokeWidth={1.5} aria-hidden="true" />
+            </PortalTrigger>
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}

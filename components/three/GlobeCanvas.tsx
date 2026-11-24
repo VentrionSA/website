@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { MARKETS } from "@/lib/content";
@@ -8,12 +8,22 @@ import countryData from "@/lib/geo/countries.json";
 import { latLonToVector3 } from "./geo";
 
 type Tier = "high" | "low";
-type DragState = { dx: number; dragging: boolean };
+/**
+ * Pointer state shared between the DOM handlers and the render loop.
+ * `pressed` is set on pointer-down; it becomes a drag (`dragging`) only once the
+ * pointer has travelled a few pixels, so a plain click still selects a market.
+ */
+type DragState = { dx: number; dragging: boolean; pressed: boolean; startX: number; lastX: number; velocity: number };
 
 type GlobeProps = {
+  /** The market drawn in burgundy (selected, or hovered on the globe or in the list). */
   focusIndex: number;
+  /** The market the globe turns to face (selected, or hovered in the list). Hovering a marker on the globe never turns it. */
+  orientIndex: number;
   onHover: (index: number | null) => void;
   onSelect: (index: number) => void;
+  /** Called when the visitor starts dragging, so the automatic tour can pause. */
+  onInteract?: () => void;
   tier: Tier;
   /** Reduced motion: no pulsing highlight or breathing markers. */
   calm?: boolean;
@@ -238,12 +248,14 @@ function Marker({
   index,
   focused,
   calm,
+  drag,
   onHover,
   onSelect,
 }: {
   index: number;
   focused: boolean;
   calm: boolean;
+  drag: MutableRefObject<DragState>;
   onHover: (index: number | null) => void;
   onSelect: (index: number) => void;
 }) {
@@ -289,17 +301,18 @@ function Marker({
       {/* Generous invisible hit area */}
       <mesh
         onPointerOver={(e) => {
-          if (!isFacing(e)) return;
+          // While the globe is being dragged, markers passing under the pointer are ignored.
+          if (drag.current.dragging || !isFacing(e)) return;
           e.stopPropagation();
           document.body.style.cursor = "pointer";
           onHover(index);
         }}
         onPointerOut={() => {
           document.body.style.cursor = "";
-          onHover(null);
+          if (!drag.current.dragging) onHover(null);
         }}
         onClick={(e) => {
-          if (!isFacing(e)) return;
+          if (drag.current.dragging || !isFacing(e)) return;
           e.stopPropagation();
           onSelect(index);
         }}
@@ -319,29 +332,46 @@ function targetFor(index: number) {
   return { y: -Math.atan2(v.x, v.z), x: m.lat * DEG * 0.78 + 0.06 };
 }
 
-function Rig({ focusIndex, drag, children }: { focusIndex: number; drag: MutableRefObject<DragState>; children: ReactNode }) {
+const DRAG_SPEED = 0.006; // radians per pixel
+
+/**
+ * Turns the globe to face `orientIndex`. Dragging takes over completely: the
+ * pointer moves the globe directly, a flick carries on with gentle momentum,
+ * and the globe stays where it is left until a market is chosen again.
+ */
+function Rig({ orientIndex, drag, children }: { orientIndex: number; drag: MutableRefObject<DragState>; children: ReactNode }) {
   const group = useRef<THREE.Group>(null);
-  const target = useRef(targetFor(focusIndex));
+  const target = useRef(targetFor(orientIndex));
   const size = useThree((s) => s.size);
 
   useEffect(() => {
-    const next = targetFor(focusIndex);
+    const next = targetFor(orientIndex);
     const current = group.current?.rotation.y ?? next.y;
     // choose the equivalent angle closest to the current rotation
     const twoPi = Math.PI * 2;
     next.y += Math.round((current - next.y) / twoPi) * twoPi;
     target.current = next;
-  }, [focusIndex]);
+    drag.current.velocity = 0;
+  }, [orientIndex, drag]);
 
   useFrame((_, delta) => {
     const g = group.current;
     if (!g) return;
     const d = Math.min(delta, 0.05);
-    if (drag.current.dx !== 0) {
-      target.current.y += drag.current.dx * 0.006;
-      drag.current.dx = 0;
+    const state = drag.current;
+    if (state.dx !== 0) {
+      const step = state.dx * DRAG_SPEED;
+      target.current.y += step;
+      // remember the flick speed for momentum after release
+      state.velocity = THREE.MathUtils.lerp(state.velocity, step / Math.max(d, 1 / 120), 0.5);
+      state.dx = 0;
+    } else if (!state.dragging && Math.abs(state.velocity) > 0.01) {
+      target.current.y += state.velocity * d;
+      state.velocity *= Math.exp(-3.2 * d);
+    } else if (state.dragging) {
+      state.velocity *= Math.exp(-12 * d);
     }
-    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, target.current.y, drag.current.dragging ? 10 : 2.6, d);
+    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, target.current.y, state.dragging ? 18 : 3.2, d);
     g.rotation.x = THREE.MathUtils.damp(g.rotation.x, target.current.x, 2.6, d);
     const s = size.width < 520 ? 0.94 : 1;
     g.scale.setScalar(THREE.MathUtils.damp(g.scale.x, s, 4, d));
@@ -354,11 +384,18 @@ function Rig({ focusIndex, drag, children }: { focusIndex: number; drag: Mutable
   );
 }
 
-export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm = false }: GlobeProps) {
+export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect, onInteract, tier, calm = false }: GlobeProps) {
   const wrap = useRef<HTMLDivElement>(null);
-  const drag = useRef<DragState>({ dx: 0, dragging: false });
-  const lastX = useRef(0);
+  const drag = useRef<DragState>({ dx: 0, dragging: false, pressed: false, startX: 0, lastX: 0, velocity: 0 });
   const [active, setActive] = useState(false);
+
+  const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const state = drag.current;
+    state.pressed = false;
+    if (!state.dragging) return;
+    state.dragging = false;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+  };
 
   useEffect(() => {
     const el = wrap.current;
@@ -382,17 +419,35 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
       ref={wrap}
       className="absolute inset-0 cursor-grab touch-pan-y active:cursor-grabbing"
       onPointerDown={(e) => {
-        drag.current.dragging = true;
-        lastX.current = e.clientX;
+        const state = drag.current;
+        state.pressed = true;
+        state.startX = e.clientX;
+        state.lastX = e.clientX;
+        state.velocity = 0;
       }}
       onPointerMove={(e) => {
-        if (!drag.current.dragging) return;
-        drag.current.dx += e.clientX - lastX.current;
-        lastX.current = e.clientX;
+        const state = drag.current;
+        if (!state.pressed) return;
+        if (!state.dragging) {
+          if (Math.abs(e.clientX - state.startX) < 5) return;
+          // It is a drag: take the pointer so markers underneath stop reacting, and pause the tour.
+          state.dragging = true;
+          state.lastX = e.clientX;
+          e.currentTarget.setPointerCapture(e.pointerId);
+          document.body.style.cursor = "";
+          onHover(null);
+          onInteract?.();
+          return;
+        }
+        state.dx += e.clientX - state.lastX;
+        state.lastX = e.clientX;
       }}
-      onPointerUp={() => (drag.current.dragging = false)}
-      onPointerLeave={() => (drag.current.dragging = false)}
-      onPointerCancel={() => (drag.current.dragging = false)}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onLostPointerCapture={() => {
+        drag.current.dragging = false;
+        drag.current.pressed = false;
+      }}
     >
       <Canvas
         frameloop={active ? "always" : "never"}
@@ -400,10 +455,10 @@ export default function GlobeCanvas({ focusIndex, onHover, onSelect, tier, calm 
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, 4.6], fov: 30, near: 0.1, far: 20 }}
       >
-        <Rig focusIndex={focusIndex} drag={drag}>
+        <Rig orientIndex={orientIndex} drag={drag}>
           <GlobeBody focusIndex={focusIndex} tier={tier} calm={calm} />
           {MARKETS.map((_, i) => (
-            <Marker key={i} index={i} focused={i === focusIndex} calm={calm} onHover={onHover} onSelect={onSelect} />
+            <Marker key={i} index={i} focused={i === focusIndex} calm={calm} drag={drag} onHover={onHover} onSelect={onSelect} />
           ))}
         </Rig>
       </Canvas>

@@ -8,10 +8,12 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
 import { BACKDROPS } from "@/lib/backdrops";
+import { getCallAction } from "@/lib/site";
 
 /** Full-bleed closing statement: the relationship stays with Ventrion, wherever the work happens. */
 export function Closing() {
   const root = useRef<HTMLElement>(null);
+  const call = getCallAction();
 
   useGSAP(
     () => {
@@ -43,12 +45,12 @@ export function Closing() {
         <SplitHeading id="closing-title" className="display-xl mt-12 max-w-[17ch] text-balance text-ivory">
           Our clients deal with Ventrion.{" "}
           <span className="mt-2 block">
-            We coordinate the world <em className="text-burgundy">around them.</em>
+            We bring the world <em className="text-burgundy">to them.</em>
           </span>
         </SplitHeading>
         <Reveal className="mt-12" delay={0.2}>
-          <ArrowLink href="/#contact" magnetic>
-            Request an Introduction
+          <ArrowLink href={call.href} icon="up-right" magnetic>
+            {call.label}
           </ArrowLink>
         </Reveal>
       </div>

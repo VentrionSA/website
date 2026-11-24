@@ -64,7 +64,7 @@ export const PRINCIPLES: Principle[] = [
     title: "Principals We *Know*",
     lead: "We prefer *direct relationships* over chains of intermediaries.",
     body: [
-      "Ventrion is connected to the principals themselves: the companies and decision-makers on each side of a trade. Many of these relationships have developed through years of cooperation.",
+      "Ventrion is connected to the principals themselves: the decision-makers our clients need to reach, whether they are looking for a buyer or a seller. Many of these relationships have developed through years of cooperation.",
       "This creates something that cannot be achieved by working through a chain of intermediaries:",
     ],
     closing: "accountability between people who expect to work together again.",
@@ -72,24 +72,23 @@ export const PRINCIPLES: Principle[] = [
   {
     id: "local",
     numeral: "II",
-    title: "Local Knowledge, *Ventrion Responsibility*",
-    lead: "Every market has its own *operational realities.*",
+    title: "Local Knowledge, *Trusted Guidance*",
+    lead: "Every market has its own *realities.*",
     body: [
-      "Port procedures, customs practices, documentation requirements, local transportation conditions and commercial conventions can differ significantly between countries. Our direct relationships in each market provide the local knowledge required to navigate these differences.",
-      "But from the client’s perspective, Ventrion remains responsible for coordinating the operation. The client should not need to manage separate relationships around the world.",
+      "Regulations, procedures and commercial conventions differ from one country to the next. Ventrion does not manage them on a client’s behalf.",
+      "Instead, we guide our clients to the people who have the knowledge and the expertise: people we know, and trust.",
     ],
-    closing: "We do that for them.",
+    closing: "We know who to call.",
   },
   {
     id: "quality",
     numeral: "III",
     title: "*Quality* Over Quantity",
-    lead: "We do not measure the *strength* of our network by the number of names we can list.",
+    lead: "We do not measure our network by the *number of names* in it.",
     body: [
-      "A large network has little value if the people within it are unknown or unreliable. Our preference is to work with counterparties who understand how we operate and who share our expectations regarding communication, transparency and professional conduct.",
-      "When a transaction calls for a new counterpart, we approach that introduction carefully.",
+      "A large network has little value if its people are unknown or unreliable. We work with counterparties who share our standards of communication, transparency and conduct.",
     ],
-    closing: "Because every counterpart we introduce becomes part of the experience we deliver to our client.",
+    closing: "Every introduction carries our name.",
   },
   {
     id: "accountability",

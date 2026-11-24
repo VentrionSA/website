@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Ventrion — Connecting markets. Moving opportunity.",
     short_name: "Ventrion",
-    description: "A private trade facilitation group.",
+    description: "An independent trade facilitation company.",
     start_url: "/",
     display: "standalone",
     background_color: "#f4f0e6",
