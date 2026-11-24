@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { memo, useEffect, useMemo, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import { PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import { MARKETS } from "@/lib/content";
 import countryData from "@/lib/geo/countries.json";
@@ -9,11 +10,29 @@ import { latLonToVector3 } from "./geo";
 
 type Tier = "high" | "low";
 /**
- * Pointer state shared between the DOM handlers and the render loop.
- * `pressed` is set on pointer-down; it becomes a drag (`dragging`) only once the
- * pointer has travelled a few pixels, so a plain click still selects a market.
+ * Pointer state shared between the DOM handlers and the render loop (no React state,
+ * so dragging never re-renders anything). `pressed` is set on pointer-down; it becomes
+ * a drag only once the pointer has travelled a few pixels, so a plain click still
+ * selects a market. The render loop reads `x` every frame and places the globe
+ * exactly under the finger.
  */
-type DragState = { dx: number; dragging: boolean; pressed: boolean; startX: number; lastX: number; velocity: number };
+type DragState = {
+  pressed: boolean;
+  dragging: boolean;
+  /** Pointer x where the drag began, and its latest position (CSS px). */
+  startX: number;
+  x: number;
+  /** Set when a drag begins: the rig records the globe's angle at that instant. */
+  fresh: boolean;
+  /** Set on pointer-down: stop any glide or turn at once, like catching a spinning globe. */
+  caught: boolean;
+  /** Recent pointer samples, for the release velocity. */
+  samples: { t: number; x: number }[];
+  /** Set on release: the angular velocity (rad/s) the globe glides on with. */
+  release: number | null;
+  /** Trackpad swipes: angle to add on the next frame (the trackpad supplies its own momentum). */
+  nudge: number;
+};
 
 type GlobeProps = {
   /** The market drawn in burgundy (selected, or hovered on the globe or in the list). */
@@ -105,12 +124,15 @@ function useMapTextures(tier: Tier) {
 
     const map = new THREE.CanvasTexture(mapCanvas);
     map.colorSpace = THREE.SRGBColorSpace;
-    map.anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
+    map.anisotropy = Math.min(4, gl.capabilities.getMaxAnisotropy());
     const ids = new THREE.CanvasTexture(idCanvas);
     ids.colorSpace = THREE.NoColorSpace;
     ids.minFilter = THREE.NearestFilter;
     ids.magFilter = THREE.NearestFilter;
     ids.generateMipmaps = false;
+    // Upload now, while the globe is still off-screen, rather than on its first visible frame.
+    gl.initTexture(map);
+    gl.initTexture(ids);
     return { map, ids };
   }, [gl, tier]);
 
@@ -244,7 +266,14 @@ function GlobeBody({ focusIndex, tier, calm }: { focusIndex: number; tier: Tier;
 
 /* ── Market markers ────────────────────────────────────────────────────── */
 
-function Marker({
+// Shared, fixed geometries: a marker's size changes by scale, never by rebuilding geometry.
+const PIN_GEOMETRY = new THREE.CircleGeometry(1, 32);
+const RIM_GEOMETRY = new THREE.RingGeometry(1, 1.3, 40);
+const PULSE_GEOMETRY = new THREE.RingGeometry(0.02, 0.023, 48);
+const HIT_GEOMETRY = new THREE.SphereGeometry(0.055, 12, 12);
+const PIN_SIZE = { rest: 0.0105, focused: 0.0145 };
+
+const Marker = memo(function Marker({
   index,
   focused,
   calm,
@@ -261,7 +290,10 @@ function Marker({
 }) {
   const market = MARKETS[index];
   const group = useRef<THREE.Group>(null);
-  const ring = useRef<THREE.Mesh>(null);
+  const pin = useRef<THREE.Mesh>(null);
+  const rim = useRef<THREE.Mesh>(null);
+  const pulse = useRef<THREE.Mesh>(null);
+  const size = useRef(focused ? PIN_SIZE.focused : PIN_SIZE.rest);
   const position = useMemo(() => latLonToVector3(market.lat, market.lon, 1.006), [market]);
   const world = useMemo(() => new THREE.Vector3(), []);
 
@@ -269,13 +301,14 @@ function Marker({
     group.current?.lookAt(position.clone().multiplyScalar(2));
   }, [position]);
 
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    if (ring.current) {
-      const phase = calm ? 0.35 : (t * 0.55 + index * 0.21) % 1;
-      const s = 1 + phase * (focused ? 2.4 : 1.6);
-      ring.current.scale.setScalar(s);
-      (ring.current.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (focused ? 0.9 : 0.45);
+  useFrame(({ clock }, delta) => {
+    size.current = THREE.MathUtils.damp(size.current, focused ? PIN_SIZE.focused : PIN_SIZE.rest, 10, Math.min(delta, 0.1));
+    pin.current?.scale.setScalar(size.current);
+    rim.current?.scale.setScalar(size.current);
+    if (pulse.current) {
+      const phase = calm ? 0.35 : (clock.getElapsedTime() * 0.55 + index * 0.21) % 1;
+      pulse.current.scale.setScalar(1 + phase * (focused ? 2.4 : 1.6));
+      (pulse.current.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * (focused ? 0.9 : 0.45);
     }
   });
 
@@ -286,20 +319,18 @@ function Marker({
 
   return (
     <group ref={group} position={position}>
-      <mesh renderOrder={3}>
-        <circleGeometry args={[focused ? 0.0145 : 0.0105, 24]} />
+      <mesh ref={pin} geometry={PIN_GEOMETRY} renderOrder={3}>
         <meshBasicMaterial color={PIN} toneMapped={false} depthWrite={false} transparent />
       </mesh>
-      <mesh renderOrder={3}>
-        <ringGeometry args={[focused ? 0.0145 : 0.0105, focused ? 0.019 : 0.0135, 32]} />
+      <mesh ref={rim} geometry={RIM_GEOMETRY} renderOrder={3}>
         <meshBasicMaterial color={focused ? BURGUNDY : GREEN} toneMapped={false} depthWrite={false} transparent side={THREE.DoubleSide} />
       </mesh>
-      <mesh ref={ring} renderOrder={3}>
-        <ringGeometry args={[0.02, 0.023, 48]} />
+      <mesh ref={pulse} geometry={PULSE_GEOMETRY} renderOrder={3}>
         <meshBasicMaterial color={focused ? BURGUNDY : GREEN} transparent depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       {/* Generous invisible hit area */}
       <mesh
+        geometry={HIT_GEOMETRY}
         onPointerOver={(e) => {
           // While the globe is being dragged, markers passing under the pointer are ignored.
           if (drag.current.dragging || !isFacing(e)) return;
@@ -317,12 +348,11 @@ function Marker({
           onSelect(index);
         }}
       >
-        <sphereGeometry args={[0.055, 12, 12]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
     </group>
   );
-}
+});
 
 /* ── Rotation rig ──────────────────────────────────────────────────────── */
 
@@ -332,67 +362,173 @@ function targetFor(index: number) {
   return { y: -Math.atan2(v.x, v.z), x: m.lat * DEG * 0.78 + 0.06 };
 }
 
-const DRAG_SPEED = 0.006; // radians per pixel
+const DRAG_SPEED = 0.006; // radians per pixel: the globe stays under the finger
+const TURN_STIFFNESS = 3.6; // critically damped spring for turning to a market: eases in and out
+const GLIDE_FRICTION = 2.2; // how quickly a flick slows to a stop
+const MAX_GLIDE = 9; // rad/s
+const STEP = 1 / 240; // integration sub-step, so motion is identical at 60 Hz or 120 Hz
+
+type Axis = { value: number; vel: number; target: number };
 
 /**
- * Turns the globe to face `orientIndex`. Dragging takes over completely: the
- * pointer moves the globe directly, a flick carries on with gentle momentum,
- * and the globe stays where it is left until a market is chosen again.
+ * Turns the globe. Three kinds of motion, never mixed:
+ * - drag: the angle is set directly from the pointer every frame (1:1, no smoothing, no lag);
+ * - glide: after a flick, the release speed decays smoothly to rest;
+ * - turn: a critically damped spring to the chosen market, starting from the current
+ *   speed, so it eases in and out with no jolt or overshoot.
+ * After a drag the globe stays where it was left until a market is chosen again.
  */
 function Rig({ orientIndex, drag, children }: { orientIndex: number; drag: MutableRefObject<DragState>; children: ReactNode }) {
   const group = useRef<THREE.Group>(null);
-  const target = useRef(targetFor(orientIndex));
+  const start = useMemo(() => targetFor(orientIndex), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const yaw = useRef<Axis & { mode: "rest" | "turn" | "glide" | "drag"; grabbedAt: number }>({
+    value: start.y,
+    vel: 0,
+    target: start.y,
+    mode: "rest",
+    grabbedAt: start.y,
+  });
+  const tilt = useRef<Axis>({ value: start.x, vel: 0, target: start.x });
   const size = useThree((s) => s.size);
 
   useEffect(() => {
     const next = targetFor(orientIndex);
-    const current = group.current?.rotation.y ?? next.y;
-    // choose the equivalent angle closest to the current rotation
+    const y = yaw.current;
     const twoPi = Math.PI * 2;
-    next.y += Math.round((current - next.y) / twoPi) * twoPi;
-    target.current = next;
-    drag.current.velocity = 0;
-  }, [orientIndex, drag]);
+    // the equivalent angle closest to where the globe is now
+    y.target = next.y + Math.round((y.value - next.y) / twoPi) * twoPi;
+    tilt.current.target = next.x;
+    if (y.mode !== "drag") y.mode = "turn";
+  }, [orientIndex]);
 
   useFrame((_, delta) => {
     const g = group.current;
     if (!g) return;
-    const d = Math.min(delta, 0.05);
-    const state = drag.current;
-    if (state.dx !== 0) {
-      const step = state.dx * DRAG_SPEED;
-      target.current.y += step;
-      // remember the flick speed for momentum after release
-      state.velocity = THREE.MathUtils.lerp(state.velocity, step / Math.max(d, 1 / 120), 0.5);
-      state.dx = 0;
-    } else if (!state.dragging && Math.abs(state.velocity) > 0.01) {
-      target.current.y += state.velocity * d;
-      state.velocity *= Math.exp(-3.2 * d);
-    } else if (state.dragging) {
-      state.velocity *= Math.exp(-12 * d);
+    const s = drag.current;
+    const y = yaw.current;
+    const t = tilt.current;
+
+    if (s.caught) {
+      s.caught = false;
+      if (y.mode === "glide" || y.mode === "turn") {
+        y.mode = "rest";
+        y.vel = 0;
+      }
     }
-    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, target.current.y, state.dragging ? 18 : 3.2, d);
-    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, target.current.x, 2.6, d);
-    const s = size.width < 520 ? 0.94 : 1;
-    g.scale.setScalar(THREE.MathUtils.damp(g.scale.x, s, 4, d));
+    if (s.nudge !== 0 && !s.dragging) {
+      y.value += s.nudge;
+      s.nudge = 0;
+      y.vel = 0;
+      y.mode = "rest";
+    }
+    if (s.dragging) {
+      if (s.fresh) {
+        s.fresh = false;
+        y.grabbedAt = y.value;
+      }
+      y.mode = "drag";
+      y.vel = 0;
+      y.value = y.grabbedAt + (s.x - s.startX) * DRAG_SPEED;
+    } else if (y.mode === "drag") {
+      const v = s.release ?? 0;
+      s.release = null;
+      y.vel = v;
+      y.mode = Math.abs(v) > 0.05 ? "glide" : "rest";
+    }
+
+    const k = TURN_STIFFNESS * TURN_STIFFNESS;
+    const c = 2 * TURN_STIFFNESS;
+    let remaining = Math.min(delta, 0.1);
+    while (remaining > 1e-6) {
+      const h = Math.min(remaining, STEP);
+      remaining -= h;
+      if (y.mode === "glide") {
+        y.value += y.vel * h;
+        y.vel *= Math.exp(-GLIDE_FRICTION * h);
+        if (Math.abs(y.vel) < 0.01) {
+          y.vel = 0;
+          y.mode = "rest";
+        }
+      } else if (y.mode === "turn") {
+        y.vel += (k * (y.target - y.value) - c * y.vel) * h;
+        y.value += y.vel * h;
+        if (Math.abs(y.target - y.value) < 1e-5 && Math.abs(y.vel) < 1e-4) {
+          y.value = y.target;
+          y.vel = 0;
+          y.mode = "rest";
+        }
+      }
+      t.vel += (k * (t.target - t.value) - c * t.vel) * h;
+      t.value += t.vel * h;
+    }
+
+    g.rotation.y = y.value;
+    g.rotation.x = t.value;
+    const scale = size.width < 520 ? 0.94 : 1;
+    if (g.scale.x !== scale) g.scale.setScalar(THREE.MathUtils.damp(g.scale.x, scale, 6, Math.min(delta, 0.1)));
   });
 
   return (
-    <group ref={group} rotation={[target.current.x, target.current.y, 0]}>
+    <group ref={group} rotation={[start.x, start.y, 0]}>
       {children}
     </group>
   );
 }
 
+/**
+ * Release velocity (rad/s) from the pointer's final ~100 ms of movement, using at least
+ * two samples so it also works where the browser delivers moves sparsely. Zero when the
+ * pointer had come to rest before it was lifted.
+ */
+function releaseVelocity(samples: { t: number; x: number }[], now: number) {
+  if (samples.length < 2) return 0;
+  const last = samples[samples.length - 1];
+  if (now - last.t > 100) return 0;
+  let i = samples.length - 2;
+  while (i > 0 && last.t - samples[i - 1].t <= 100) i--;
+  const first = samples[i];
+  const dt = last.t - first.t;
+  if (dt < 4) return 0;
+  const v = ((last.x - first.x) / dt) * 1000 * DRAG_SPEED;
+  return Math.max(-MAX_GLIDE, Math.min(MAX_GLIDE, v));
+}
+
 export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect, onInteract, tier, calm = false }: GlobeProps) {
   const wrap = useRef<HTMLDivElement>(null);
-  const drag = useRef<DragState>({ dx: 0, dragging: false, pressed: false, startX: 0, lastX: 0, velocity: 0 });
+  const drag = useRef<DragState>({
+    pressed: false,
+    dragging: false,
+    startX: 0,
+    x: 0,
+    fresh: false,
+    caught: false,
+    samples: [],
+    release: null,
+    nudge: 0,
+  });
   const [active, setActive] = useState(false);
+
+  // Resolution: as sharp as the screen allows, stepped down automatically if the device
+  // cannot hold its full frame rate, so rotation never drops frames.
+  const cap = tier === "high" ? 1.75 : 1.4;
+  const [dpr, setDpr] = useState(() => Math.min(typeof window === "undefined" ? 1 : window.devicePixelRatio || 1, cap));
+  // On high-density screens the pixels already smooth the edges; skip multisampling there.
+  const gl = useMemo(
+    () => ({
+      antialias: typeof window === "undefined" || (window.devicePixelRatio || 1) < 1.5,
+      alpha: true,
+      powerPreference: "high-performance" as const,
+    }),
+    [],
+  );
+  const camera = useMemo(() => ({ position: [0, 0, 4.6] as [number, number, number], fov: 30, near: 0.1, far: 20 }), []);
 
   const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
     const state = drag.current;
     state.pressed = false;
     if (!state.dragging) return;
+    state.release = releaseVelocity(state.samples, e.timeStamp);
+    state.samples = [];
     state.dragging = false;
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
   };
@@ -405,7 +541,7 @@ export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect
       if (event.ctrlKey || Math.abs(event.deltaX) < 1 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
       event.preventDefault();
       event.stopPropagation(); // keep the smooth-scroller from nudging the page
-      drag.current.dx -= event.deltaX * (event.deltaMode === 1 ? 16 : 1);
+      drag.current.nudge -= event.deltaX * (event.deltaMode === 1 ? 16 : 1) * DRAG_SPEED;
       onInteract?.();
     };
     el.addEventListener("wheel", onWheel, { passive: false });
@@ -436,26 +572,31 @@ export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect
       onPointerDown={(e) => {
         const state = drag.current;
         state.pressed = true;
+        state.caught = true;
         state.startX = e.clientX;
-        state.lastX = e.clientX;
-        state.velocity = 0;
+        state.x = e.clientX;
+        state.samples = [{ t: e.timeStamp, x: e.clientX }];
       }}
       onPointerMove={(e) => {
         const state = drag.current;
         if (!state.pressed) return;
+        // every intermediate position the browser recorded, for an exact release speed
+        const native = e.nativeEvent;
+        const points = typeof native.getCoalescedEvents === "function" ? native.getCoalescedEvents() : [];
+        for (const p of points.length ? points : [native]) state.samples.push({ t: p.timeStamp, x: p.clientX });
+        if (state.samples.length > 48) state.samples.splice(0, state.samples.length - 48);
+        state.x = e.clientX;
         if (!state.dragging) {
           if (Math.abs(e.clientX - state.startX) < 5) return;
           // It is a drag: take the pointer so markers underneath stop reacting, and pause the tour.
           state.dragging = true;
-          state.lastX = e.clientX;
+          state.fresh = true;
+          state.startX = e.clientX;
           e.currentTarget.setPointerCapture(e.pointerId);
           document.body.style.cursor = "";
           onHover(null);
           onInteract?.();
-          return;
         }
-        state.dx += e.clientX - state.lastX;
-        state.lastX = e.clientX;
       }}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
@@ -468,12 +609,13 @@ export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect
         drag.current.pressed = false;
       }}
     >
-      <Canvas
-        frameloop={active ? "always" : "never"}
-        dpr={tier === "high" ? [1, 1.75] : [1, 1.4]}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        camera={{ position: [0, 0, 4.6], fov: 30, near: 0.1, far: 20 }}
-      >
+      <Canvas frameloop={active ? "always" : "never"} dpr={dpr} gl={gl} camera={camera}>
+        <PerformanceMonitor
+          flipflops={3}
+          onDecline={() => setDpr((d) => Math.max(1, Math.round((d - 0.25) * 100) / 100))}
+          onIncline={() => setDpr((d) => Math.min(cap, Math.round((d + 0.25) * 100) / 100))}
+          onFallback={() => setDpr(1)}
+        />
         <Rig orientIndex={orientIndex} drag={drag}>
           <GlobeBody focusIndex={focusIndex} tier={tier} calm={calm} />
           {MARKETS.map((_, i) => (
