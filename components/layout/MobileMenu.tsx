@@ -6,14 +6,14 @@ import { ArrowUpRight, KeyRound, Phone } from "lucide-react";
 import { NAV_LINKS } from "@/lib/content";
 import { getCallAction } from "@/lib/site";
 import { scrollToId, startScroll, stopScroll } from "@/lib/scroll";
-import { useInvestorPortal } from "@/components/portal/InvestorPortal";
+import { useClientPortal } from "@/components/portal/ClientPortal";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const portal = useInvestorPortal();
+  const portal = useClientPortal();
   const call = getCallAction();
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                 >
                   <span className="flex items-center gap-3">
                     <Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-                    {call.isPhone ? `${call.label} · ${call.detail}` : call.label}
+                    {call.isPhone ? `Call ${call.detail}` : call.label}
                   </span>
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
                 </a>
@@ -136,7 +136,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                 >
                   <span className="flex items-center gap-3">
                     <KeyRound className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-                    Track your investment
+                    Client portal
                   </span>
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
                 </button>

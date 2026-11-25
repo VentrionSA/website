@@ -1,6 +1,6 @@
 # Ventrion — website
 
-A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (interactive 3D globe), our principles (four principles with self-drawing line illustrations in `components/sections/principles/`), a closing statement, contact.
+A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (interactive 3D globe), our principles (four principles, each with a photograph, in `components/sections/principles/`), a closing statement, contact.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Three.js / React Three Fiber · Lucide · Zod.
 
@@ -29,17 +29,17 @@ Values still in `[BRACKETS]` are treated as “not configured”. Set them in **
 
 Until the telephone number is set, the call buttons read "Request a call" and open an email to Ventrion asking for a call back.
 
-### 2. Investor portal ("Track your investment")
+### 2. Client portal ("Track your engagements")
 
-Opened from the header, the mobile menu, the contact section, the footer, or a link to `/#track`. The visitor's Investor ID is hashed on their device (SHA-256) and only the fingerprint is sent to `POST /api/investor`, which looks it up in the server-side `INVESTOR_REGISTRY` variable (JSON, see `lib/investor.ts`). With no registry, every ID is answered "could not verify"; nothing is ever shown as verified without a record.
+Opened from the header, the mobile menu, the contact section, the footer, or a link to `/#track`. The visitor's Client ID is hashed on their device (SHA-256) and only the fingerprint is sent to `POST /api/portal`, which looks it up in the server-side `CLIENT_REGISTRY` variable (JSON, see `lib/client-portal.ts`). With no registry, every ID is answered "could not verify"; nothing is ever shown as verified without a record.
 
 Issue an ID for a client:
 
 ```bash
-node scripts/investor.mjs new "Client name"
+node scripts/client-id.mjs new "Client name"
 ```
 
-Give the printed Investor ID to the client privately, add the printed entry to `INVESTOR_REGISTRY` in Vercel (Production), then redeploy. Update `status`, `stage`, `updated`, `note` and `timeline` there as the engagement progresses.
+Give the printed Client ID to the client privately, add the printed entry to `CLIENT_REGISTRY` in Vercel (Production), then redeploy. Update `status`, `stage`, `updated`, `note` and `timeline` there as the engagement progresses.
 
 ### 3. Legal pages
 
@@ -48,7 +48,7 @@ Give the printed Investor ID to the client privately, add the printed entry to `
 ## Content
 
 - **Navigation, markets and the four principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
-- **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically).
+- **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically). The four principle photographs in `assets/images/principles/` (`principals`, `local`, `quality`, `accountability`) are Pexels placeholders graded to the site's green and ivory; replace them at the same filenames (square, about 1600px, subject near the centre) and adjust their framing in `components/sections/principles/PrincipleImages.tsx` if needed.
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
 - **Globe map:** `lib/geo/countries.json`, country outlines from Natural Earth (via world-atlas, 1:110m with Bahrain from 1:50m) pre-projected to an equirectangular map; network markets are tagged by id. The globe draws it as a texture at runtime.
 
@@ -56,4 +56,4 @@ Give the printed Investor ID to the client privately, add the printed entry to `
 
 - Respects `prefers-reduced-motion` (no smooth scroll, no scroll animations, static 3D fallbacks).
 - WebGL scenes are lazy-loaded, pause when off-screen, and fall back to CSS/2D versions when WebGL is unavailable or the device is low-powered.
-- Keyboard-accessible navigation, mobile menu and investor portal (focus trap, Escape to close), and market selector.
+- Keyboard-accessible navigation, mobile menu and client portal (focus trap, Escape to close), and market selector.

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { FINGERPRINT_PATTERN, type InvestorRecord, type InvestorResponse } from "@/lib/investor";
+import { FINGERPRINT_PATTERN, type ClientRecord, type PortalResponse } from "@/lib/client-portal";
 
 /**
- * POST /api/investor  { fingerprint }  — verifies an Investor ID for the portal.
+ * POST /api/portal  { fingerprint }  — verifies a Client ID for the client portal.
  *
- * The browser sends only the SHA-256 fingerprint of the ID (see lib/investor.ts).
- * Records come from the server-side INVESTOR_REGISTRY environment variable; with
+ * The browser sends only the SHA-256 fingerprint of the ID (see lib/client-portal.ts).
+ * Records come from the server-side CLIENT_REGISTRY environment variable; with
  * no registry configured every lookup is answered "unverified". The route never
  * invents a record.
  */
@@ -19,7 +19,7 @@ const RATE_LIMIT = { windowMs: 10 * 60 * 1000, max: 8 };
 
 const bodySchema = z.object({ fingerprint: z.string().regex(FINGERPRINT_PATTERN) });
 
-const recordSchema: z.ZodType<InvestorRecord> = z.object({
+const recordSchema: z.ZodType<ClientRecord> = z.object({
   name: z.string().max(200).optional(),
   status: z.string().min(1).max(120),
   stage: z.string().max(200).optional(),
@@ -33,19 +33,19 @@ const recordSchema: z.ZodType<InvestorRecord> = z.object({
 
 const registrySchema = z.record(z.string().regex(FINGERPRINT_PATTERN), recordSchema);
 
-let cache: { source: string; registry: Map<string, InvestorRecord> } | null = null;
+let cache: { source: string; registry: Map<string, ClientRecord> } | null = null;
 
-function loadRegistry(): Map<string, InvestorRecord> {
-  const source = process.env.INVESTOR_REGISTRY ?? "";
+function loadRegistry(): Map<string, ClientRecord> {
+  const source = process.env.CLIENT_REGISTRY ?? process.env.INVESTOR_REGISTRY ?? "";
   if (cache && cache.source === source) return cache.registry;
-  let registry = new Map<string, InvestorRecord>();
+  let registry = new Map<string, ClientRecord>();
   if (source.trim()) {
     try {
       const parsed = registrySchema.safeParse(JSON.parse(source));
       if (parsed.success) registry = new Map(Object.entries(parsed.data));
-      else console.error("INVESTOR_REGISTRY is not in the expected format; no investor can be verified until it is fixed.");
+      else console.error("CLIENT_REGISTRY is not in the expected format; no client can be verified until it is fixed.");
     } catch {
-      console.error("INVESTOR_REGISTRY is not valid JSON; no investor can be verified until it is fixed.");
+      console.error("CLIENT_REGISTRY is not valid JSON; no client can be verified until it is fixed.");
     }
   }
   cache = { source, registry };
@@ -68,7 +68,7 @@ function retryAfterSeconds(key: string): number {
   return 0;
 }
 
-async function respond(body: InvestorResponse, status: number, started: number) {
+async function respond(body: PortalResponse, status: number, started: number) {
   const wait = MIN_RESPONSE_MS - (Date.now() - started);
   if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
   return Response.json(body, { status, headers: { "Cache-Control": "no-store", "X-Robots-Tag": "noindex" } });
@@ -99,5 +99,5 @@ export async function POST(request: Request) {
 }
 
 export function GET() {
-  return Response.json({ status: "invalid" } satisfies InvestorResponse, { status: 405, headers: { Allow: "POST" } });
+  return Response.json({ status: "invalid" } satisfies PortalResponse, { status: 405, headers: { Allow: "POST" } });
 }

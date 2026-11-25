@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Terms of *Use*" updated="24 November 2026" draft>
+    <LegalPage eyebrow="Legal" title="Terms of *Use*" updated="25 November 2026" draft>
       <p>
         These terms govern your use of this website, operated by <strong>Ventrion Company</strong> (“Ventrion”). By
         using the website you agree to these terms.
@@ -20,9 +20,9 @@ export default function TermsPage() {
         offer, a solicitation, or financial, legal or investment advice, and no contract is formed by contacting us.
         Any commercial engagement is subject to separate written agreement.
       </p>
-      <h2>Investor portal</h2>
+      <h2>Client portal</h2>
       <p>
-        The investor portal is for clients to whom Ventrion has issued an Investor ID. Keep your Investor ID private.
+        The client portal is for clients to whom Ventrion has issued a Client ID. Keep your Client ID private.
         Information shown in the portal is provided for convenience and does not replace your written agreements with
         Ventrion.
       </p>

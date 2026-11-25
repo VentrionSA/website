@@ -4,9 +4,9 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
-import { InvestorPortalProvider } from "@/components/portal/InvestorPortal";
+import { ClientPortalProvider } from "@/components/portal/ClientPortal";
 import { MARKETS } from "@/lib/content";
-import { getSiteUrl, isPlaceholder, siteConfig } from "@/lib/site";
+import { getPhoneDisplay, getSiteUrl, isPlaceholder, siteConfig } from "@/lib/site";
 
 const serif = Cormorant_Garamond({
   subsets: ["latin"],
@@ -87,7 +87,14 @@ function StructuredData() {
         areaServed: MARKETS.map((m) => ({ "@type": "Country", name: m.name })),
         knowsAbout: ["Trade facilitation", "International trade"],
         ...(!isPlaceholder(siteConfig.email)
-          ? { contactPoint: { "@type": "ContactPoint", contactType: "sales", email: siteConfig.email } }
+          ? {
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "sales",
+                email: siteConfig.email,
+                ...(getPhoneDisplay() ? { telephone: getPhoneDisplay() } : {}),
+              },
+            }
           : {}),
       },
       {
@@ -117,11 +124,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <SmoothScroll>
-          <InvestorPortalProvider>
+          <ClientPortalProvider>
             <Navigation />
             {children}
             <Footer />
-          </InvestorPortalProvider>
+          </ClientPortalProvider>
         </SmoothScroll>
         <div className="grain" aria-hidden="true" />
         <StructuredData />

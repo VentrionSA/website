@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { LogoMark, LogoWordmark } from "@/components/brand/Logo";
-import { PortalTrigger } from "@/components/portal/InvestorPortal";
+import { PortalTrigger } from "@/components/portal/ClientPortal";
 import { NAV_LINKS } from "@/lib/content";
 import { getMailtoHref, getPhoneDisplay, getTelHref, getWhatsAppHref, siteConfig } from "@/lib/site";
 
@@ -77,8 +77,8 @@ export function Footer() {
                 </li>
               ) : null}
               <li className="flex flex-col gap-1">
-                <span className={labelClass}>Investors</span>
-                <PortalTrigger className={`${linkClass} self-start text-left`}>Track your investment</PortalTrigger>
+                <span className={labelClass}>Client portal</span>
+                <PortalTrigger className={`${linkClass} self-start text-left`}>Track your engagements</PortalTrigger>
               </li>
             </ul>
           </div>

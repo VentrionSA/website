@@ -25,10 +25,10 @@ export const siteConfig = {
   /** Business contact details — placeholders until confirmed. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@ventrion.sa",
   /**
-   * The number the "Call Ventrion" buttons dial, international format, e.g. +966 5X XXX XXXX.
-   * Until it is set, those buttons become "Request a call" (an email asking Ventrion to call back).
+   * The number the "Call Ventrion" buttons dial, written as it should be displayed.
+   * Without a number, those buttons become "Request a call" (an email asking Ventrion to call back).
    */
-  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "[PHONE_NUMBER_WITH_COUNTRY_CODE]",
+  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+966 55 151 0051",
   /** International format, digits only or with +, e.g. +9665XXXXXXXX */
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "[WHATSAPP_NUMBER_WITH_COUNTRY_CODE]",
 

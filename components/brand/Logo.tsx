@@ -60,7 +60,7 @@ export function LogoLockup({
         {tagline ? (
           <span
             aria-hidden="true"
-            className={`flex items-center gap-[0.85em] overflow-hidden whitespace-nowrap font-sans font-semibold uppercase leading-none tracking-[0.245em] ${taglineClassName}`}
+            className={`flex items-center gap-[0.85em] overflow-hidden whitespace-nowrap font-sans font-semibold uppercase leading-none tracking-[0.245em] [contain:inline-size] ${taglineClassName}`}
           >
             <span className="h-px min-w-[0.6em] flex-1 bg-current opacity-45" />
             <span className="-mr-[0.245em]">Global Commerce</span>

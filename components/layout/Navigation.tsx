@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import { useEffect, useState } from "react";
+import { useMotionValueEvent, useScroll } from "motion/react";
 import { usePathname } from "next/navigation";
 import { KeyRound } from "lucide-react";
 import { LogoLockup } from "@/components/brand/Logo";
-import { PortalTrigger } from "@/components/portal/InvestorPortal";
+import { PortalTrigger } from "@/components/portal/ClientPortal";
 import { NAV_LINKS } from "@/lib/content";
 import { MobileMenu } from "./MobileMenu";
-
-const EASE = [0.22, 1, 0.36, 1] as const;
 
 function useActiveSection(ids: string[], enabled: boolean) {
   const [active, setActive] = useState<string | null>(null);
@@ -17,11 +15,16 @@ function useActiveSection(ids: string[], enabled: boolean) {
     if (!enabled) return;
     const els = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     if (!els.length) return;
+    // Only the section crossing the middle of the screen is current; between linked
+    // sections (the figure, the principles, the closing line) no link is underlined.
+    const inBand = new Set<string>();
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
+          if (entry.isIntersecting) inBand.add(entry.target.id);
+          else inBand.delete(entry.target.id);
         });
+        setActive(ids.find((id) => inBand.has(id)) ?? null);
       },
       { rootMargin: "-45% 0px -50% 0px" },
     );
@@ -38,19 +41,11 @@ export function Navigation() {
   const isHome = pathname === "/";
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
-  const lastY = useRef(0);
   const active = useActiveSection(SECTION_IDS, isHome);
 
-  useMotionValueEvent(scrollY, "change", (y) => {
-    const prev = lastY.current;
-    lastY.current = y;
-    setScrolled(y > 32);
-    if (open) return;
-    if (y > 640 && y > prev + 6) setHidden(true);
-    else if (y < prev - 6 || y <= 640) setHidden(false);
-  });
+  // The bar is always in view, on every section; it only condenses once the page scrolls.
+  useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 32));
 
   useEffect(() => {
     document.documentElement.dataset.menu = open ? "open" : "closed";
@@ -62,11 +57,8 @@ export function Navigation() {
 
   return (
     <>
-      <motion.header
-        initial={false}
-        animate={{ y: hidden && !open ? "-105%" : "0%" }}
-        transition={{ duration: 0.7, ease: EASE }}
-        className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-700 ${
+      <header
+        className={`fixed inset-x-0 top-0 z-[60] border-b transition-[background-color,border-color,backdrop-filter] duration-700 ${
           solid ? "border-line bg-ink/80 backdrop-blur-xl" : "border-transparent bg-transparent"
         }`}
       >
@@ -81,8 +73,9 @@ export function Navigation() {
               className={`${morph} ${solid ? "gap-3" : "gap-3 lg:gap-[1.14vw]"}`}
               markClassName={`w-auto ${morph} ${solid ? "h-[30px]" : "h-[38px] lg:h-[clamp(44px,4.2vw,72px)]"}`}
               wordClassName={`h-auto ${morph} ${solid ? "w-[104px]" : "w-[118px] lg:w-[clamp(132px,12.3vw,212px)]"}`}
-              taglineClassName={`${morph} ${
-                solid ? "mt-0 max-h-0 opacity-0" : "mt-[0.95em] max-h-[2em] text-[7px] opacity-100 lg:text-[clamp(7px,0.623vw,10.75px)]"
+              // the type size holds while the tagline folds away, so it never widens the lock-up
+              taglineClassName={`${morph} text-[7px] lg:text-[clamp(7px,0.623vw,10.75px)] ${
+                solid ? "mt-0 max-h-0 opacity-0" : "mt-[0.95em] max-h-[2em] opacity-100"
               }`}
             />
           </a>
@@ -110,7 +103,7 @@ export function Navigation() {
                 <span aria-hidden="true" className="h-5 w-px bg-mark/30" />
                 <PortalTrigger className="link-draw flex items-center gap-2 font-text text-[clamp(15px,1.12vw,19px)] tracking-[0.025em] text-ivory opacity-90 transition-opacity duration-500 hover:opacity-100">
                   <KeyRound className="h-[0.95em] w-[0.95em]" strokeWidth={1.5} aria-hidden="true" />
-                  Track your investment
+                  Client portal
                 </PortalTrigger>
               </li>
             </ul>
@@ -118,7 +111,7 @@ export function Navigation() {
 
           <div className="relative z-10 flex items-center gap-1 lg:hidden">
             <PortalTrigger
-              label="Track your investment"
+              label="Client portal"
               className="flex h-11 w-11 items-center justify-center text-ivory transition-opacity hover:opacity-80"
             >
               <KeyRound className="h-[18px] w-[18px]" strokeWidth={1.5} aria-hidden="true" />
@@ -146,7 +139,7 @@ export function Navigation() {
             </button>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       <MobileMenu open={open} onClose={() => setOpen(false)} />
     </>

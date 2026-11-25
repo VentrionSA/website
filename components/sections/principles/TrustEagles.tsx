@@ -37,7 +37,7 @@ export function TrustEagles() {
     <div
       ref={root}
       aria-hidden="true"
-      className="pointer-events-none relative mt-2 w-[136vw] max-w-[90rem] shrink-0 sm:w-[118vw] lg:mt-0 lg:w-[100vw]"
+      className="pointer-events-none relative -mt-2 w-[136vw] shrink-0 sm:w-[112vw] lg:-mt-6 lg:w-[min(100vw,80rem,118svh)]"
     >
       <div
         data-eagles
@@ -50,7 +50,7 @@ export function TrustEagles() {
           fill
           quality={86}
           placeholder="blur"
-          sizes="(min-width: 1440px) 1440px, 136vw"
+          sizes="(min-width: 1024px) min(100vw, 1280px), 136vw"
           className="object-cover"
         />
       </div>

@@ -14,7 +14,7 @@ const format = (n: number) => Math.round(n).toLocaleString("en-US");
  * and no word on whether Ventrion stood in the middle or at the end of the trade.
  * It appears as an outline, fills, holds long enough to be read beyond doubt,
  * then empties and dissolves into the page, leaving only the line that explains
- * why nothing more is said. Appearance as disappearance.
+ * why nothing more is said: the particulars remain under seal. Appearance as disappearance.
  */
 
 const figureStyle: CSSProperties = {
@@ -90,7 +90,7 @@ export function Tonnage() {
         400,000 metric tonnes, to date
       </h2>
       <p className="sr-only">
-        The weight of what Ventrion has been part of, to date: 400,000 metric tonnes. The rest is discretion.
+        The weight of what Ventrion has been part of, to date: 400,000 metric tonnes. The particulars remain under seal.
       </p>
 
       <div
@@ -136,7 +136,7 @@ export function Tonnage() {
           data-ton-rest
           className="mt-14 px-6 text-center font-serif text-[clamp(2.1rem,4.6vw,4.25rem)] font-medium leading-[1.02] text-ivory motion-safe:absolute motion-safe:inset-x-0 motion-safe:top-1/2 motion-safe:mt-0 motion-safe:-translate-y-1/2"
         >
-          The rest is <em className="text-burgundy">discretion.</em>
+          The particulars remain <em className="text-burgundy">under seal.</em>
         </p>
       </div>
     </section>

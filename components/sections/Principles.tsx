@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
-import { PRINCIPLES, type PrincipleId } from "@/lib/content";
+import { PRINCIPLES } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
-import { PrincipleIllustration } from "./principles/Illustrations";
+import { PrincipleFrame, PrincipleInlineImage } from "./principles/PrincipleImages";
 import { TrustEagles } from "./principles/TrustEagles";
 
 /** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
@@ -57,34 +57,6 @@ function TrustStatement() {
   );
 }
 
-/** Inline illustration for small screens: draws itself once it scrolls into view. */
-function InlineIllustration({ id }: { id: PrincipleId }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [seen, setSeen] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setSeen(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -20% 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className="mb-10 aspect-square w-full max-w-[280px] lg:hidden">
-      <PrincipleIllustration id={id} active={seen} />
-    </div>
-  );
-}
-
 export function Principles() {
   const [active, setActive] = useState(0);
   const items = useRef<(HTMLLIElement | null)[]>([]);
@@ -116,27 +88,26 @@ export function Principles() {
               But <em className="text-ivory">network size alone</em> is not what matters to us.
             </p>
           </Reveal>
+          <TrustStatement />
           <TrustEagles />
-          <div className="relative -mt-[clamp(2.5rem,11vw,9.5rem)]">
-            <TrustStatement />
-          </div>
+          {/* What the eagles mean */}
+          <Reveal className="relative -mt-[clamp(1.5rem,7vw,6.5rem)] flex max-w-[36rem] flex-col items-center">
+            <span aria-hidden="true" className="h-10 w-px bg-gradient-to-b from-transparent to-mark/40" />
+            <p className="mt-6 text-balance font-serif text-[clamp(1.3rem,2vw,1.7rem)] italic leading-snug text-ivory">
+              High above the ground, two eagles lock talons and fall together, turning as one. Each trusts the other
+              to let go in time.
+            </p>
+          </Reveal>
         </div>
 
         <div className="mt-[clamp(4rem,9vw,8rem)] lg:grid lg:grid-cols-12 lg:gap-8">
-          {/* Pinned illustration (desktop) */}
+          {/* Pinned photograph (desktop) */}
           <div className="hidden lg:col-span-5 lg:block">
-            <div className="sticky top-[12vh] flex h-[76vh] flex-col justify-center">
-              <div className="relative mx-auto aspect-square w-full max-w-[440px]">
-                {PRINCIPLES.map((principle, i) => (
-                  <div
-                    key={principle.id}
-                    className={`absolute inset-0 transition-opacity duration-700 ${active === i ? "opacity-100" : "opacity-0"}`}
-                  >
-                    <PrincipleIllustration id={principle.id} active={active === i} />
-                  </div>
-                ))}
+            <div className="sticky top-[12vh] flex h-[76vh] flex-col items-center justify-center">
+              <div className="w-full max-w-[min(440px,calc((76vh-7rem)*0.8))]">
+                <PrincipleFrame active={active} />
               </div>
-              <div className="mx-auto mt-12 flex w-full max-w-[440px] items-center gap-3" aria-hidden="true">
+              <div className="mx-auto mt-10 flex w-full max-w-[min(440px,calc((76vh-7rem)*0.8))] items-center gap-3" aria-hidden="true">
                 {PRINCIPLES.map((principle, i) => (
                   <span
                     key={principle.id}
@@ -144,7 +115,7 @@ export function Principles() {
                   />
                 ))}
               </div>
-              <p className="eyebrow mx-auto mt-4 w-full max-w-[440px] text-mist" aria-hidden="true">
+              <p className="eyebrow mx-auto mt-4 w-full max-w-[min(440px,calc((76vh-7rem)*0.8))] text-mist" aria-hidden="true">
                 <span className="text-ivory">{PRINCIPLES[active].numeral}</span>
                 <span className="px-2">/</span>IV
               </p>
@@ -161,7 +132,7 @@ export function Principles() {
                 data-index={i}
                 className="flex flex-col justify-center border-t border-line py-16 first:border-t-0 first:pt-0 lg:min-h-[76vh] lg:py-24 lg:first:pt-24"
               >
-                <InlineIllustration id={principle.id} />
+                <PrincipleInlineImage id={principle.id} />
                 <Reveal stagger={0.1}>
                   <p data-reveal className="eyebrow text-ivory">
                     {principle.numeral}

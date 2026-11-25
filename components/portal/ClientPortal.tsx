@@ -15,23 +15,23 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, Fingerprint, KeyRound, Loader2, Lock, RotateCcw, ShieldCheck, Timer, X } from "lucide-react";
 import { LogoMark } from "@/components/brand/Logo";
 import {
-  fingerprintInvestorId,
-  normalizeInvestorId,
-  INVESTOR_ID_MAX,
-  INVESTOR_ID_MIN,
-  type InvestorRecord,
-  type InvestorResponse,
-} from "@/lib/investor";
+  fingerprintClientId,
+  normalizeClientId,
+  CLIENT_ID_MAX,
+  CLIENT_ID_MIN,
+  type ClientRecord,
+  type PortalResponse,
+} from "@/lib/client-portal";
 import { getCallAction, getMailtoHref, siteConfig } from "@/lib/site";
 import { startScroll, stopScroll } from "@/lib/scroll";
 
 /*
- * "Track your investment": the investor portal.
+ * The client portal: "Track your engagements".
  *
  * Every security marker shown here is real: the HTTPS check, the SHA-256
  * fingerprint computed on the visitor's device (the ID itself is never sent),
  * the idle lock, and the server-side verification against Ventrion's private
- * registry (see lib/investor.ts and app/api/investor/route.ts). Nothing is
+ * registry (see lib/client-portal.ts and app/api/portal/route.ts). Nothing is
  * shown as verified unless the server has a record for that fingerprint.
  */
 
@@ -41,13 +41,13 @@ const MINT = "#8cc5a8";
 type PortalContextValue = { open: () => void; close: () => void; isOpen: boolean };
 const PortalContext = createContext<PortalContextValue | null>(null);
 
-export function useInvestorPortal() {
+export function useClientPortal() {
   const value = useContext(PortalContext);
-  if (!value) throw new Error("useInvestorPortal must be used inside <InvestorPortalProvider>");
+  if (!value) throw new Error("useClientPortal must be used inside <ClientPortalProvider>");
   return value;
 }
 
-export function InvestorPortalProvider({ children }: { children: ReactNode }) {
+export function ClientPortalProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const returnFocus = useRef<HTMLElement | null>(null);
   const wasOpen = useRef(false);
@@ -58,7 +58,7 @@ export function InvestorPortalProvider({ children }: { children: ReactNode }) {
   }, []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  // Deep link: /#track opens the portal (handy for links sent to investors).
+  // Deep link: /#track opens the portal (handy for links sent to clients).
   useEffect(() => {
     const check = () => {
       if (window.location.hash !== "#track") return;
@@ -83,14 +83,14 @@ export function InvestorPortalProvider({ children }: { children: ReactNode }) {
   return (
     <PortalContext.Provider value={value}>
       {children}
-      <AnimatePresence>{isOpen ? <PortalDialog key="investor-portal" onClose={close} /> : null}</AnimatePresence>
+      <AnimatePresence>{isOpen ? <PortalDialog key="client-portal" onClose={close} /> : null}</AnimatePresence>
     </PortalContext.Provider>
   );
 }
 
 /** Any button that opens the portal. */
 export function PortalTrigger({ className = "", children, label }: { className?: string; children: ReactNode; label?: string }) {
-  const { open } = useInvestorPortal();
+  const { open } = useClientPortal();
   return (
     <button type="button" onClick={open} aria-haspopup="dialog" aria-label={label} className={className}>
       {children}
@@ -140,13 +140,13 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
   const [fingerprint, setFingerprint] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [step, setStep] = useState(0);
-  const [record, setRecord] = useState<InvestorRecord | null>(null);
+  const [record, setRecord] = useState<ClientRecord | null>(null);
   const [retryAfter, setRetryAfter] = useState(0);
   const [remaining, setRemaining] = useState(SESSION_SECONDS);
 
-  const normalized = normalizeInvestorId(value);
+  const normalized = normalizeClientId(value);
   const busy = phase === "verifying";
-  const ready = normalized.length >= INVESTOR_ID_MIN && !busy && hashing;
+  const ready = normalized.length >= CLIENT_ID_MIN && !busy && hashing;
   const call = getCallAction();
   const mail = getMailtoHref();
 
@@ -203,7 +203,7 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
     let cancelled = false;
     const t = window.setTimeout(async () => {
       try {
-        const fp = await fingerprintInvestorId(normalized);
+        const fp = await fingerprintClientId(normalized);
         if (!cancelled) setFingerprint(fp);
       } catch {
         /* Web Crypto unavailable: the handshake already shows it */
@@ -257,16 +257,16 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
     setRecord(null);
     setStep(1);
     try {
-      const fp = await fingerprintInvestorId(normalized);
+      const fp = await fingerprintClientId(normalized);
       setStep(2);
-      const response = await fetch("/api/investor", {
+      const response = await fetch("/api/portal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fingerprint: fp }),
         cache: "no-store",
       });
       setStep(3);
-      const data = (await response.json()) as InvestorResponse;
+      const data = (await response.json()) as PortalResponse;
       if (data.status === "verified") {
         setRecord(data.record);
         setPhase("verified");
@@ -292,7 +292,7 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
     },
     {
       icon: Fingerprint,
-      label: "Investor ID",
+      label: "Client ID",
       value: hashing ? "Hashed on device · SHA-256" : "Hashing unavailable",
       ok: hashing,
     },
@@ -347,7 +347,7 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
             <LogoMark className="h-7 w-auto text-paper" />
             <div className="leading-none">
               <p className="font-text text-[12px] uppercase tracking-[0.3em] text-paper">Ventrion</p>
-              <p className="mt-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-paper/50">Investor portal</p>
+              <p className="mt-1.5 font-mono text-[9.5px] uppercase tracking-[0.22em] text-paper/50">Client portal</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -362,7 +362,7 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close the investor portal"
+              aria-label="Close the client portal"
               className="-mr-2 flex h-9 w-9 items-center justify-center text-paper/70 transition-colors hover:text-paper"
             >
               <X className="h-5 w-5" strokeWidth={1.5} />
@@ -385,11 +385,11 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
             Session <span className="text-paper/70">{reference}</span>
           </p>
           <h2 id="portal-title" className="mt-3 font-serif text-[2.35rem] font-medium leading-[1.02] sm:text-[2.6rem]">
-            Track your <em>investment.</em>
+            Track your <em>engagements.</em>
           </h2>
           <p id="portal-desc" className="mt-3 max-w-[30rem] text-[14.5px] leading-relaxed text-paper/70">
-            Every client is invested, whether by product, by capital or by time. Enter your Investor ID to follow your
-            position.
+            A private view of your engagement with Ventrion. Enter the Client ID you were given to follow its
+            progress.
           </p>
 
           {/* Session checks */}
@@ -483,19 +483,19 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
             </div>
           ) : (
             <form onSubmit={verify} className="mt-7" noValidate>
-              <label htmlFor="investor-id" className="font-mono text-[10px] uppercase tracking-[0.24em] text-paper/60">
-                Investor ID
+              <label htmlFor="client-id" className="font-mono text-[10px] uppercase tracking-[0.24em] text-paper/60">
+                Client ID
               </label>
               <div className="mt-2 flex items-center gap-3 border border-paper/20 bg-black/20 px-4 transition-colors focus-within:border-[#8cc5a8]/80">
                 <KeyRound className="h-4 w-4 shrink-0 text-paper/45" strokeWidth={1.5} aria-hidden="true" />
                 <input
                   ref={input}
-                  id="investor-id"
-                  name="investor-id"
+                  id="client-id"
+                  name="client-id"
                   value={value}
                   onChange={(event) => {
                     touch();
-                    setValue(event.target.value.toUpperCase().replace(/[^A-Z0-9 -]/g, "").slice(0, INVESTOR_ID_MAX + 8));
+                    setValue(event.target.value.toUpperCase().replace(/[^A-Z0-9 -]/g, "").slice(0, CLIENT_ID_MAX + 8));
                     if (phase !== "idle" && phase !== "verifying") setPhase("idle");
                   }}
                   disabled={busy}
@@ -504,11 +504,11 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
                   autoCapitalize="characters"
                   spellCheck={false}
                   placeholder="VTR-XXXX-XXXX-XXXX"
-                  aria-describedby="investor-id-fingerprint investor-id-note"
+                  aria-describedby="client-id-fingerprint client-id-note"
                   className="h-14 w-full min-w-0 bg-transparent font-mono text-[16px] uppercase tracking-[0.16em] text-paper outline-none placeholder:text-paper/25 sm:text-[17px]"
                 />
               </div>
-              <p id="investor-id-fingerprint" className="mt-2.5 flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] text-paper/45">
+              <p id="client-id-fingerprint" className="mt-2.5 flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] text-paper/45">
                 <Fingerprint className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} aria-hidden="true" />
                 <span className="uppercase tracking-[0.2em]">SHA-256</span>
                 <span className="truncate text-paper/70">{fingerprint ? formatFingerprint(fingerprint) : "awaiting input"}</span>
@@ -528,7 +528,7 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
               <div aria-live="polite">
                 {phase === "unverified" ? (
                   <div className="mt-5 border border-[#e3a3ab]/35 bg-burgundy/15 p-4 text-[13.5px] leading-relaxed">
-                    <p className="text-paper">We could not verify this Investor ID.</p>
+                    <p className="text-paper">We could not verify this Client ID.</p>
                     <p className="mt-1 text-paper/65">
                       Check the ID and try again. If it still cannot be verified, please speak with Ventrion.
                     </p>
@@ -573,9 +573,9 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
             </form>
           )}
 
-          <p id="investor-id-note" className="mt-6 text-[11.5px] leading-relaxed text-paper/45">
-            Your Investor ID is turned into a one-way fingerprint on this device before anything is sent; the ID itself
-            never leaves your device and is not stored. Investor IDs are issued privately by Ventrion.
+          <p id="client-id-note" className="mt-6 text-[11.5px] leading-relaxed text-paper/45">
+            Your Client ID is turned into a one-way fingerprint on this device before anything is sent; the ID itself
+            never leaves your device and is not stored. Client IDs are issued privately by Ventrion.
           </p>
         </div>
 
