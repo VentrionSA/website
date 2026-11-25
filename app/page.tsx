@@ -1,7 +1,6 @@
 import { Hero } from "@/components/sections/Hero";
 import { Introduction } from "@/components/sections/Introduction";
 import { Network } from "@/components/sections/Network";
-import { Tonnage } from "@/components/sections/Tonnage";
 import { Principles } from "@/components/sections/Principles";
 import { Closing } from "@/components/sections/Closing";
 import { Contact } from "@/components/sections/Contact";
@@ -17,7 +16,6 @@ export default function HomePage() {
       <Hero />
       <Introduction />
       <Network />
-      <Tonnage />
       <Principles />
       <Closing />
       <Contact />

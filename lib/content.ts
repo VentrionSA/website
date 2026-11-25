@@ -22,12 +22,13 @@ export type Market = {
   id: string;
   name: string;
   region: Region;
-  /** Representative coordinates used to place the marker on the globe. */
+  /** Representative coordinates used to place the marker on the map. */
   lat: number;
   lon: number;
 };
 
-// Ids match the network tags in lib/geo/countries.json (used by the globe and map).
+// Ids match the network tags in lib/geo/countries.json; the map's outlines are built from it
+// (scripts/build-network-map.py writes lib/geo/network-map.ts).
 export const MARKETS: Market[] = [
   { id: "saudi-arabia", name: "Saudi Arabia", region: "Middle East", lat: 24.2, lon: 45.1 },
   { id: "united-arab-emirates", name: "United Arab Emirates", region: "Middle East", lat: 24.4, lon: 54.4 },
@@ -44,11 +45,10 @@ export const REGIONS: Region[] = ["Middle East", "Central Asia & Caspian", "Asia
 
 /* ── Principles of the network ─────────────────────────────────────────── */
 
-export type PrincipleId = "principals" | "local" | "quality" | "accountability";
+export type PrincipleId = "principals" | "quality" | "distance";
 
 export type Principle = {
   id: PrincipleId;
-  numeral: string;
   title: string;
   /** Opening sentence, set in the serif. *Starred* words are emphasised. */
   lead: string;
@@ -60,29 +60,16 @@ export type Principle = {
 export const PRINCIPLES: Principle[] = [
   {
     id: "principals",
-    numeral: "I",
     title: "Principals We *Know*",
     lead: "We prefer *direct relationships* over chains of intermediaries.",
     body: [
-      "Ventrion is connected to the principals themselves: the decision-makers our clients need to reach, whether they are looking for a buyer or a seller. Many of these relationships have developed through years of cooperation.",
+      "Wherever possible, Ventrion deals with the principals themselves: the decision-makers our clients need to reach, whether they are looking for a buyer or a seller. Many of these relationships have developed through years of cooperation.",
       "This creates something that cannot be achieved by working through a chain of intermediaries:",
     ],
     closing: "accountability between people who expect to work together again.",
   },
   {
-    id: "local",
-    numeral: "II",
-    title: "Local Knowledge, *Trusted Guidance*",
-    lead: "Every market has its own *realities.*",
-    body: [
-      "Regulations, procedures and commercial conventions differ from one country to the next. Ventrion does not manage them on a client’s behalf.",
-      "Instead, we guide our clients to the people who have the knowledge and the expertise: people we know, and trust.",
-    ],
-    closing: "We know who to call.",
-  },
-  {
     id: "quality",
-    numeral: "III",
     title: "*Quality* Over Quantity",
     lead: "We do not measure our network by the *number of names* in it.",
     body: [
@@ -91,10 +78,13 @@ export const PRINCIPLES: Principle[] = [
     closing: "Every introduction carries our name.",
   },
   {
-    id: "accountability",
-    numeral: "IV",
-    title: "Global Reach With *Personal Accountability*",
-    lead: "The purpose of an international network is to make *distance less relevant.*",
-    body: ["A transaction may take place thousands of kilometres away, but the relationship with our client remains local and direct."],
+    // global reach, personal accountability: said in other words
+    id: "distance",
+    title: "Distance Changes *Nothing*",
+    lead: "However far an engagement reaches, *it stays personal.*",
+    body: [
+      "Our network spans markets thousands of kilometres apart. Our clients are never passed along a chain: they deal with the people at Ventrion who know their engagement, and who answer to them personally.",
+    ],
+    closing: "One call reaches the whole network.",
   },
 ];

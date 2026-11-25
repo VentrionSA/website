@@ -315,6 +315,49 @@
     animation: float-bob 9s ease-in-out infinite alternate;
   }
 
+  /* Network map: arcs draw out from the market in focus, and its name rises in */
+  .map-arc {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: map-arc 1.5s var(--ease-premium) forwards;
+  }
+  .map-label {
+    animation: hero-fade 0.9s var(--ease-premium) both;
+  }
+
+  /* Introduction diagram: once the lines have drawn, light keeps moving through them */
+  .flow-pulse {
+    stroke-dasharray: 0.05 0.95;
+    stroke-dashoffset: 0.05;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    animation: flow-pulse 4s linear infinite;
+    animation-play-state: paused;
+  }
+  .is-flowing .flow-pulse {
+    opacity: 1;
+    animation-play-state: running;
+  }
+  .flow-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: flow-spin 70s linear infinite;
+  }
+  .flow-node-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: node-pulse 2.4s ease-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flow-pulse {
+      display: none;
+    }
+    .flow-ring,
+    .flow-node-ring {
+      animation: none;
+    }
+  }
+
   /* Form controls */
   .field-input {
     width: 100%;
@@ -368,6 +411,38 @@
   }
   to {
     transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes flow-pulse {
+  from {
+    stroke-dashoffset: 0.05;
+  }
+  to {
+    stroke-dashoffset: -0.95;
+  }
+}
+
+@keyframes flow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes node-pulse {
+  from {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@keyframes map-arc {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 

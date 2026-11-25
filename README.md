@@ -1,8 +1,8 @@
 # Ventrion — website
 
-A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (interactive 3D globe), our principles (four principles, each with a photograph, in `components/sections/principles/`), a closing statement, contact.
+A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (an interactive 2D map), our principles (the eagles section, "The way we work", and three principles, in `components/sections/principles/`), a closing statement, contact.
 
-**Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Three.js / React Three Fiber · Lucide · Zod.
+**Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Lucide · Zod.
 
 ```bash
 npm install
@@ -48,12 +48,12 @@ Give the printed Client ID to the client privately, add the printed entry to `CL
 ## Content
 
 - **Navigation, markets and the four principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
-- **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically). The four principle photographs in `assets/images/principles/` (`principals`, `local`, `quality`, `accountability`) are Pexels placeholders graded to the site's green and ivory; replace them at the same filenames (square, about 1600px, subject near the centre) and adjust their framing in `components/sections/principles/PrincipleImages.tsx` if needed.
+- **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically). The eagles artwork (`assets/images/art/trust-eagles.jpg`) is Ventrion's own, cleaned, extended and graded.
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
-- **Globe map:** `lib/geo/countries.json`, country outlines from Natural Earth (via world-atlas, 1:110m with Bahrain from 1:50m) pre-projected to an equirectangular map; network markets are tagged by id. The globe draws it as a texture at runtime.
+- **Network map:** `lib/geo/countries.json` holds country outlines from Natural Earth (via world-atlas, 1:110m with Bahrain from 1:50m), with the network's markets tagged by id. `python3 scripts/build-network-map.py` projects and crops them into `lib/geo/network-map.ts`, which the map draws as SVG; run it again after changing the markets. Marker positions come from `MARKETS` in `lib/content.ts`.
 
 ## Accessibility & performance notes
 
 - Respects `prefers-reduced-motion` (no smooth scroll, no scroll animations, static 3D fallbacks).
-- WebGL scenes are lazy-loaded, pause when off-screen, and fall back to CSS/2D versions when WebGL is unavailable or the device is low-powered.
+- The network map is plain SVG: its countries sit on a static layer, and only the arcs and markers move.
 - Keyboard-accessible navigation, mobile menu and client portal (focus trap, Escape to close), and market selector.

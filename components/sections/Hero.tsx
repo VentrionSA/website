@@ -82,7 +82,7 @@ export function Hero() {
               className="hero-fade mt-6 max-w-[34rem] font-text text-[17px] leading-[1.25] tracking-[0.02em] text-ivory md:text-[20px] lg:mt-[1.86vw] lg:max-w-none lg:text-[clamp(18px,1.741vw,31px)] lg:leading-[1.2]"
               style={i(2)}
             >
-              Independent trade facilitation, directly between principals.
+              Independent trade facilitation.
             </p>
           </div>
         </div>

@@ -1,0 +1,174 @@
+"""
+Builds lib/geo/network-map.ts: the country outlines for the 2D network map.
+
+Reads lib/geo/countries.json (Natural Earth via world-atlas, equirectangular, 2048 x 1024),
+reprojects to an equidistant cylindrical projection with standard parallel 30 degrees
+(true shapes around the Gulf, Central Asia and China), crops to the region the network
+covers, drops specks, simplifies, and writes compact SVG path strings.
+
+    python3 scripts/build-network-map.py
+"""
+import json
+import math
+import os
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC = os.path.join(ROOT, "lib", "geo", "countries.json")
+OUT = os.path.join(ROOT, "lib", "geo", "network-map.ts")
+
+# Projection and crop. The map's viewBox is the crop; units are tenths of a degree of latitude.
+LON_MIN, LON_MAX = 8.0, 162.0
+LAT_MIN, LAT_MAX = -13.8, 60.2  # centred on 23.2°N: Kazakhstan's north to Java's south
+K = 10.0
+COS = math.cos(math.radians(30.0))
+PAD = 4.0  # clip a little outside the crop so no clipped edge ever shows
+TOL = 1.4  # simplification tolerance, map units (about a pixel at desktop size)
+MIN_AREA = 14.0  # drop islands smaller than this, map units squared (never a network country's)
+
+W = (LON_MAX - LON_MIN) * K * COS
+H = (LAT_MAX - LAT_MIN) * K
+
+
+def project(lon, lat):
+    return ((lon - LON_MIN) * K * COS, (LAT_MAX - lat) * K)
+
+
+def parse_rings(d, w, h):
+    rings, ring = [], []
+    for token in d.replace("Z", " Z ").replace("M", " M ").replace("L", " L ").split():
+        if token in ("M", "L"):
+            continue
+        if token == "Z":
+            if ring:
+                rings.append(ring)
+            ring = []
+            continue
+        x, y = (float(v) for v in token.split(","))
+        lon = x / w * 360.0 - 180.0
+        lat = 90.0 - y / h * 180.0
+        ring.append(project(lon, lat))
+    if ring:
+        rings.append(ring)
+    return rings
+
+
+def clip(ring, x0, y0, x1, y1):
+    """Sutherland-Hodgman against the rectangle."""
+    def edge(points, inside, cut):
+        out = []
+        for i, p in enumerate(points):
+            q = points[i - 1]
+            if inside(p):
+                if not inside(q):
+                    out.append(cut(q, p))
+                out.append(p)
+            elif inside(q):
+                out.append(cut(q, p))
+        return out
+
+    def at_x(xc):
+        return lambda a, b: (xc, a[1] + (b[1] - a[1]) * (xc - a[0]) / (b[0] - a[0]))
+
+    def at_y(yc):
+        return lambda a, b: (a[0] + (b[0] - a[0]) * (yc - a[1]) / (b[1] - a[1]), yc)
+
+    pts = ring
+    for inside, cut in (
+        (lambda p: p[0] >= x0, at_x(x0)),
+        (lambda p: p[0] <= x1, at_x(x1)),
+        (lambda p: p[1] >= y0, at_y(y0)),
+        (lambda p: p[1] <= y1, at_y(y1)),
+    ):
+        if not pts:
+            break
+        pts = edge(pts, inside, cut)
+    return pts
+
+
+def area(ring):
+    return abs(sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(ring, ring[1:] + ring[:1]))) / 2
+
+
+def simplify(points, tol):
+    """Douglas-Peucker on an open polyline."""
+    if len(points) < 3:
+        return points
+    (ax, ay), (bx, by) = points[0], points[-1]
+    dx, dy = bx - ax, by - ay
+    norm = math.hypot(dx, dy) or 1e-9
+    best, idx = 0.0, 0
+    for i in range(1, len(points) - 1):
+        px, py = points[i]
+        dist = abs(dy * px - dx * py + bx * ay - by * ax) / norm
+        if dist > best:
+            best, idx = dist, i
+    if best > tol:
+        return simplify(points[: idx + 1], tol)[:-1] + simplify(points[idx:], tol)
+    return [points[0], points[-1]]
+
+
+def to_path(rings):
+    parts = []
+    for ring in rings:
+        # split the closed ring in two halves so Douglas-Peucker keeps its shape
+        mid = len(ring) // 2
+        tol = TOL if area(ring) > 400 else TOL / 3  # keep small islands (Bahrain) recognisable
+        pts = simplify(ring[: mid + 1], tol)[:-1] + simplify(ring[mid:] + ring[:1], tol)[:-1]
+        if len(pts) < 3:
+            continue
+        cmds = ["M%s,%s" % (fmt(pts[0][0]), fmt(pts[0][1]))]
+        cmds += ["L%s,%s" % (fmt(x), fmt(y)) for x, y in pts[1:]]
+        parts.append("".join(cmds) + "Z")
+    return "".join(parts)
+
+
+def fmt(v):
+    s = "%.1f" % v
+    return s[:-2] if s.endswith(".0") else s
+
+
+def main():
+    data = json.load(open(SRC))
+    w, h = data["w"], data["h"]
+    land, network = [], {}
+    for country in data["countries"]:
+        rings = []
+        for ring in parse_rings(country["d"], w, h):
+            ring = clip(ring, -PAD * K, -PAD * K, W + PAD * K, H + PAD * K)
+            if len(ring) >= 3 and (country["id"] or area(ring) >= MIN_AREA):
+                rings.append(ring)
+        if not rings:
+            continue
+        path = to_path(rings)
+        if not path:
+            continue
+        if country["id"]:
+            network[country["id"]] = path
+        else:
+            land.append(path)
+
+    land_path = "".join(land)
+    lines = [
+        "// Generated by scripts/build-network-map.py from lib/geo/countries.json. Do not edit by hand.",
+        "// Equidistant cylindrical projection, standard parallel 30°, cropped to the network's region.",
+        "",
+        "export const MAP_PROJECTION = { lonMin: %s, latMax: %s, k: %s, cos: %.6f } as const;" % (LON_MIN, LAT_MAX, K, COS),
+        "export const MAP_SIZE = { width: %s, height: %s } as const;" % (fmt(W), fmt(H)),
+        "",
+        "/** Every country in view that is not in the network, as one path. */",
+        "export const LAND_PATH =\n  %s;" % json.dumps(land_path),
+        "",
+        "/** The network's countries, by market id (see MARKETS in lib/content.ts). */",
+        "export const NETWORK_PATHS: Record<string, string> = {",
+    ]
+    for key in sorted(network):
+        lines.append("  %s: %s," % (json.dumps(key), json.dumps(network[key])))
+    lines.append("};")
+    lines.append("")
+    open(OUT, "w").write("\n".join(lines))
+    print("land %d chars, network %d chars (%s), size %s x %s" % (
+        len(land_path), sum(len(v) for v in network.values()), ", ".join(sorted(network)), fmt(W), fmt(H)))
+
+
+if __name__ == "__main__":
+    main()

@@ -5,20 +5,14 @@
  * attribution required). Replace files in assets/images/backdrops at the same paths.
  */
 import hero from "@/assets/images/backdrops/hero-wake.jpg";
-import approach from "@/assets/images/backdrops/approach.jpg";
-import network from "@/assets/images/backdrops/network.jpg";
-import vessel from "@/assets/images/backdrops/vessel.jpg";
+import clouds from "@/assets/images/backdrops/clouds.jpg";
 import expertise from "@/assets/images/backdrops/expertise.jpg";
 
 export const BACKDROPS = {
   /** A ship's wake on misted green water, running to the top right */
   hero,
-  /** Vessel above the clouds */
-  about: approach,
-  /** Vessels at anchor, seen from above */
-  network,
-  /** A single vessel on open water */
-  closing: vessel,
+  /** Above a sea of clouds at first light: the world, seen from altitude */
+  closing: clouds,
   /** Port cranes at night, gold reflections */
   contact: expertise,
 };

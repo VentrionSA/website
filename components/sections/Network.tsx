@@ -1,23 +1,17 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MARKETS, REGIONS } from "@/lib/content";
-import { useGraphicsTier, useInViewport, useNearViewport, usePrefersReducedMotion } from "@/lib/device";
+import { useInViewport, usePrefersReducedMotion } from "@/lib/device";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { FlatMap } from "./network/FlatMap";
-import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
-import { BACKDROPS } from "@/lib/backdrops";
-
-const loadGlobe = () => import("@/components/three/GlobeCanvas");
-const GlobeCanvas = dynamic(loadGlobe, { ssr: false });
+import { NetworkMap } from "./network/NetworkMap";
 
 function CornerFrame() {
   const corner = "absolute h-5 w-5 border-mark/35";
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[5]">
       <span className={`${corner} left-0 top-0 border-l border-t`} />
       <span className={`${corner} right-0 top-0 border-r border-t`} />
       <span className={`${corner} bottom-0 left-0 border-b border-l`} />
@@ -27,36 +21,21 @@ function CornerFrame() {
 }
 
 export function Network() {
-  const globeBox = useRef<HTMLDivElement>(null);
-  const near = useNearViewport(globeBox, "900px 0px");
-  const inView = useInViewport(globeBox);
-  // Reduced-motion visitors still get the 3D globe, with ambient motion stilled.
-  const tier = useGraphicsTier({ allowReducedMotion: true });
+  const mapBox = useRef<HTMLDivElement>(null);
+  const inView = useInViewport(mapBox);
   const reduce = usePrefersReducedMotion();
   const [active, setActive] = useState(0);
   const [hover, setHover] = useState<number | null>(null);
-  const [listHover, setListHover] = useState<number | null>(null);
   const lastInteraction = useRef(0);
   const hoverRef = useRef<number | null>(null);
   // Highlighted in burgundy: anything hovered, otherwise the selection.
   const focus = hover ?? active;
-  // Faced by the globe: the selection, or a name hovered in the list. Hovering a
-  // marker on the globe itself only highlights it, so the globe never moves under the pointer.
-  const orient = listHover ?? active;
 
   useEffect(() => {
     hoverRef.current = hover;
   }, [hover]);
 
-  // Warm the 3D bundle shortly after load so the globe is ready before it is reached.
-  useEffect(() => {
-    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
-    const run = () => void loadGlobe();
-    if (w.requestIdleCallback) w.requestIdleCallback(run);
-    else window.setTimeout(run, 1500);
-  }, []);
-
-  // Gently cycle through markets while the section is on screen and idle.
+  // Gently tour the markets while the map is on screen and idle.
   useEffect(() => {
     if (!inView || reduce) return;
     const id = window.setInterval(() => {
@@ -76,24 +55,8 @@ export function Network() {
     setHover(index);
   }, []);
 
-  const hoverListItem = useCallback((index: number | null) => {
-    lastInteraction.current = Date.now();
-    setHover(index);
-    setListHover(index);
-  }, []);
-
-  // Dragging the globe hands it to the visitor: the tour stays paused for half a minute.
-  const interact = useCallback(() => {
-    lastInteraction.current = Date.now() + 18_000;
-  }, []);
-
   return (
-    <section id="network" aria-labelledby="network-title" className="relative isolate overflow-clip bg-graphite py-[clamp(6rem,12vw,11rem)]">
-      <SectionBackdrop src={BACKDROPS.network} wash={0.74} side="both" saturate={0.4} />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_40%_at_32%_58%,rgba(24,67,53,0.05),transparent_72%)]"
-      />
+    <section id="network" aria-labelledby="network-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-mark/25 to-transparent" />
 
       <div className="shell relative">
@@ -107,37 +70,32 @@ export function Network() {
           It is created by knowing <em className="text-burgundy">who to call.</em>
         </SplitHeading>
 
-        <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:items-center lg:gap-8">
-          <div className="lg:col-span-7">
-          <div ref={globeBox} className="relative mx-auto aspect-square w-full max-w-[760px]">
+        {/* The map: the full width of the page from the Mediterranean to the Pacific */}
+        <Reveal className="mt-14 lg:mt-20" y={30}>
+          <div
+            ref={mapBox}
+            className="relative -mx-[clamp(1.25rem,4.6vw,5rem)] aspect-[5/4] overflow-hidden sm:mx-0 sm:aspect-[16/10] lg:aspect-[2/1]"
+          >
             <CornerFrame />
-            {/* soft shadow grounding the porcelain globe */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-[85%] h-[7%] w-[58%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(24,67,53,0.18),transparent)] blur-md"
-            />
-            <div className="absolute inset-[4%]">
-              {tier === "none" ? (
-                <FlatMap focusIndex={focus} onHover={hoverMarket} onSelect={select} />
-              ) : tier !== "pending" && near ? (
-                <GlobeCanvas
-                  focusIndex={focus}
-                  orientIndex={orient}
-                  onHover={hoverMarket}
-                  onSelect={select}
-                  onInteract={interact}
-                  tier={tier}
-                  calm={reduce}
-                />
-              ) : null}
+            <NetworkMap focusIndex={focus} onHover={hoverMarket} onSelect={select} calm={reduce} />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] flex items-end justify-between gap-4 px-5 pb-4 sm:px-6 sm:pb-5">
+              <p className="eyebrow flex items-center gap-3 text-[9.5px] text-mist sm:text-[10px]">
+                <span aria-hidden="true" className="relative flex h-2 w-2">
+                  {reduce ? null : <span className="absolute inset-0 animate-ping rounded-full bg-burgundy/50" />}
+                  <span className="relative h-2 w-2 rounded-full bg-burgundy" />
+                </span>
+                <span>
+                  Now highlighting <span className="ml-1 text-ivory">{MARKETS[focus].name}</span>
+                </span>
+              </p>
+              <p className="eyebrow hidden text-[9.5px] text-mist/80 sm:block">Select a market</p>
             </div>
-            <p className="eyebrow pointer-events-none absolute bottom-3 left-6 text-[9.5px] text-mist/80">
-              {tier === "none" ? "Select a market" : "Drag to rotate · Select a market"}
-            </p>
           </div>
+        </Reveal>
 
-          {/* The markets, listed beneath the globe: hover, tab to or tap a name to bring it forward */}
-          <div className="mx-auto mt-8 grid w-full max-w-[760px] grid-cols-2 gap-x-6 gap-y-7 border-t border-line pt-7 sm:grid-cols-3">
+        <div className="mt-12 grid gap-14 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+          {/* The markets, by region: hover, tab to or tap a name to bring it forward on the map */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:col-span-7">
             {REGIONS.map((region) => (
               <div key={region} className={region === "Middle East" ? "row-span-2 sm:row-span-1" : ""}>
                 <p className="eyebrow text-[10px] text-mist">{region}</p>
@@ -148,10 +106,10 @@ export function Network() {
                         <button
                           type="button"
                           onClick={() => select(i)}
-                          onMouseEnter={() => hoverListItem(i)}
-                          onMouseLeave={() => hoverListItem(null)}
-                          onFocus={() => hoverListItem(i)}
-                          onBlur={() => hoverListItem(null)}
+                          onMouseEnter={() => hoverMarket(i)}
+                          onMouseLeave={() => hoverMarket(null)}
+                          onFocus={() => hoverMarket(i)}
+                          onBlur={() => hoverMarket(null)}
                           aria-pressed={i === active}
                           className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight text-ivory transition-opacity duration-500 sm:text-[1.25rem] ${
                             i === focus ? "italic" : "opacity-80 hover:opacity-100"
@@ -172,28 +130,20 @@ export function Network() {
               </div>
             ))}
           </div>
-          </div>
 
           <Reveal stagger={0.12} className="lg:col-span-4 lg:col-start-9">
             <p data-reveal className="font-serif text-[1.45rem] leading-snug text-ivory sm:text-[1.65rem]">
-              Ventrion is connected directly to the <em className="text-ivory">principals.</em>
+              The shortest path to a <em className="text-burgundy">serious</em> counterpart.
             </p>
             <p data-reveal className="mt-6 text-[16px] leading-[1.8] text-mist">
-              Not to a chain of intermediaries. Every introduction is made between the decision-makers themselves.
+              We value our clients&rsquo; time as much as they do. Wherever possible, we go straight to the principals;
+              where we cannot, we work only through people we know and trust. Every counterpart is qualified before an
+              introduction is made, so our clients meet only parties who are serious and ready to do business.
             </p>
-            <div data-reveal className="mt-10 flex items-center gap-4 border-t border-line pt-6">
-              <span aria-hidden="true" className="relative flex h-2 w-2">
-                <span className="absolute inset-0 animate-ping rounded-full bg-burgundy/50" />
-                <span className="relative h-2 w-2 rounded-full bg-burgundy" />
-              </span>
-              <p className="eyebrow text-[10px] text-mist">
-                Now highlighting <span className="ml-1 text-ivory">{MARKETS[focus].name}</span>
-              </p>
-            </div>
           </Reveal>
         </div>
 
-        <p className="mt-8 text-xs leading-relaxed text-mist/70">
+        <p className="mt-12 text-xs leading-relaxed text-mist/70">
           Highlighted markets reflect the reach of our network. They do not indicate office locations.
         </p>
       </div>

@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 import { PRINCIPLES } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
-import { PrincipleFrame, PrincipleInlineImage } from "./principles/PrincipleImages";
-import { TrustEagles } from "./principles/TrustEagles";
+import { WayWeWork } from "./principles/WayWeWork";
 
 /** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
 function TrustStatement() {
@@ -58,106 +57,59 @@ function TrustStatement() {
 }
 
 export function Principles() {
-  const [active, setActive] = useState(0);
-  const items = useRef<(HTMLLIElement | null)[]>([]);
-
-  // The principle crossing the middle of the viewport drives the pinned illustration.
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(Number((entry.target as HTMLElement).dataset.index));
-        });
-      },
-      { rootMargin: "-48% 0px -48% 0px" },
-    );
-    items.current.forEach((el) => el && io.observe(el));
-    return () => io.disconnect();
-  }, []);
-
   return (
-    <section id="principles" aria-labelledby="principles-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
+    <section id="principles" aria-labelledby="principles-title" className="relative isolate overflow-clip bg-ink pt-[clamp(6rem,12vw,11rem)]">
+      <div className="shell relative flex flex-col items-center text-center">
+        <Eyebrow index="03" className="justify-center">
+          Our Principles
+        </Eyebrow>
+        <Reveal className="mt-10">
+          <p className="display-md max-w-[24ch] text-balance text-mist">
+            But <em className="text-ivory">network size alone</em> is not what matters to us.
+          </p>
+        </Reveal>
+        <TrustStatement />
+      </div>
 
-      <div className="shell relative">
-        <div className="flex flex-col items-center text-center">
-          <Eyebrow index="03" className="justify-center">
-            Our Principles
-          </Eyebrow>
-          <Reveal className="mt-10">
-            <p className="display-md max-w-[24ch] text-balance text-mist">
-              But <em className="text-ivory">network size alone</em> is not what matters to us.
-            </p>
-          </Reveal>
-          <TrustStatement />
-          <TrustEagles />
-          {/* What the eagles mean */}
-          <Reveal className="relative -mt-[clamp(1.5rem,7vw,6.5rem)] flex max-w-[36rem] flex-col items-center">
-            <span aria-hidden="true" className="h-10 w-px bg-gradient-to-b from-transparent to-mark/40" />
-            <p className="mt-6 text-balance font-serif text-[clamp(1.3rem,2vw,1.7rem)] italic leading-snug text-ivory">
-              High above the ground, two eagles lock talons and fall together, turning as one. Each trusts the other
-              to let go in time.
-            </p>
-          </Reveal>
-        </div>
+      <WayWeWork />
 
-        <div className="mt-[clamp(4rem,9vw,8rem)] lg:grid lg:grid-cols-12 lg:gap-8">
-          {/* Pinned photograph (desktop) */}
-          <div className="hidden lg:col-span-5 lg:block">
-            <div className="sticky top-[12vh] flex h-[76vh] flex-col items-center justify-center">
-              <div className="w-full max-w-[min(440px,calc((76vh-7rem)*0.8))]">
-                <PrincipleFrame active={active} />
-              </div>
-              <div className="mx-auto mt-10 flex w-full max-w-[min(440px,calc((76vh-7rem)*0.8))] items-center gap-3" aria-hidden="true">
-                {PRINCIPLES.map((principle, i) => (
-                  <span
-                    key={principle.id}
-                    className={`h-px flex-1 transition-colors duration-700 ${i <= active ? "bg-mark" : "bg-line-strong"}`}
-                  />
+      {/* What we commit to: the principles, one to a row */}
+      <div id="commitments" className="shell relative scroll-mt-24 py-[clamp(5rem,10vw,9rem)]">
+        <Reveal>
+          <p className="flex items-center gap-4 font-text text-[12px] font-medium uppercase tracking-[0.2em] text-ivory sm:text-[13px]">
+            <span aria-hidden="true" className="h-px w-10 bg-burgundy sm:w-12" />
+            Our commitment to you
+          </p>
+        </Reveal>
+        <ul className="mt-10 border-t border-line lg:mt-14">
+          {PRINCIPLES.map((principle) => (
+            <li
+              key={principle.id}
+              className="grid gap-7 border-b border-line py-[clamp(3rem,6vw,5.5rem)] lg:grid-cols-12 lg:gap-8"
+            >
+              <Reveal className="lg:col-span-5">
+                <h3 className="display-md max-w-[14ch] text-balance text-ivory">
+                  <Emphasis text={principle.title} />
+                </h3>
+              </Reveal>
+              <Reveal stagger={0.1} className="lg:col-span-6 lg:col-start-7">
+                <p data-reveal className="max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">
+                  <Emphasis text={principle.lead} className="text-ivory" />
+                </p>
+                {principle.body.map((paragraph) => (
+                  <p key={paragraph.slice(0, 24)} data-reveal className="mt-5 max-w-[34rem] text-[16px] leading-[1.8] text-mist">
+                    {paragraph}
+                  </p>
                 ))}
-              </div>
-              <p className="eyebrow mx-auto mt-4 w-full max-w-[min(440px,calc((76vh-7rem)*0.8))] text-mist" aria-hidden="true">
-                <span className="text-ivory">{PRINCIPLES[active].numeral}</span>
-                <span className="px-2">/</span>IV
-              </p>
-            </div>
-          </div>
-
-          <ol className="lg:col-span-6 lg:col-start-7">
-            {PRINCIPLES.map((principle, i) => (
-              <li
-                key={principle.id}
-                ref={(el) => {
-                  items.current[i] = el;
-                }}
-                data-index={i}
-                className="flex flex-col justify-center border-t border-line py-16 first:border-t-0 first:pt-0 lg:min-h-[76vh] lg:py-24 lg:first:pt-24"
-              >
-                <PrincipleInlineImage id={principle.id} />
-                <Reveal stagger={0.1}>
-                  <p data-reveal className="eyebrow text-ivory">
-                    {principle.numeral}
+                {principle.closing ? (
+                  <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-ivory sm:text-[1.5rem]">
+                    {principle.closing}
                   </p>
-                  <h3 data-reveal className="display-md mt-5 max-w-[16ch] text-ivory">
-                    <Emphasis text={principle.title} />
-                  </h3>
-                  <p data-reveal className="mt-7 max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">
-                    <Emphasis text={principle.lead} className="text-ivory" />
-                  </p>
-                  {principle.body.map((paragraph) => (
-                    <p key={paragraph.slice(0, 24)} data-reveal className="mt-5 max-w-[34rem] text-[16px] leading-[1.8] text-mist">
-                      {paragraph}
-                    </p>
-                  ))}
-                  {principle.closing ? (
-                    <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-ivory sm:text-[1.5rem]">
-                      {principle.closing}
-                    </p>
-                  ) : null}
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-        </div>
+                ) : null}
+              </Reveal>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

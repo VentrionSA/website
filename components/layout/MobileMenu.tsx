@@ -37,7 +37,13 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
       }
     };
     document.addEventListener("keydown", onKey);
-    const focusTimer = window.setTimeout(() => panelRef.current?.querySelector<HTMLElement>("a[href]")?.focus(), 350);
+    // Move focus into the menu without scrolling: each link slides up inside a clipped row,
+    // and a plain focus() makes the browser scroll that row to show the link at once, so
+    // "About" would jump into place instead of sliding in with the others.
+    const focusTimer = window.setTimeout(
+      () => panelRef.current?.querySelector<HTMLElement>("a[href]")?.focus({ preventScroll: true }),
+      350,
+    );
     return () => {
       document.removeEventListener("keydown", onKey);
       window.clearTimeout(focusTimer);
