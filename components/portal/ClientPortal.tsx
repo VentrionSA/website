@@ -26,7 +26,7 @@ import { getCallAction, getMailtoHref, siteConfig } from "@/lib/site";
 import { startScroll, stopScroll } from "@/lib/scroll";
 
 /*
- * The client portal: "Track your engagements".
+ * The client portal: "Track your progress".
  *
  * Every security marker shown here is real: the HTTPS check, the SHA-256
  * fingerprint computed on the visitor's device (the ID itself is never sent),
@@ -385,11 +385,11 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
             Session <span className="text-paper/70">{reference}</span>
           </p>
           <h2 id="portal-title" className="mt-3 font-serif text-[2.35rem] font-medium leading-[1.02] sm:text-[2.6rem]">
-            Track your <em>engagements.</em>
+            Track your <em>progress.</em>
           </h2>
           <p id="portal-desc" className="mt-3 max-w-[30rem] text-[14.5px] leading-relaxed text-paper/70">
-            A private view of your engagement with Ventrion. Enter the Client ID you were given to follow its
-            progress.
+            Ventrion values transparency and time more than anything. To give you peace of mind, you can track your
+            trade whenever you want, wherever you are.
           </p>
 
           {/* Session checks */}

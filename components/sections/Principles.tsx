@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import Image from "next/image";
+import { useRef, type ReactNode } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 import { PRINCIPLES, type PrincipleId } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -8,14 +9,37 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
 import { WayWeWork } from "./principles/WayWeWork";
 import { TradingHouse } from "./principles/diagrams/TradingHouse";
-import { ElementTable } from "./principles/diagrams/ElementTable";
-import { BulkBags } from "./principles/diagrams/BulkBags";
+import warehouse from "@/assets/images/art/warehouse.webp";
+import shipHold from "@/assets/images/art/ship-hold.webp";
 
-/** A drawing for each principle, in the style of the network map. */
-const DIAGRAMS: Record<PrincipleId, () => React.ReactElement> = {
-  principals: TradingHouse,
-  quality: ElementTable,
-  distance: BulkBags,
+const ART_SIZES = "(min-width: 1024px) 28rem, 100vw";
+
+/**
+ * A picture for each principle. Ventrion's own illustrations, cut out of their
+ * backgrounds: a warehouse of bulk bags where one carries the red tag (one name
+ * among many), and a ship's hold laden with cargo (however far it travels). The old
+ * trading house is drawn in the style of the network map.
+ */
+const VISUALS: Record<PrincipleId, ReactNode> = {
+  principals: <TradingHouse />,
+  quality: (
+    <Image
+      src={warehouse}
+      alt="A warehouse of bulk bags on pallets; one bag carries a red tag."
+      sizes={ART_SIZES}
+      quality={85}
+      className="h-auto w-full"
+    />
+  ),
+  distance: (
+    <Image
+      src={shipHold}
+      alt="A cutaway of a ship's hold, laden with cargo."
+      sizes={ART_SIZES}
+      quality={85}
+      className="h-auto w-full"
+    />
+  ),
 };
 
 /** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
@@ -101,12 +125,7 @@ export function Principles() {
                 <h3 className="display-md max-w-[14ch] text-balance text-ivory">
                   <Emphasis text={principle.title} />
                 </h3>
-                <div aria-hidden="true" className="mt-8 w-full max-w-[26rem] lg:mt-12">
-                  {(() => {
-                    const Diagram = DIAGRAMS[principle.id];
-                    return <Diagram />;
-                  })()}
-                </div>
+                <div className="mt-8 w-full max-w-[28rem] lg:mt-12">{VISUALS[principle.id]}</div>
               </Reveal>
               <Reveal stagger={0.1} className="lg:col-span-6 lg:col-start-7">
                 <p data-reveal className="max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">

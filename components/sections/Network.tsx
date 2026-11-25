@@ -7,6 +7,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { NetworkMap } from "./network/NetworkMap";
+import { ElementTable } from "./network/ElementTable";
 
 function CornerFrame() {
   const corner = "absolute h-5 w-5 border-mark/35";
@@ -94,41 +95,48 @@ export function Network() {
         </Reveal>
 
         <div className="mt-12 grid gap-14 lg:mt-16 lg:grid-cols-12 lg:gap-8">
-          {/* The markets, by region: hover, tab to or tap a name to bring it forward on the map */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:col-span-7">
-            {REGIONS.map((region) => (
-              <div key={region} className={region === "Middle East" ? "row-span-2 sm:row-span-1" : ""}>
-                <p className="eyebrow text-[10px] text-mist">{region}</p>
-                <ul className="mt-3 space-y-2">
-                  {MARKETS.map((market, i) =>
-                    market.region === region ? (
-                      <li key={market.id}>
-                        <button
-                          type="button"
-                          onClick={() => select(i)}
-                          onMouseEnter={() => hoverMarket(i)}
-                          onMouseLeave={() => hoverMarket(null)}
-                          onFocus={() => hoverMarket(i)}
-                          onBlur={() => hoverMarket(null)}
-                          aria-pressed={i === active}
-                          className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight text-ivory transition-opacity duration-500 sm:text-[1.25rem] ${
-                            i === focus ? "italic" : "opacity-80 hover:opacity-100"
-                          }`}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className={`h-1.5 w-1.5 shrink-0 rounded-full bg-burgundy transition-transform duration-500 ${
-                              i === focus ? "scale-100" : "scale-0 group-hover:scale-100"
+          <div className="lg:col-span-7">
+            {/* The markets, by region: hover, tab to or tap a name to bring it forward on the map */}
+            <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3">
+              {REGIONS.map((region) => (
+                <div key={region} className={region === "Middle East" ? "row-span-2 sm:row-span-1" : ""}>
+                  <p className="eyebrow text-[10px] text-mist">{region}</p>
+                  <ul className="mt-3 space-y-2">
+                    {MARKETS.map((market, i) =>
+                      market.region === region ? (
+                        <li key={market.id}>
+                          <button
+                            type="button"
+                            onClick={() => select(i)}
+                            onMouseEnter={() => hoverMarket(i)}
+                            onMouseLeave={() => hoverMarket(null)}
+                            onFocus={() => hoverMarket(i)}
+                            onBlur={() => hoverMarket(null)}
+                            aria-pressed={i === active}
+                            className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight text-ivory transition-opacity duration-500 sm:text-[1.25rem] ${
+                              i === focus ? "italic" : "opacity-80 hover:opacity-100"
                             }`}
-                          />
-                          {market.name}
-                        </button>
-                      </li>
-                    ) : null,
-                  )}
-                </ul>
-              </div>
-            ))}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={`h-1.5 w-1.5 shrink-0 rounded-full bg-burgundy transition-transform duration-500 ${
+                                i === focus ? "scale-100" : "scale-0 group-hover:scale-100"
+                              }`}
+                            />
+                            {market.name}
+                          </button>
+                        </li>
+                      ) : null,
+                    )}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            {/* What moves through the network: the table of elements, in the map's colours */}
+            <Reveal className="mt-14 max-w-[34rem] border-t border-line pt-10 lg:mt-16">
+              <ElementTable />
+            </Reveal>
           </div>
 
           <Reveal stagger={0.12} className="lg:col-span-4 lg:col-start-9">

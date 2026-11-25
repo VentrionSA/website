@@ -1,6 +1,6 @@
 # Ventrion — website
 
-A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (an interactive 2D map), our principles (the eagles section, "The way we work", and three principles, each with a drawing in the style of the network map: a trading house, the table of elements and bulk bags, in `components/sections/principles/`), a closing statement, contact.
+A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (an interactive 2D map), our principles (the eagles section, "The way we work", and three principles, each with a picture: a trading house drawn in the style of the network map, and two of Ventrion's illustrations, a warehouse of bulk bags and a ship's hold, in `components/sections/principles/`; the table of elements sits beneath the network map), a closing statement, contact.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Lucide · Zod.
 
@@ -29,7 +29,7 @@ Values still in `[BRACKETS]` are treated as “not configured”. Set them in **
 
 Until the telephone number is set, the call buttons read "Request a call" and open an email to Ventrion asking for a call back.
 
-### 2. Client portal ("Track your engagements")
+### 2. Client portal ("Track your progress")
 
 Opened from the header, the mobile menu, the contact section, the footer, or a link to `/#track`. The visitor's Client ID is hashed on their device (SHA-256) and only the fingerprint is sent to `POST /api/portal`, which looks it up in the server-side `CLIENT_REGISTRY` variable (JSON, see `lib/client-portal.ts`). With no registry, every ID is answered "could not verify"; nothing is ever shown as verified without a record.
 
@@ -48,7 +48,7 @@ Give the printed Client ID to the client privately, add the printed entry to `CL
 ## Content
 
 - **Navigation, markets and the four principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
-- **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically). The eagles artwork (`assets/images/art/trust-eagles.jpg`) is Ventrion's own, cleaned, extended and graded.
+- **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically). The eagles artwork (`assets/images/art/trust-eagles.jpg`) is Ventrion's own, cleaned, extended and graded; the warehouse and ship's hold illustrations (`assets/images/art/warehouse.webp`, `ship-hold.webp`) are Ventrion's own, cut out of their backgrounds as transparent images, soft shadows kept.
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
 - **Network map:** `lib/geo/countries.json` holds country outlines from Natural Earth (via world-atlas, 1:110m with Bahrain from 1:50m), with the network's markets tagged by id. `python3 scripts/build-network-map.py` projects and crops them into `lib/geo/network-map.ts`, which the map draws as SVG; run it again after changing the markets. Marker positions come from `MARKETS` in `lib/content.ts`.
 

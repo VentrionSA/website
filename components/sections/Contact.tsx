@@ -104,7 +104,7 @@ export function Contact() {
               </span>
               <span className="flex flex-col text-left">
                 <span className="eyebrow text-[9.5px] text-mist">Client portal</span>
-                <span className="mt-0.5">Track your engagements</span>
+                <span className="mt-0.5">Track your progress</span>
               </span>
             </PortalTrigger>
           </div>

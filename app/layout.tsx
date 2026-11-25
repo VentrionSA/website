@@ -24,7 +24,7 @@ const textSerif = Source_Serif_4({
   display: "swap",
 });
 
-// Display serif for the second line of the hero, "Moving opportunity."
+// Display serif for the second line of the hero, "Moving opportunities."
 const accent = Fraunces({
   subsets: ["latin"],
   // optical sizes give the display cut at headline sizes; the SOFT and WONK axes aren't used
@@ -40,7 +40,7 @@ const sans = Manrope({
 });
 
 const siteUrl = getSiteUrl();
-const title = "Ventrion — Connecting markets. Moving opportunity.";
+const title = "Ventrion — Connecting markets. Moving opportunities.";
 const description = siteConfig.description;
 
 export const metadata: Metadata = {
@@ -92,7 +92,7 @@ function StructuredData() {
         url: siteUrl,
         logo: `${siteUrl}/brand/ventrion-logo-512.png`,
         description: siteConfig.description,
-        slogan: "Connecting markets. Moving opportunity.",
+        slogan: "Connecting markets. Moving opportunities. In every direction.",
         areaServed: MARKETS.map((m) => ({ "@type": "Country", name: m.name })),
         knowsAbout: ["Trade facilitation", "International trade"],
         ...(!isPlaceholder(siteConfig.email)

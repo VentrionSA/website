@@ -1,5 +1,5 @@
 /**
- * Client portal ("Track your engagements") — shared by the browser and the API route.
+ * Client portal ("Track your progress") — shared by the browser and the API route.
  *
  * Security model
  * - A Client ID never leaves the visitor's device in readable form. The browser
