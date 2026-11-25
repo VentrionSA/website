@@ -1,6 +1,6 @@
 # Ventrion — website
 
-A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (an interactive 2D map), our principles (the eagles section, "The way we work", and three principles, in `components/sections/principles/`), a closing statement, contact.
+A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (an interactive 2D map), our principles (the eagles section, "The way we work", and three principles, each with a drawing in the style of the network map: a trading house, the table of elements and bulk bags, in `components/sections/principles/`), a closing statement, contact.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Lucide · Zod.
 

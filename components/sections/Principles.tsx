@@ -2,11 +2,21 @@
 
 import { useRef } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
-import { PRINCIPLES } from "@/lib/content";
+import { PRINCIPLES, type PrincipleId } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
 import { WayWeWork } from "./principles/WayWeWork";
+import { TradingHouse } from "./principles/diagrams/TradingHouse";
+import { ElementTable } from "./principles/diagrams/ElementTable";
+import { BulkBags } from "./principles/diagrams/BulkBags";
+
+/** A drawing for each principle, in the style of the network map. */
+const DIAGRAMS: Record<PrincipleId, () => React.ReactElement> = {
+  principals: TradingHouse,
+  quality: ElementTable,
+  distance: BulkBags,
+};
 
 /** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
 function TrustStatement() {
@@ -91,6 +101,12 @@ export function Principles() {
                 <h3 className="display-md max-w-[14ch] text-balance text-ivory">
                   <Emphasis text={principle.title} />
                 </h3>
+                <div aria-hidden="true" className="mt-8 w-full max-w-[26rem] lg:mt-12">
+                  {(() => {
+                    const Diagram = DIAGRAMS[principle.id];
+                    return <Diagram />;
+                  })()}
+                </div>
               </Reveal>
               <Reveal stagger={0.1} className="lg:col-span-6 lg:col-start-7">
                 <p data-reveal className="max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">

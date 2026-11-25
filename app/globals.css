@@ -358,6 +358,42 @@
     }
   }
 
+  /* Principle diagrams: the element card fades in, the clock keeps time, the flag lifts,
+     the lifted bulk bag sways on its hook */
+  .element-card {
+    animation: card-in 0.7s ease both;
+  }
+  .clock-hour,
+  .clock-minute {
+    transform-origin: 200px 68px;
+  }
+  .clock-minute {
+    animation: flow-spin 40s linear infinite;
+  }
+  .clock-hour {
+    animation: flow-spin 480s linear infinite;
+  }
+  .flag {
+    transform-origin: 200px 13px;
+    animation: flag-wave 3.4s ease-in-out infinite alternate;
+  }
+  .bag-sway {
+    animation: bag-sway 5.6s ease-in-out infinite alternate;
+  }
+  .bag-shadow {
+    animation: bag-shadow 5.6s ease-in-out infinite alternate;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .element-card,
+    .clock-hour,
+    .clock-minute,
+    .flag,
+    .bag-sway,
+    .bag-shadow {
+      animation: none;
+    }
+  }
+
   /* Form controls */
   .field-input {
     width: 100%;
@@ -437,6 +473,42 @@
   to {
     transform: scale(1.9);
     opacity: 0;
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flag-wave {
+  from {
+    transform: skewY(0deg) scaleX(1);
+  }
+  to {
+    transform: skewY(-5deg) scaleX(0.94);
+  }
+}
+
+@keyframes bag-sway {
+  from {
+    transform: rotate(-1.4deg);
+  }
+  to {
+    transform: rotate(1.4deg);
+  }
+}
+
+@keyframes bag-shadow {
+  from {
+    transform: translateX(7px);
+  }
+  to {
+    transform: translateX(-7px);
   }
 }
 
