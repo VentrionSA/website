@@ -10,8 +10,8 @@ const i = (n: number) => ({ "--i": n }) as CSSProperties;
 
 /**
  * The opening view, built to Ventrion's hero design: the wake on ivory, the
- * words in Ventrion green on the misted side, a single burgundy call to action,
- * and the regions set in a band beneath the photograph.
+ * words in Ventrion green on the misted side, and the regions set in a band
+ * beneath the photograph.
  */
 export function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -84,15 +84,6 @@ export function Hero() {
             >
               Independent trade facilitation, directly between principals.
             </p>
-
-            <div className="hero-fade mt-9 lg:mt-[3.03vw]" style={i(3)}>
-              <a
-                href="/#contact"
-                className="inline-flex h-[52px] items-center bg-burgundy px-7 font-text text-[17px] tracking-[0.01em] text-paper transition-colors duration-500 hover:bg-burgundy-deep lg:h-[clamp(48px,3.35vw,58px)] lg:px-[clamp(24px,1.94vw,34px)] lg:text-[clamp(17px,1.384vw,24px)]"
-              >
-                Start a conversation
-              </a>
-            </div>
           </div>
         </div>
       </div>
