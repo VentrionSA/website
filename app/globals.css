@@ -31,6 +31,8 @@
   /* Text serif for the navigation, hero details and the hero strip */
   --font-text: var(--font-source), "Source Serif 4", Georgia, "Times New Roman", serif;
   --font-sans: var(--font-manrope), "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Fraunces: the second line of the hero */
+  --font-accent: var(--font-fraunces), "Fraunces", Georgia, "Times New Roman", serif;
 
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-cinematic: cubic-bezier(0.65, 0, 0.35, 1);
@@ -166,11 +168,14 @@
   -webkit-text-stroke: 1px color-mix(in srgb, var(--color-ivory) 28%, transparent);
 }
 
+/* Clips a headline line for the rise-in. The padding gives descenders (p, y, g) room under
+   the tight hero leading, and serifs that overhang the line's ends (the M of Fraunces) room at
+   the sides; the matching negative margins keep the layout exactly as it was. */
 @utility line-mask {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.06em;
-  margin-bottom: -0.06em;
+  padding: 0 0.08em 0.28em;
+  margin: 0 -0.08em -0.28em;
 }
 
 @utility no-scrollbar {
@@ -358,7 +363,8 @@
    ────────────────────────────────────────────────────────────── */
 @keyframes hero-rise {
   from {
-    transform: translate3d(0, 108%, 0);
+    /* starts below the mask's descender room, so nothing shows before it rises */
+    transform: translate3d(0, 145%, 0);
   }
   to {
     transform: translate3d(0, 0, 0);

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Manrope, Source_Serif_4 } from "next/font/google";
+import { Cormorant_Garamond, Fraunces, Manrope, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Navigation } from "@/components/layout/Navigation";
@@ -21,6 +21,15 @@ const textSerif = Source_Serif_4({
   subsets: ["latin"],
   axes: ["opsz"],
   variable: "--font-source",
+  display: "swap",
+});
+
+// Display serif for the second line of the hero, "Moving opportunity."
+const accent = Fraunces({
+  subsets: ["latin"],
+  // optical sizes give the display cut at headline sizes; the SOFT and WONK axes aren't used
+  axes: ["opsz"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
@@ -118,7 +127,7 @@ function StructuredData() {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${serif.variable} ${textSerif.variable} ${sans.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${serif.variable} ${textSerif.variable} ${accent.variable} ${sans.variable}`} suppressHydrationWarning>
       <body>
         <a href="#main" className="skip-link">
           Skip to content

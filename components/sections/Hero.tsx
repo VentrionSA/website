@@ -58,7 +58,7 @@ export function Hero() {
 
             <h1
               id="hero-title"
-              className="mt-6 font-serif text-[min(11.6vw,4.2rem)] font-semibold leading-[0.897] tracking-[-0.033em] text-ivory md:text-[3.8rem] lg:mt-[1.3vw] lg:text-[min(6.02vw,11.6svh)]"
+              className="mt-6 font-serif text-[min(11.5vw,4.2rem)] font-semibold leading-[0.897] tracking-[-0.033em] text-ivory md:text-[3.8rem] lg:mt-[1.3vw] lg:text-[min(6.02vw,11.6svh)]"
             >
               <span className="line-mask">
                 <span className="hero-line" style={i(0)}>
@@ -66,7 +66,13 @@ export function Hero() {
                 </span>
               </span>
               <span className="line-mask">
-                <span className="hero-line" style={i(1)}>
+                {/* Fraunces at 400 matches the weight of the Cormorant line above. Its optical size is held
+                    at the display cut: left automatic, phones get the wider text cut and the line wraps.
+                    Held at 90, the two lines set to the same width at every screen size. */}
+                <span
+                  className="hero-line font-accent font-normal tracking-[-0.02em]"
+                  style={{ ...i(1), fontVariationSettings: '"opsz" 90' }}
+                >
                   Moving opportunity.
                 </span>
               </span>
