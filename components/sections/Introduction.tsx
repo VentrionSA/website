@@ -256,7 +256,7 @@ export function Introduction() {
   return (
     <section id="about" aria-labelledby="about-title" className="relative isolate overflow-clip bg-ink py-[clamp(7rem,14vw,12rem)]">
       <div className="shell flex flex-col items-center text-center">
-        <Eyebrow index="01" className="justify-center">
+        <Eyebrow index="01" align="center">
           Independent Trade Facilitation
         </Eyebrow>
         <SplitHeading id="about-title" className="display-lg mt-8 max-w-[13ch] text-ivory">

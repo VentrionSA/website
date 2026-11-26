@@ -76,7 +76,7 @@ export function Principles() {
   return (
     <section id="principles" aria-labelledby="principles-title" className="relative isolate overflow-clip bg-ink pt-[clamp(6rem,12vw,11rem)]">
       <div className="shell relative flex flex-col items-center text-center">
-        <Eyebrow index="03" className="justify-center">
+        <Eyebrow index="03" align="center">
           Our Principles
         </Eyebrow>
         <Reveal className="mt-10">

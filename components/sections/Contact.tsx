@@ -53,7 +53,7 @@ export function Contact() {
     <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
       <SectionBackdrop src={BACKDROPS.contact} wash={0.8} side="both" saturate={0.45} />
       <div className="shell relative flex flex-col items-center text-center">
-        <Eyebrow index="04" className="justify-center">
+        <Eyebrow index="04" align="center">
           Contact
         </Eyebrow>
         <SplitHeading id="contact-title" className="display-xl mt-8 max-w-[17ch] text-balance text-ivory">
