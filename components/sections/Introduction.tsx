@@ -210,7 +210,7 @@ function Selection() {
 const STEPS = [
   {
     title: "Tell us what you need.",
-    body: "One conversation is enough to begin: the product, the volume, the timing, and what matters most to you.",
+    body: "One candid conversation is enough to begin: the product, the volume, the timing, and what matters most to you.",
   },
   {
     title: "We find the right counterpart.",
@@ -267,7 +267,8 @@ export function Introduction() {
             Ventrion endeavours to be a <em className="text-ivory">reliable business partner</em> to all of its commercial counterparts.
           </p>
           <p data-reveal className="mt-6 max-w-[34rem] text-[17px] leading-[1.8] text-mist">
-            We facilitate trade for a private circle of clients and counterparts, personally and discreetly.
+            We facilitate trade for a private circle of clients and counterparts: candid with them, and discreet about
+            them.
           </p>
         </Reveal>
 

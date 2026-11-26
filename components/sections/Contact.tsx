@@ -60,8 +60,8 @@ export function Contact() {
           Every engagement begins with a <em className="text-burgundy">call.</em>
         </SplitHeading>
         <Reveal className="mt-7 max-w-[30rem]">
-          <p className="text-[17px] leading-relaxed text-mist">
-            Speak with Ventrion directly. Every conversation is private and confidential.
+          <p className="text-balance text-[17px] leading-relaxed text-mist">
+            Speak with Ventrion directly. Every conversation is candid and confidential.
           </p>
         </Reveal>
 
