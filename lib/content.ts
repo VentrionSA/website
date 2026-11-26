@@ -27,8 +27,8 @@ export type Market = {
   lon: number;
 };
 
-// Ids match the network tags in lib/geo/countries.json; the map's outlines are built from it
-// (scripts/build-network-map.py writes lib/geo/network-map.ts).
+// Ids match NETWORK in scripts/build-network-map.mjs, which writes the map's outlines
+// (lib/geo/network-map.ts); run `npm run build:map` after changing the markets.
 export const MARKETS: Market[] = [
   { id: "saudi-arabia", name: "Saudi Arabia", region: "Middle East", lat: 24.2, lon: 45.1 },
   { id: "united-arab-emirates", name: "United Arab Emirates", region: "Middle East", lat: 24.4, lon: 54.4 },

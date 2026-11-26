@@ -50,10 +50,10 @@ Give the printed Client ID to the client privately, add the printed entry to `CL
 - **Navigation, markets and the four principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
 - **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically). The eagles artwork (`assets/images/art/trust-eagles.jpg`) is Ventrion's own, cleaned, extended and graded; the warehouse and ship's hold illustrations (`assets/images/art/warehouse.webp`, `ship-hold.webp`) are Ventrion's own, cut out of their backgrounds as transparent images, soft shadows kept.
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
-- **Network map:** `lib/geo/countries.json` holds country outlines from Natural Earth (via world-atlas, 1:110m with Bahrain from 1:50m), with the network's markets tagged by id. `python3 scripts/build-network-map.py` projects the whole world (Equal Earth projection, Antarctica left out) into `lib/geo/network-map.ts`, which the map draws as SVG; run it again after changing the markets. Marker positions come from `MARKETS` in `lib/content.ts`.
+- **Network map:** country outlines from Natural Earth at 1:50m (the `world-atlas` package), projected to Equal Earth by `npm run build:map` (`scripts/build-network-map.mjs`, using `d3-geo` and `topojson-client`) into `lib/geo/network-map.ts`; run it again after changing the markets. Marker positions come from `MARKETS` in `lib/content.ts`. The map opens on the whole world and, once it is in view, closes in on the network; a camera then glides between markets (the selection or the tour), and the visitor can switch between the whole world and the network.
 
 ## Accessibility & performance notes
 
 - Respects `prefers-reduced-motion` (no smooth scroll, no scroll animations, static 3D fallbacks).
-- The network map is plain SVG: its countries sit on a static layer, and only the arcs and markers move.
+- The network map is plain SVG: the camera only changes its viewBox, and markers and labels are moved directly, so React does not re-render while it glides.
 - Keyboard-accessible navigation, mobile menu and client portal (focus trap, Escape to close), and market selector.
