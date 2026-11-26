@@ -19,9 +19,13 @@ export function Footer() {
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      {/* The floating star: a quiet presence behind the footer, clear of the copyright line */}
-      <div aria-hidden="true" className="pointer-events-none absolute -right-[10vw] top-[6%] text-mark/[0.06] lg:-right-[4vw] lg:top-[10%]">
-        <LogoMark className="float-mark h-[58vw] w-auto max-h-[520px] lg:h-[26vw]" />
+      {/* The floating star: its centre sits exactly on the right edge, so half of it lies beyond
+          the page and half reaches in. The outer box places it; the star itself floats. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 text-mark/[0.06]"
+      >
+        <LogoMark className="float-mark h-[70vw] w-auto max-h-[620px] lg:h-[30vw]" />
       </div>
       <div className="shell relative pb-10 pt-24 lg:pt-32">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-8">

@@ -6,6 +6,7 @@ import { useInViewport, usePrefersReducedMotion } from "@/lib/device";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { MAP_SIZE } from "@/lib/geo/network-map";
 import { NetworkMap } from "./network/NetworkMap";
 import { ElementTable } from "./network/ElementTable";
 
@@ -71,15 +72,19 @@ export function Network() {
           It is created by knowing <em className="text-burgundy">who to call.</em>
         </SplitHeading>
 
-        {/* The map: the full width of the page from the Mediterranean to the Pacific */}
+        {/* The map: the whole world, across the full width of the page */}
         <Reveal className="mt-14 lg:mt-20" y={30}>
-          <div
-            ref={mapBox}
-            className="relative -mx-[clamp(1.25rem,4.6vw,5rem)] aspect-[5/4] overflow-hidden sm:mx-0 sm:aspect-[16/10] lg:aspect-[2/1]"
-          >
-            <CornerFrame />
-            <NetworkMap focusIndex={focus} onHover={hoverMarket} onSelect={select} calm={reduce} />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] flex items-end justify-between gap-4 px-5 pb-4 sm:px-6 sm:pb-5">
+          <div className="relative -mx-[clamp(1.25rem,4.6vw,5rem)] sm:mx-0">
+            <div
+              ref={mapBox}
+              className="relative overflow-hidden"
+              style={{ aspectRatio: `${MAP_SIZE.width} / ${MAP_SIZE.height}` }}
+            >
+              <CornerFrame />
+              <NetworkMap focusIndex={focus} onHover={hoverMarket} onSelect={select} calm={reduce} />
+            </div>
+            {/* beneath the map on phones, over its lower edge (the Southern Ocean) from sm up */}
+            <div className="pointer-events-none flex items-end justify-between gap-4 px-5 pt-4 sm:absolute sm:inset-x-0 sm:bottom-0 sm:z-[5] sm:px-6 sm:pb-5 sm:pt-0">
               <p className="eyebrow flex items-center gap-3 text-[9.5px] text-mist sm:text-[10px]">
                 <span aria-hidden="true" className="relative flex h-2 w-2">
                   {reduce ? null : <span className="absolute inset-0 animate-ping rounded-full bg-burgundy/50" />}

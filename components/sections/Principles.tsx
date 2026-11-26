@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useRef, type ReactNode } from "react";
+import { useRef } from "react";
+import type { StaticImageData } from "next/image";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
 import { PRINCIPLES, type PrincipleId } from "@/lib/content";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -9,37 +9,19 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
 import { WayWeWork } from "./principles/WayWeWork";
 import { TradingHouse } from "./principles/diagrams/TradingHouse";
+import { IllustratedPrinciple } from "./principles/IllustratedPrinciple";
 import warehouse from "@/assets/images/art/warehouse.webp";
 import shipHold from "@/assets/images/art/ship-hold.webp";
 
-const ART_SIZES = "(min-width: 1024px) 28rem, 100vw";
-
 /**
- * A picture for each principle. Ventrion's own illustrations, cut out of their
- * backgrounds: a warehouse of bulk bags where one carries the red tag (one name
- * among many), and a ship's hold laden with cargo (however far it travels). The old
- * trading house is drawn in the style of the network map.
+ * Ventrion's own illustrations, cut out of their backgrounds, as the backgrounds of two
+ * principles: a warehouse of bulk bags where one carries the red tag (one name among
+ * many), and a ship's hold laden with cargo (however far it travels). The first
+ * principle keeps the trading house, drawn in the style of the network map.
  */
-const VISUALS: Record<PrincipleId, ReactNode> = {
-  principals: <TradingHouse />,
-  quality: (
-    <Image
-      src={warehouse}
-      alt="A warehouse of bulk bags on pallets; one bag carries a red tag."
-      sizes={ART_SIZES}
-      quality={85}
-      className="h-auto w-full"
-    />
-  ),
-  distance: (
-    <Image
-      src={shipHold}
-      alt="A cutaway of a ship's hold, laden with cargo."
-      sizes={ART_SIZES}
-      quality={85}
-      className="h-auto w-full"
-    />
-  ),
+const BACKGROUNDS: Partial<Record<PrincipleId, { image: StaticImageData; side: "left" | "right" }>> = {
+  quality: { image: warehouse, side: "right" },
+  distance: { image: shipHold, side: "left" },
 };
 
 /** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
@@ -107,43 +89,52 @@ export function Principles() {
 
       <WayWeWork />
 
-      {/* What we commit to: the principles, one to a row */}
-      <div id="commitments" className="shell relative scroll-mt-24 py-[clamp(5rem,10vw,9rem)]">
-        <Reveal>
-          <p className="flex items-center gap-4 font-text text-[12px] font-medium uppercase tracking-[0.2em] text-ivory sm:text-[13px]">
-            <span aria-hidden="true" className="h-px w-10 bg-burgundy sm:w-12" />
-            Our commitment to you
-          </p>
-        </Reveal>
-        <ul className="mt-10 border-t border-line lg:mt-14">
-          {PRINCIPLES.map((principle) => (
-            <li
-              key={principle.id}
-              className="grid gap-7 border-b border-line py-[clamp(3rem,6vw,5.5rem)] lg:grid-cols-12 lg:gap-8"
-            >
-              <Reveal className="lg:col-span-5">
-                <h3 className="display-md max-w-[14ch] text-balance text-ivory">
-                  <Emphasis text={principle.title} />
-                </h3>
-                <div className="mt-8 w-full max-w-[28rem] lg:mt-12">{VISUALS[principle.id]}</div>
-              </Reveal>
-              <Reveal stagger={0.1} className="lg:col-span-6 lg:col-start-7">
-                <p data-reveal className="max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">
-                  <Emphasis text={principle.lead} className="text-ivory" />
-                </p>
-                {principle.body.map((paragraph) => (
-                  <p key={paragraph.slice(0, 24)} data-reveal className="mt-5 max-w-[34rem] text-[16px] leading-[1.8] text-mist">
-                    {paragraph}
-                  </p>
-                ))}
-                {principle.closing ? (
-                  <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-ivory sm:text-[1.5rem]">
-                    {principle.closing}
-                  </p>
-                ) : null}
-              </Reveal>
-            </li>
-          ))}
+      {/* What we commit to: the principles */}
+      <div id="commitments" className="relative scroll-mt-24 pb-[clamp(2rem,5vw,4rem)] pt-[clamp(5rem,10vw,9rem)]">
+        <div className="shell">
+          <Reveal>
+            <p className="flex items-center gap-4 font-text text-[12px] font-medium uppercase tracking-[0.2em] text-ivory sm:text-[13px]">
+              <span aria-hidden="true" className="h-px w-10 bg-burgundy sm:w-12" />
+              Our commitment to you
+            </p>
+          </Reveal>
+        </div>
+        <ul className="mt-10 lg:mt-14">
+          {PRINCIPLES.map((principle) => {
+            const background = BACKGROUNDS[principle.id];
+            if (background) {
+              return <IllustratedPrinciple key={principle.id} principle={principle} image={background.image} side={background.side} />;
+            }
+            return (
+              <li key={principle.id} className="shell">
+                <div className="grid gap-7 border-y border-line py-[clamp(3rem,6vw,5.5rem)] lg:grid-cols-12 lg:gap-8">
+                  <Reveal className="lg:col-span-5">
+                    <h3 className="display-md max-w-[14ch] text-balance text-ivory">
+                      <Emphasis text={principle.title} />
+                    </h3>
+                    <div className="mt-8 w-full max-w-[28rem] lg:mt-12">
+                      <TradingHouse />
+                    </div>
+                  </Reveal>
+                  <Reveal stagger={0.1} className="lg:col-span-6 lg:col-start-7">
+                    <p data-reveal className="max-w-[30ch] font-serif text-[1.45rem] leading-snug text-ivory/90 sm:text-[1.6rem]">
+                      <Emphasis text={principle.lead} className="text-ivory" />
+                    </p>
+                    {principle.body.map((paragraph) => (
+                      <p key={paragraph.slice(0, 24)} data-reveal className="mt-5 max-w-[34rem] text-[16px] leading-[1.8] text-mist">
+                        {paragraph}
+                      </p>
+                    ))}
+                    {principle.closing ? (
+                      <p data-reveal className="mt-6 max-w-[28ch] font-serif text-[1.35rem] italic leading-snug text-ivory sm:text-[1.5rem]">
+                        {principle.closing}
+                      </p>
+                    ) : null}
+                  </Reveal>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>

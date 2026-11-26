@@ -1,10 +1,11 @@
 """
-Builds lib/geo/network-map.ts: the country outlines for the 2D network map.
+Builds lib/geo/network-map.ts: the country outlines for the network's world map.
 
 Reads lib/geo/countries.json (Natural Earth via world-atlas, equirectangular, 2048 x 1024),
-reprojects to an equidistant cylindrical projection with standard parallel 30 degrees
-(true shapes around the Gulf, Central Asia and China), crops to the region the network
-covers, drops specks, simplifies, and writes compact SVG path strings.
+reprojects every country to the Equal Earth projection (an equal-area world map with
+gently curved sides), leaves out Antarctica, simplifies, and writes compact SVG paths
+(whole map units, relative moves). The map's markers, arcs and graticule use the same
+projection at runtime: see components/sections/network/NetworkMap.tsx.
 
     python3 scripts/build-network-map.py
 """
@@ -16,21 +17,35 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "lib", "geo", "countries.json")
 OUT = os.path.join(ROOT, "lib", "geo", "network-map.ts")
 
-# Projection and crop. The map's viewBox is the crop; units are tenths of a degree of latitude.
-LON_MIN, LON_MAX = 8.0, 162.0
-LAT_MIN, LAT_MAX = -13.8, 60.2  # centred on 23.2°N: Kazakhstan's north to Java's south
-K = 10.0
-COS = math.cos(math.radians(30.0))
-PAD = 4.0  # clip a little outside the crop so no clipped edge ever shows
-TOL = 1.4  # simplification tolerance, map units (about a pixel at desktop size)
-MIN_AREA = 14.0  # drop islands smaller than this, map units squared (never a network country's)
+# Equal Earth (Šavrič, Patterson & Jenny, 2018)
+A1, A2, A3, A4 = 1.340264, -0.081106, 0.000893, 0.003796
+M = math.sqrt(3) / 2
 
-W = (LON_MAX - LON_MIN) * K * COS
-H = (LAT_MAX - LAT_MIN) * K
+
+def equal_earth(lon, lat):
+    lam, phi = math.radians(lon), math.radians(lat)
+    th = math.asin(M * math.sin(phi))
+    t2 = th * th
+    t6 = t2 * t2 * t2
+    x = (2 * math.sqrt(3) * lam * math.cos(th)) / (3 * (9 * A4 * t6 * t2 + 7 * A3 * t6 + 3 * A2 * t2 + A1))
+    y = th * (A1 + A2 * t2 + t6 * (A3 + A4 * t2))
+    return x, y
+
+
+X_MAX = equal_earth(180, 0)[0]  # half the width of the world at the equator
+WIDTH = 2000.0  # map units across the whole world
+SCALE = WIDTH / (2 * X_MAX)
+LAT_MAX, LAT_MIN = 84.0, -57.0  # the Arctic islands to Cape Horn; Antarctica is left out
+Y_TOP = equal_earth(0, LAT_MAX)[1]
+HEIGHT = SCALE * (Y_TOP - equal_earth(0, LAT_MIN)[1])
+
+TOL = 1.0  # simplification tolerance, map units (about two-thirds of a pixel at desktop size)
+MIN_AREA = 6.0  # leave out islands smaller than this, map units squared (never a network country's)
 
 
 def project(lon, lat):
-    return ((lon - LON_MIN) * K * COS, (LAT_MAX - lat) * K)
+    x, y = equal_earth(lon, lat)
+    return SCALE * (x + X_MAX), SCALE * (Y_TOP - y)
 
 
 def parse_rings(d, w, h):
@@ -44,16 +59,14 @@ def parse_rings(d, w, h):
             ring = []
             continue
         x, y = (float(v) for v in token.split(","))
-        lon = x / w * 360.0 - 180.0
-        lat = 90.0 - y / h * 180.0
-        ring.append(project(lon, lat))
+        ring.append((x / w * 360.0 - 180.0, 90.0 - y / h * 180.0))
     if ring:
         rings.append(ring)
     return rings
 
 
-def clip(ring, x0, y0, x1, y1):
-    """Sutherland-Hodgman against the rectangle."""
+def clip(ring, y0, y1):
+    """Clip a ring to the band between two horizontal lines (Sutherland-Hodgman)."""
     def edge(points, inside, cut):
         out = []
         for i, p in enumerate(points):
@@ -66,23 +79,11 @@ def clip(ring, x0, y0, x1, y1):
                 out.append(cut(q, p))
         return out
 
-    def at_x(xc):
-        return lambda a, b: (xc, a[1] + (b[1] - a[1]) * (xc - a[0]) / (b[0] - a[0]))
-
     def at_y(yc):
         return lambda a, b: (a[0] + (b[0] - a[0]) * (yc - a[1]) / (b[1] - a[1]), yc)
 
-    pts = ring
-    for inside, cut in (
-        (lambda p: p[0] >= x0, at_x(x0)),
-        (lambda p: p[0] <= x1, at_x(x1)),
-        (lambda p: p[1] >= y0, at_y(y0)),
-        (lambda p: p[1] <= y1, at_y(y1)),
-    ):
-        if not pts:
-            break
-        pts = edge(pts, inside, cut)
-    return pts
+    pts = edge(ring, lambda p: p[1] >= y0, at_y(y0))
+    return edge(pts, lambda p: p[1] <= y1, at_y(y1)) if pts else pts
 
 
 def area(ring):
@@ -107,24 +108,36 @@ def simplify(points, tol):
     return [points[0], points[-1]]
 
 
+def encode(points):
+    """One ring as a compact path: absolute start, then relative moves in whole units."""
+    pts = []
+    for x, y in points:
+        p = (int(round(x)), int(round(y)))
+        if not pts or p != pts[-1]:
+            pts.append(p)
+    if len(pts) > 1 and pts[0] == pts[-1]:
+        pts.pop()
+    if len(pts) < 3:
+        return ""
+    out = "M%d %d" % pts[0]
+    numbers = []
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        numbers += [x1 - x0, y1 - y0]
+    body = ""
+    for n in numbers:
+        s = str(n)
+        body += s if (not body or s.startswith("-")) else " " + s
+    return out + "l" + body + "z"
+
+
 def to_path(rings):
     parts = []
     for ring in rings:
-        # split the closed ring in two halves so Douglas-Peucker keeps its shape
         mid = len(ring) // 2
-        tol = TOL if area(ring) > 400 else TOL / 3  # keep small islands (Bahrain) recognisable
+        tol = TOL if area(ring) > 300 else TOL / 3  # keep small islands (Bahrain) recognisable
         pts = simplify(ring[: mid + 1], tol)[:-1] + simplify(ring[mid:] + ring[:1], tol)[:-1]
-        if len(pts) < 3:
-            continue
-        cmds = ["M%s,%s" % (fmt(pts[0][0]), fmt(pts[0][1]))]
-        cmds += ["L%s,%s" % (fmt(x), fmt(y)) for x, y in pts[1:]]
-        parts.append("".join(cmds) + "Z")
-    return "".join(parts)
-
-
-def fmt(v):
-    s = "%.1f" % v
-    return s[:-2] if s.endswith(".0") else s
+        parts.append(encode(pts))
+    return "".join(p for p in parts if p)
 
 
 def main():
@@ -134,9 +147,11 @@ def main():
     for country in data["countries"]:
         rings = []
         for ring in parse_rings(country["d"], w, h):
-            ring = clip(ring, -PAD * K, -PAD * K, W + PAD * K, H + PAD * K)
-            if len(ring) >= 3 and (country["id"] or area(ring) >= MIN_AREA):
-                rings.append(ring)
+            if max(lat for _, lat in ring) < -60:  # Antarctica
+                continue
+            projected = clip([project(lon, lat) for lon, lat in ring], -4.0, HEIGHT + 4.0)
+            if len(projected) >= 3 and (country["id"] or area(projected) >= MIN_AREA):
+                rings.append(projected)
         if not rings:
             continue
         path = to_path(rings)
@@ -150,12 +165,13 @@ def main():
     land_path = "".join(land)
     lines = [
         "// Generated by scripts/build-network-map.py from lib/geo/countries.json. Do not edit by hand.",
-        "// Equidistant cylindrical projection, standard parallel 30°, cropped to the network's region.",
+        "// The world in the Equal Earth projection, Antarctica left out; whole map units.",
         "",
-        "export const MAP_PROJECTION = { lonMin: %s, latMax: %s, k: %s, cos: %.6f } as const;" % (LON_MIN, LAT_MAX, K, COS),
-        "export const MAP_SIZE = { width: %s, height: %s } as const;" % (fmt(W), fmt(H)),
+        "export const MAP_PROJECTION = { scale: %.6f, xMax: %.6f, yTop: %.6f, latMin: %s, latMax: %s } as const;"
+        % (SCALE, X_MAX, Y_TOP, LAT_MIN, LAT_MAX),
+        "export const MAP_SIZE = { width: %d, height: %d } as const;" % (round(WIDTH), round(HEIGHT)),
         "",
-        "/** Every country in view that is not in the network, as one path. */",
+        "/** Every country not in the network, as one path. */",
         "export const LAND_PATH =\n  %s;" % json.dumps(land_path),
         "",
         "/** The network's countries, by market id (see MARKETS in lib/content.ts). */",
@@ -166,8 +182,8 @@ def main():
     lines.append("};")
     lines.append("")
     open(OUT, "w").write("\n".join(lines))
-    print("land %d chars, network %d chars (%s), size %s x %s" % (
-        len(land_path), sum(len(v) for v in network.values()), ", ".join(sorted(network)), fmt(W), fmt(H)))
+    print("land %d chars, network %d chars (%s), size %d x %d" % (
+        len(land_path), sum(len(v) for v in network.values()), ", ".join(sorted(network)), round(WIDTH), round(HEIGHT)))
 
 
 if __name__ == "__main__":
