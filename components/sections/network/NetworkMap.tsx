@@ -1,7 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { gsap } from "@/lib/gsap";
+import { memo, useCallback, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type Ref } from "react";
 import { MARKETS } from "@/lib/content";
 import { LAND_PATH, MAP_PROJECTION, MAP_SIZE, NETWORK_PATHS } from "@/lib/geo/network-map";
 
@@ -27,37 +26,84 @@ function project(lat: number, lon: number) {
 }
 
 const POINTS = MARKETS.map((m) => project(m.lat, m.lon));
-/** The middle of the network: the camera leans towards it, so more of the network stays in view. */
-const CENTRE = {
-  x: POINTS.reduce((sum, p) => sum + p.x, 0) / POINTS.length,
-  y: POINTS.reduce((sum, p) => sum + p.y, 0) / POINTS.length,
-};
-/** Map units per degree of longitude, around the network's latitudes. */
-const UNITS_PER_DEGREE = (MW / 360) * 0.95;
 
 /* ── The camera: a centre (map units) and a scale (pixels per map unit) ────── */
 
 type Camera = { cx: number; cy: number; s: number };
+type Box = { x0: number; y0: number; x1: number; y1: number };
+type Bounds = { west: number; east: number; south: number; north: number };
 
-const clamp = (v: number, lo: number, hi: number) => (lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, v)));
-
-/** The whole world, fitted to the box. */
-function worldCamera(w: number, h: number): Camera {
-  return { cx: MW / 2, cy: MH / 2, s: Math.min(w / MW, h / MH) };
+/** The map units a stretch of the globe covers (its edges sampled, as the meridians curve). */
+function boxOf({ west, east, south, north }: Bounds): Box {
+  const box = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+  const add = (lat: number, lon: number) => {
+    const p = project(lat, lon);
+    box.x0 = Math.min(box.x0, p.x);
+    box.x1 = Math.max(box.x1, p.x);
+    box.y0 = Math.min(box.y0, p.y);
+    box.y1 = Math.max(box.y1, p.y);
+  };
+  for (let lat = south; lat <= north; lat += 1) {
+    add(lat, west);
+    add(lat, east);
+  }
+  for (let lon = west; lon <= east; lon += 2) {
+    add(south, lon);
+    add(north, lon);
+  }
+  return box;
 }
 
-/** Close in on a market: about 112 degrees of longitude across a desktop, 60 across a phone. */
-function marketCamera(w: number, h: number, index: number): Camera {
-  const degrees = w < 640 ? 60 : w < 1024 ? 84 : 112;
-  const s = w / (degrees * UNITS_PER_DEGREE);
-  const p = POINTS[index];
-  const vw = w / s;
-  const vh = h / s;
-  return {
-    cx: clamp(p.x * 0.62 + CENTRE.x * 0.38, vw / 2, MW - vw / 2),
-    cy: clamp(p.y * 0.62 + CENTRE.y * 0.38, vh / 2, MH - vh / 2),
-    s,
-  };
+/** Frames a box in the part of the stage below the fixed header (`inset` pixels tall). */
+function fit(box: Box, w: number, h: number, inset: number, margin: number): Camera {
+  const area = h - inset;
+  const s = Math.min(w / ((box.x1 - box.x0) * (1 + 2 * margin)), area / ((box.y1 - box.y0) * (1 + 2 * margin)));
+  return { cx: (box.x0 + box.x1) / 2, cy: (box.y0 + box.y1) / 2 - inset / (2 * s), s };
+}
+
+const WORLD: Box = { x0: 0, y0: 0, x1: MW, y1: MH };
+/** The network, on screens wide enough to hold all of it: the Red Sea to Indonesia, Kazakhstan to Java. */
+const NETWORK = boxOf({ west: 28, east: 146, south: -12, north: 57 });
+/** Phones: the Gulf and Central Asia first, then the camera travels east to China and Indonesia. */
+const NETWORK_WEST = boxOf({ west: 34, east: 90, south: -6, north: 56 });
+const NETWORK_EAST = boxOf({ west: 76, east: 134, south: -10, north: 54 });
+
+type Key = { at: number; cam: Camera };
+
+/** The scroll's camera path: the whole world, then the network (on phones, west then east). */
+function cameraPath(w: number, h: number, inset: number): Key[] {
+  const world = fit(WORLD, w, h, inset, 0.02);
+  if (w >= 640) {
+    return [
+      { at: 0.1, cam: world },
+      { at: 0.68, cam: fit(NETWORK, w, h, inset, 0.03) },
+    ];
+  }
+  return [
+    { at: 0.08, cam: world },
+    { at: 0.5, cam: fit(NETWORK_WEST, w, h, inset, 0.02) },
+    { at: 0.86, cam: fit(NETWORK_EAST, w, h, inset, 0.02) },
+  ];
+}
+
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+/** The camera at a point along the path: zoom on a logarithmic scale so it feels even. */
+function cameraAt(path: Key[], progress: number): Camera {
+  if (progress <= path[0].at) return path[0].cam;
+  for (let i = 0; i < path.length - 1; i++) {
+    const a = path[i];
+    const b = path[i + 1];
+    if (progress <= b.at) {
+      const t = easeInOut((progress - a.at) / (b.at - a.at));
+      return {
+        cx: a.cam.cx + (b.cam.cx - a.cam.cx) * t,
+        cy: a.cam.cy + (b.cam.cy - a.cam.cy) * t,
+        s: Math.exp(Math.log(a.cam.s) + (Math.log(b.cam.s) - Math.log(a.cam.s)) * t),
+      };
+    }
+  }
+  return path[path.length - 1].cam;
 }
 
 /** A gentle arc between two markets, bowed to the north like a flight path. */
@@ -122,36 +168,46 @@ const Countries = memo(function Countries({
   );
 });
 
-/** The map fades out towards the edges of its band. */
+/** The map fades out towards the edges of the stage. */
 const EDGE_FADE =
-  "linear-gradient(90deg,transparent 0%,#000 5%,#000 95%,transparent 100%),linear-gradient(180deg,transparent 0%,#000 7%,#000 93%,transparent 100%)";
+  "linear-gradient(90deg,transparent 0%,#000 4%,#000 96%,transparent 100%),linear-gradient(180deg,transparent 0%,#000 7%,#000 93%,transparent 100%)";
+
+export type NetworkMapHandle = {
+  /** Where the scroll is along the camera's path: 0 the whole world, 1 the network. */
+  setProgress: (progress: number) => void;
+  /** Whether a market's marker is on screen, clear of the header and the caption. */
+  shows: (index: number) => boolean;
+};
 
 /**
  * The network on a map of the world, in the site's colours: every country in sage, the
  * markets' countries in green, the one in focus in burgundy, with arcs drawn from it to
  * the rest of the network.
  *
- * A camera frames the map. `zoomed` false shows the whole world; true closes in on the
- * market at `cameraIndex` (about a continent's width across), and the camera glides
- * whenever either changes. Markers and the market's name are positioned from the camera,
- * so they keep their size at every zoom.
+ * The page's scroll drives a camera through it (`setProgress`): it opens on the whole
+ * world and closes in on the network. Only the SVG viewBox changes as it moves, and the
+ * markers and the market's name are placed directly, so nothing re-renders while it does.
  */
 export function NetworkMap({
+  ref,
   focusIndex,
-  cameraIndex,
-  zoomed,
   onHover,
   onSelect,
   calm = false,
+  still = false,
+  topInset = 0,
 }: {
+  ref?: Ref<NetworkMapHandle>;
   /** Highlighted in burgundy (hover or selection). */
   focusIndex: number;
-  /** The market the camera frames when zoomed (the selection; hovering never moves the map). */
-  cameraIndex: number;
-  zoomed: boolean;
   onHover: (index: number | null) => void;
   onSelect: (index: number) => void;
+  /** Reduced motion: no ping, no travelling lights. */
   calm?: boolean;
+  /** Not driven by the scroll: framed on the whole network. */
+  still?: boolean;
+  /** Height of the fixed header over the top of the map, kept clear when framing. */
+  topInset?: number;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const landSvg = useRef<SVGSVGElement>(null);
@@ -159,9 +215,11 @@ export function NetworkMap({
   const markerEls = useRef<(HTMLButtonElement | null)[]>([]);
   const labelEl = useRef<HTMLDivElement>(null);
   const camera = useRef<Camera | null>(null);
+  const path = useRef<Key[] | null>(null);
+  const progress = useRef(0);
   const size = useRef({ w: 0, h: 0 });
-  const view = useRef({ zoomed, cameraIndex, focusIndex });
-  const tween = useRef<gsap.core.Tween | null>(null);
+  const focusRef = useRef(focusIndex);
+  const stillRef = useRef(still);
   const [ready, setReady] = useState(false);
   const [dot, setDot] = useState(14);
 
@@ -186,80 +244,67 @@ export function NetworkMap({
     });
     const label = labelEl.current;
     if (label) {
-      const p = POINTS[view.current.focusIndex];
+      const p = POINTS[focusRef.current];
       const x = (p.x - vx) * cam.s;
       label.style.transform = `translate3d(${x.toFixed(1)}px,${((p.y - vy) * cam.s).toFixed(1)}px,0)`;
       label.dataset.side = x > w - 190 ? "left" : "right";
     }
   }, []);
 
-  const target = useCallback((w: number, h: number) => {
-    const { zoomed: z, cameraIndex: c } = view.current;
-    return z ? marketCamera(w, h, c) : worldCamera(w, h);
-  }, []);
+  const frame = useCallback(() => {
+    const { w, h } = size.current;
+    if (!w || !h) return;
+    if (stillRef.current) camera.current = fit(w >= 640 ? NETWORK : NETWORK_WEST, w, h, topInset, 0.03);
+    else if (path.current) camera.current = cameraAt(path.current, progress.current);
+    apply();
+  }, [apply, topInset]);
 
-  // Measure the box; on every resize, snap to the current view.
+  useImperativeHandle(
+    ref,
+    () => ({
+      setProgress(p: number) {
+        progress.current = Math.min(1, Math.max(0, p));
+        frame();
+      },
+      shows(index: number) {
+        const cam = camera.current;
+        const { w, h } = size.current;
+        if (!cam || !w || !h) return true;
+        const p = POINTS[index];
+        const x = (p.x - cam.cx) * cam.s + w / 2;
+        const y = (p.y - cam.cy) * cam.s + h / 2;
+        return x > 24 && x < w - 24 && y > topInset + 24 && y < h - 64;
+      },
+    }),
+    [frame, topInset],
+  );
+
+  // Measure the stage; on every resize, rebuild the camera's path and reframe.
   useLayoutEffect(() => {
+    stillRef.current = still;
     const el = box.current;
     if (!el) return;
     const measure = () => {
       const { width, height } = el.getBoundingClientRect();
       if (!width || !height) return;
       size.current = { w: width, h: height };
-      tween.current?.kill();
-      camera.current = target(width, height);
-      setDot(3.2 / marketCamera(width, height, 0).s);
-      apply();
+      path.current = cameraPath(width, height, topInset);
+      const close = width >= 640 ? fit(NETWORK, width, height, topInset, 0.03) : fit(NETWORK_WEST, width, height, topInset, 0.02);
+      setDot(3.4 / close.s);
+      frame();
       setReady(true);
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [apply, target]);
+  }, [frame, still, topInset]);
 
   // The market's name follows the focus.
   useLayoutEffect(() => {
-    view.current.focusIndex = focusIndex;
+    focusRef.current = focusIndex;
     apply();
   }, [focusIndex, apply]);
-
-  // Glide to the new view when the zoom or the selected market changes.
-  useEffect(() => {
-    view.current.zoomed = zoomed;
-    view.current.cameraIndex = cameraIndex;
-    const from = camera.current;
-    const { w, h } = size.current;
-    if (!from || !w || !h) return;
-    const to = target(w, h);
-    tween.current?.kill();
-    if (calm) {
-      camera.current = to;
-      apply();
-      return;
-    }
-    // Zoom on a logarithmic scale so it feels even; glide the centre alongside.
-    const ls0 = Math.log(from.s);
-    const ls1 = Math.log(to.s);
-    const zooming = Math.abs(ls1 - ls0) > 0.4;
-    const state = { t: 0 };
-    tween.current = gsap.to(state, {
-      t: 1,
-      duration: zooming ? 2.6 : 1.7,
-      ease: zooming ? "power2.inOut" : "power3.inOut",
-      onUpdate: () => {
-        const t = state.t;
-        camera.current = {
-          cx: from.cx + (to.cx - from.cx) * t,
-          cy: from.cy + (to.cy - from.cy) * t,
-          s: Math.exp(ls0 + (ls1 - ls0) * t),
-        };
-        apply();
-      },
-    });
-  }, [zoomed, cameraIndex, calm, apply, target]);
-
-  useEffect(() => () => void tween.current?.kill(), []);
 
   const arcs = useMemo(
     () =>
