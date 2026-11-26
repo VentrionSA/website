@@ -214,7 +214,7 @@ const STEPS = [
   },
   {
     title: "We find the right counterpart.",
-    body: "We go to the people in our network who can genuinely deliver, and qualify them before any of your time is spent.",
+    body: "We go to the people in our network who can genuinely deliver, and complete our due diligence and vetting before any of your time is spent.",
   },
   {
     title: "We make the introduction.",

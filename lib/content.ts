@@ -73,7 +73,7 @@ export const PRINCIPLES: Principle[] = [
     title: "*Quality* Over Quantity",
     lead: "We do not measure our network by the *number of names* in it.",
     body: [
-      "A large network has little value if its people are unknown or unreliable. We work with counterparties who share our standards of communication, transparency and conduct.",
+      "A large network has little value if its people are unknown or unreliable. Every counterparty we work with has passed our due diligence and vetting, and shares our standards of communication, transparency and conduct.",
     ],
     closing: "Every introduction carries our name.",
   },
