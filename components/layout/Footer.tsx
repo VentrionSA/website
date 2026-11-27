@@ -35,7 +35,7 @@ export function Footer() {
               <LogoWordmark className="h-[15px] w-auto" />
             </a>
             <p className="display-sm mt-10 max-w-[22ch] text-ivory">
-              Connecting markets. Moving opportunities. <em className="text-burgundy">In every direction.</em>
+              Creating opportunities. <em className="text-burgundy">In every direction.</em>
             </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-mist">An independent trade facilitation company.</p>
           </div>

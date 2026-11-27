@@ -37,9 +37,9 @@ export function WayWeWork() {
   );
 
   return (
-    <section ref={root} aria-labelledby="way-title" className="relative isolate mt-[clamp(4rem,8vw,7rem)] overflow-hidden">
+    <section ref={root} aria-labelledby="way-title" className="relative isolate mt-[clamp(1rem,3vw,3rem)] overflow-hidden">
       <div className="xl:flex xl:min-h-[min(42vw,calc(100svh-11rem))] xl:items-center">
-        <div className="shell w-full py-[clamp(3.5rem,7vw,6rem)] xl:py-[clamp(2.5rem,3.5vw,3.5rem)]">
+        <div className="shell w-full pb-[clamp(3.5rem,7vw,6rem)] pt-[clamp(2rem,4vw,4rem)] xl:py-[clamp(2.5rem,3.5vw,3.5rem)]">
           <div className="xl:max-w-[28rem]">
             <Reveal>
               <p className="flex items-center gap-4 font-text text-[12px] font-medium uppercase tracking-[0.2em] text-ivory sm:text-[13px]">

@@ -7,7 +7,7 @@ import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { LogoMark } from "@/components/brand/Logo";
 
-/* ── The selection: many names in, one introduction out ───────────────── */
+/* ── The selection: many names in, the right counterpart out ─────────── */
 
 type Layout = {
   w: number;
@@ -194,11 +194,11 @@ function Selection() {
         </p>
         <p data-flow-label className="text-center">
           <span className="block font-serif text-[1.05rem] italic leading-tight text-ivory sm:text-[1.45rem]">Ventrion</span>
-          <span className="eyebrow mt-2 block text-[8.5px] text-mist sm:text-[10px]">Qualifies, then connects</span>
+          <span className="eyebrow mt-2 block text-[8.5px] text-mist sm:text-[10px]">Qualifies, then facilitates</span>
         </p>
         <p data-flow-label className="text-right">
-          <span className="block font-serif text-[1.05rem] italic leading-tight text-burgundy sm:text-[1.45rem]">One introduction</span>
-          <span className="eyebrow mt-2 block text-[8.5px] text-mist sm:text-[10px]">The right counterpart</span>
+          <span className="block font-serif text-[1.05rem] italic leading-tight text-burgundy sm:text-[1.45rem]">The right counterpart</span>
+          <span className="eyebrow mt-2 block text-[8.5px] text-mist sm:text-[10px]">Ready to do business</span>
         </p>
       </div>
     </div>
@@ -217,7 +217,7 @@ const STEPS = [
     body: "We go to the people in our network who can genuinely deliver, and complete our due diligence and vetting before any of your time is spent.",
   },
   {
-    title: "We make the introduction.",
+    title: "We bring both sides together.",
     body: "Personally and discreetly, with our name behind it. Then we stay close as the conversation moves forward.",
   },
 ];
@@ -228,7 +228,7 @@ function Steps() {
       <Reveal>
         <p className="flex items-center gap-4 font-text text-[12px] font-medium uppercase tracking-[0.2em] text-ivory sm:text-[13px]">
           <span aria-hidden="true" className="h-px w-10 bg-burgundy sm:w-12" />
-          From first call to introduction
+          How we facilitate
         </p>
       </Reveal>
       <Reveal as="ol" stagger={0.14} className="mt-8 grid border-t border-line md:mt-10 md:grid-cols-3">
@@ -274,7 +274,7 @@ export function Introduction() {
 
         <Selection />
         <p className="sr-only">
-          Many names in a crowded market; Ventrion qualifies, then connects; one introduction, to the right counterpart.
+          Many names in a crowded market; Ventrion qualifies, then facilitates; the right counterpart, ready to do business.
         </p>
 
         <Steps />

@@ -32,9 +32,8 @@ export default function PrivacyPage() {
       </p>
       <h2>How we use it</h2>
       <p>
-        We use the information you share only to respond to you, to assess and discuss the introductions and trade
-        opportunities you have asked about, to show clients the status of their engagement, and to keep appropriate
-        business records. We do not sell personal information.
+        We use the information you share only to respond to you, to assess and discuss the trade opportunities you
+        have asked about, to show clients the status of their engagement, and to keep appropriate business records. We do not sell personal information.
       </p>
       <h2>Sharing</h2>
       <p>

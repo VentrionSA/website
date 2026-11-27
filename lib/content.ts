@@ -27,8 +27,8 @@ export type Market = {
   lon: number;
 };
 
-// Ids match NETWORK in scripts/build-network-map.mjs, which writes the map's outlines
-// (lib/geo/network-map.ts); run `npm run build:map` after changing the markets.
+// Ids match NETWORK in scripts/build-globe-map.mjs, which writes the globe's country
+// outlines (lib/geo/countries.json); run `npm run build:map` after changing the markets.
 export const MARKETS: Market[] = [
   { id: "saudi-arabia", name: "Saudi Arabia", region: "Middle East", lat: 24.2, lon: 45.1 },
   { id: "united-arab-emirates", name: "United Arab Emirates", region: "Middle East", lat: 24.4, lon: 54.4 },
@@ -75,7 +75,7 @@ export const PRINCIPLES: Principle[] = [
     body: [
       "A large network has little value if its people are unknown or unreliable. Every counterparty we work with has passed our due diligence and vetting, and shares our standards of communication, transparency and conduct.",
     ],
-    closing: "Every introduction carries our name.",
+    closing: "Everything we facilitate carries our name.",
   },
   {
     // global reach, personal accountability: said in other words

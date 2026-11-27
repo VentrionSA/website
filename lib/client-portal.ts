@@ -18,7 +18,7 @@
  *     "<64-character SHA-256 fingerprint>": {
  *       "name": "Client or engagement name",
  *       "status": "In progress",
- *       "stage": "Counterparty introduced",
+ *       "stage": "Counterparty qualified",
  *       "updated": "2026-11-24",
  *       "note": "Optional message for the client",
  *       "timeline": [{ "date": "2026-11-02", "label": "Engagement opened", "done": true }]

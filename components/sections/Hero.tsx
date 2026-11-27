@@ -58,26 +58,21 @@ export function Hero() {
 
             <h1
               id="hero-title"
-              className="mt-6 font-serif text-[min(10.7vw,4.2rem)] font-semibold leading-[0.897] tracking-[-0.033em] text-ivory md:text-[3.8rem] lg:mt-[1.3vw] lg:text-[min(6.02vw,11.6svh)]"
+              className="mt-6 font-serif text-[min(10.1vw,4.2rem)] font-semibold leading-[0.897] tracking-[-0.033em] text-ivory md:text-[3.8rem] lg:mt-[1.3vw] lg:text-[min(6.02vw,11.6svh)]"
             >
               <span className="line-mask">
-                <span className="hero-line" style={i(0)}>
-                  Connecting markets.
-                </span>
-              </span>
-              <span className="line-mask">
-                {/* Fraunces at 400 matches the weight of the Cormorant line above. Its optical size is held
+                {/* Fraunces at 400 sits with the weight of the Cormorant line below. Its optical size is held
                     at the display cut: left automatic, phones get the wider text cut and the line wraps. */}
                 <span
                   className="hero-line font-accent font-normal tracking-[-0.02em]"
-                  style={{ ...i(1), fontVariationSettings: '"opsz" 90' }}
+                  style={{ ...i(0), fontVariationSettings: '"opsz" 90' }}
                 >
-                  Moving opportunities.
+                  Creating opportunities.
                 </span>
               </span>
-              {/* the third line in the site's accent: burgundy italic */}
+              {/* the second line in the site's accent: burgundy italic */}
               <span className="line-mask">
-                <span className="hero-line font-medium italic text-burgundy" style={i(2)}>
+                <span className="hero-line font-medium italic text-burgundy" style={i(1)}>
                   In every direction.
                 </span>
               </span>
@@ -85,7 +80,7 @@ export function Hero() {
 
             <p
               className="hero-fade mt-6 max-w-[34rem] font-text text-[17px] leading-[1.25] tracking-[0.02em] text-ivory md:text-[20px] lg:mt-[1.86vw] lg:max-w-none lg:text-[clamp(18px,1.741vw,31px)] lg:leading-[1.2]"
-              style={i(3)}
+              style={i(2)}
             >
               Independent trade facilitation.
             </p>

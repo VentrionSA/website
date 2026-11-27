@@ -1,6 +1,6 @@
 /**
  * An old trading house, drawn as an architect's front elevation in the colours of the
- * network map: steps, a colonnade, an entablature with dentils and a pediment holding
+ * network globe: steps, a colonnade, an entablature with dentils and a pediment holding
  * a clock, whose burgundy hands keep turning. A dimension line and the centre axis
  * mark it as a drawing.
  */

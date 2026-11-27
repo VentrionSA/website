@@ -1,24 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MARKETS, REGIONS } from "@/lib/content";
-import { useInViewport, usePrefersReducedMotion } from "@/lib/device";
-import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
+import { useGraphicsTier, useInViewport, useNearViewport, usePrefersReducedMotion } from "@/lib/device";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { NetworkMap, type NetworkMapHandle } from "./network/NetworkMap";
 import { ElementTable } from "./network/ElementTable";
 
-/** The page's content edge (the shell's padding, or more on very wide screens), for the full-width map. */
-const EDGE = { "--edge": "max(clamp(1.25rem, 4.6vw, 5rem), calc((100vw - 1680px) / 2 + 5rem))" } as CSSProperties;
-/** The fixed header's height once the page has scrolled: the map keeps clear of it. */
-const HEADER = 68;
+const loadGlobe = () => import("@/components/three/GlobeCanvas");
+const GlobeCanvas = dynamic(loadGlobe, { ssr: false });
+// Only for devices without WebGL: loaded, with the country outlines, when it is needed.
+const FlatMap = dynamic(() => import("./network/FlatMap").then((m) => m.FlatMap), { ssr: false });
+
+/** The globe's stage: as large as the screen allows, the whole sphere always in view. */
+const STAGE = "w-[min(100%,calc(100svh-6.5rem),62rem)]";
 
 function CornerFrame() {
   const corner = "absolute h-5 w-5 border-mark/35";
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute bottom-4 top-[84px] inset-x-[var(--edge)] z-[5]">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-x-3 inset-y-0 sm:inset-x-0">
       <span className={`${corner} left-0 top-0 border-l border-t`} />
       <span className={`${corner} right-0 top-0 border-r border-t`} />
       <span className={`${corner} bottom-0 left-0 border-b border-l`} />
@@ -28,64 +30,42 @@ function CornerFrame() {
 }
 
 export function Network() {
-  const scene = useRef<HTMLDivElement>(null);
-  const mapBox = useRef<HTMLDivElement>(null);
-  const map = useRef<NetworkMapHandle>(null);
-  const inView = useInViewport(mapBox);
+  const globeBox = useRef<HTMLDivElement>(null);
+  const near = useNearViewport(globeBox, "900px 0px");
+  const inView = useInViewport(globeBox);
+  // Reduced-motion visitors still get the 3D globe, with ambient motion stilled.
+  const tier = useGraphicsTier({ allowReducedMotion: true });
   const reduce = usePrefersReducedMotion();
   const [active, setActive] = useState(0);
   const [hover, setHover] = useState<number | null>(null);
+  const [listHover, setListHover] = useState<number | null>(null);
   const lastInteraction = useRef(0);
   const hoverRef = useRef<number | null>(null);
-  const activeRef = useRef(0);
   // Highlighted in burgundy: anything hovered, otherwise the selection.
   const focus = hover ?? active;
+  // Faced by the globe: the selection, or a name hovered in the list. Hovering a
+  // marker on the globe itself only highlights it, so the globe never moves under the pointer.
+  const orient = listHover ?? active;
 
   useEffect(() => {
     hoverRef.current = hover;
   }, [hover]);
 
-  // The scroll drives the map: while the scene is pinned, the whole world gives way to the network.
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add(MOTION_QUERIES.motion, () => {
-        const state = { p: 0 };
-        gsap.to(state, {
-          p: 1,
-          ease: "none",
-          onUpdate: () => map.current?.setProgress(state.p),
-          scrollTrigger: { trigger: scene.current, start: "top top", end: "bottom bottom", scrub: 0.9 },
-        });
-      });
-    },
-    { scope: scene },
-  );
-
+  // Warm the 3D bundle shortly after load so the globe is ready before it is reached.
   useEffect(() => {
-    activeRef.current = active;
-  }, [active]);
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    const run = () => void loadGlobe();
+    if (w.requestIdleCallback) w.requestIdleCallback(run);
+    else window.setTimeout(run, 1500);
+  }, []);
 
-  // Gently tour the markets while the map is on screen and idle, keeping to those in the
-  // camera's view (on phones it shows part of the network at a time): a market the camera
-  // leaves gives way at once to the next one on screen.
+  // Gently cycle through markets while the globe is on screen and idle.
   useEffect(() => {
     if (!inView || reduce) return;
-    let last = Date.now();
     const id = window.setInterval(() => {
-      if (hoverRef.current !== null || Date.now() - lastInteraction.current < 9000) return;
-      const shows = (i: number) => map.current?.shows(i) ?? true;
-      const current = activeRef.current;
-      if (Date.now() - last < 5200 && shows(current)) return;
-      last = Date.now();
-      for (let step = 1; step < MARKETS.length; step++) {
-        const next = (current + step) % MARKETS.length;
-        if (shows(next)) {
-          setActive(next);
-          return;
-        }
-      }
-    }, 600);
+      if (hoverRef.current !== null || Date.now() - lastInteraction.current < 12000) return;
+      setActive((a) => (a + 1) % MARKETS.length);
+    }, 4600);
     return () => window.clearInterval(id);
   }, [inView, reduce]);
 
@@ -97,6 +77,17 @@ export function Network() {
   const hoverMarket = useCallback((index: number | null) => {
     lastInteraction.current = Date.now();
     setHover(index);
+  }, []);
+
+  const hoverListItem = useCallback((index: number | null) => {
+    lastInteraction.current = Date.now();
+    setHover(index);
+    setListHover(index);
+  }, []);
+
+  // Dragging the globe hands it to the visitor: the tour stays paused for half a minute.
+  const interact = useCallback(() => {
+    lastInteraction.current = Date.now() + 18_000;
   }, []);
 
   return (
@@ -115,43 +106,61 @@ export function Network() {
         </SplitHeading>
       </div>
 
-      {/* The map scene: the map holds the screen while the page scrolls on, and the scroll
-          carries it from the whole world into the network. With reduced motion it is a
-          still, full-width map of the network. */}
-      <div ref={scene} className="relative mt-14 motion-safe:h-[300vh] lg:mt-20 lg:motion-safe:h-[260vh]" style={EDGE}>
-        <div
-          ref={mapBox}
-          className="relative h-[118vw] overflow-hidden sm:h-[68vw] lg:h-[min(80svh,52vw)] motion-safe:sticky motion-safe:top-0 motion-safe:h-[100svh] sm:motion-safe:h-[100svh] lg:motion-safe:h-[100svh]"
-        >
+      {/* The globe, as large as the screen allows: edge to edge on phones */}
+      <div className="relative mt-10 sm:mt-14 lg:mt-16">
+        <div ref={globeBox} className={`relative mx-auto aspect-square ${STAGE}`}>
           <CornerFrame />
-          <NetworkMap
-            ref={map}
-            focusIndex={focus}
-            onHover={hoverMarket}
-            onSelect={select}
-            calm={reduce}
-            still={reduce}
-            topInset={reduce ? 0 : HEADER}
-          />
-          <div className="pointer-events-none absolute inset-x-[var(--edge)] bottom-4 z-[5] flex items-center justify-between gap-4 px-5 pb-4 sm:px-6 sm:pb-5">
-            <p className="eyebrow flex items-center gap-3 text-[9.5px] text-mist sm:text-[10px]">
-              <span aria-hidden="true" className="relative flex h-2 w-2">
-                {reduce ? null : <span className="absolute inset-0 animate-ping rounded-full bg-burgundy/50" />}
-                <span className="relative h-2 w-2 rounded-full bg-burgundy" />
-              </span>
-              <span>
-                <span className="hidden sm:inline">Now highlighting </span>
-                <span className="text-ivory sm:ml-1">{MARKETS[focus].name}</span>
-              </span>
-            </p>
+          {/* soft shadow grounding the porcelain globe */}
+          {tier === "none" ? null : (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-[93%] h-[7%] w-[60%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(24,67,53,0.16),transparent)] blur-md"
+            />
+          )}
+          <div className="absolute inset-0">
+            {tier === "none" ? (
+              <FlatMap focusIndex={focus} onHover={hoverMarket} onSelect={select} />
+            ) : tier !== "pending" && near ? (
+              <GlobeCanvas
+                focusIndex={focus}
+                orientIndex={orient}
+                onHover={hoverMarket}
+                onSelect={select}
+                onInteract={interact}
+                tier={tier}
+                calm={reduce}
+              />
+            ) : null}
           </div>
+        </div>
+
+        <div className={`mx-auto mt-5 flex items-center justify-between gap-4 px-5 sm:px-0 ${STAGE}`}>
+          <p className="eyebrow flex items-center gap-3 text-[9.5px] text-mist sm:text-[10px]">
+            <span aria-hidden="true" className="relative flex h-2 w-2">
+              {reduce ? null : <span className="absolute inset-0 animate-ping rounded-full bg-burgundy/50" />}
+              <span className="relative h-2 w-2 rounded-full bg-burgundy" />
+            </span>
+            <span>
+              <span className="hidden sm:inline">Now highlighting </span>
+              <span className="text-ivory sm:ml-1">{MARKETS[focus].name}</span>
+            </span>
+          </p>
+          <p className="eyebrow text-right text-[9.5px] text-mist/80 sm:text-[10px]">
+            {tier === "none" ? (
+              "Select a market"
+            ) : (
+              <>
+                Drag to rotate<span className="hidden sm:inline"> · Select a market</span>
+              </>
+            )}
+          </p>
         </div>
       </div>
 
       <div className="shell relative">
-        <div className="mt-12 grid gap-14 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+        <div className="mt-14 grid gap-14 lg:mt-20 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-7">
-            {/* The markets, by region: hover, tab to or tap a name to bring it forward on the map */}
+            {/* The markets, by region: hover, tab to or tap a name to bring it forward on the globe */}
             <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3">
               {REGIONS.map((region) => (
                 <div key={region} className={region === "Middle East" ? "row-span-2 sm:row-span-1" : ""}>
@@ -163,10 +172,10 @@ export function Network() {
                           <button
                             type="button"
                             onClick={() => select(i)}
-                            onMouseEnter={() => hoverMarket(i)}
-                            onMouseLeave={() => hoverMarket(null)}
-                            onFocus={() => hoverMarket(i)}
-                            onBlur={() => hoverMarket(null)}
+                            onMouseEnter={() => hoverListItem(i)}
+                            onMouseLeave={() => hoverListItem(null)}
+                            onFocus={() => hoverListItem(i)}
+                            onBlur={() => hoverListItem(null)}
                             aria-pressed={i === active}
                             className={`group flex items-center gap-2.5 text-left font-serif text-[1.15rem] leading-tight text-ivory transition-opacity duration-500 sm:text-[1.25rem] ${
                               i === focus ? "italic" : "opacity-80 hover:opacity-100"
@@ -188,7 +197,7 @@ export function Network() {
               ))}
             </div>
 
-            {/* What moves through the network: the table of elements, in the map's colours */}
+            {/* What moves through the network: the table of elements, in the globe's colours */}
             <Reveal className="mt-14 max-w-[34rem] border-t border-line pt-10 lg:mt-16">
               <ElementTable />
             </Reveal>
@@ -200,9 +209,9 @@ export function Network() {
             </p>
             <p data-reveal className="mt-6 text-[16px] leading-[1.8] text-mist">
               We value our clients&rsquo; time as much as they do, and we are candid from the first call: if we cannot
-              help, we say so. Wherever possible, we go straight to the principals;
-              where we cannot, we work only through people we know and trust. Every counterpart is qualified before an
-              introduction is made, so our clients meet only parties who are serious and ready to do business.
+              help, we say so. Wherever possible, we go straight to the principals; where we cannot, we work only through
+              people we know and trust. Every counterpart is qualified before we bring them to the table, so our clients
+              meet only parties who are serious and ready to do business.
             </p>
           </Reveal>
         </div>

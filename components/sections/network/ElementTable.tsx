@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useInViewport, usePrefersReducedMotion } from "@/lib/device";
 
 /**
- * The table of elements, drawn like the network map: every element a plain sage
+ * The table of elements, in the colours of the network globe: every element a plain sage
  * cell, a select few in green, the one in focus in burgundy. The focused element
  * is shown large in the table's own gap and changes every few seconds.
  */

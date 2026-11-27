@@ -18,9 +18,9 @@ export const siteConfig = {
   name: "Ventrion",
   /** Registered legal entity name, used in the privacy policy and terms. */
   legalName: process.env.NEXT_PUBLIC_COMPANY_LEGAL_NAME || "Ventrion Company",
-  tagline: "Connecting markets. Moving opportunities.",
+  tagline: "Creating opportunities. In every direction.",
   description:
-    "Ventrion is an independent trade facilitation company, connecting trusted counterparts through an established network across the Middle East, Central Asia and Asia.",
+    "Ventrion is an independent trade facilitation company, bringing trusted counterparts together through an established network across the Middle East, Central Asia and Asia.",
 
   /** Business contact details — placeholders until confirmed. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@ventrion.sa",
@@ -32,7 +32,7 @@ export const siteConfig = {
   /** International format, digits only or with +, e.g. +9665XXXXXXXX */
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "[WHATSAPP_NUMBER_WITH_COUNTRY_CODE]",
 
-  whatsappMessage: "Hello Ventrion, I would like to request an introduction.",
+  whatsappMessage: "Hello Ventrion, I would like to arrange a confidential conversation.",
 } as const;
 
 /** Absolute site URL — server-side only (used for metadata, sitemap, OG). */

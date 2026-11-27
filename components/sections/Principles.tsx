@@ -9,7 +9,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
 import { WayWeWork } from "./principles/WayWeWork";
 import { TradingHouse } from "./principles/diagrams/TradingHouse";
-import { IllustratedPrinciple } from "./principles/IllustratedPrinciple";
+import { IllustratedPrinciple, PRINCIPLE_TITLE } from "./principles/IllustratedPrinciple";
 import warehouse from "@/assets/images/art/warehouse.webp";
 import shipHold from "@/assets/images/art/ship-hold.webp";
 
@@ -17,7 +17,7 @@ import shipHold from "@/assets/images/art/ship-hold.webp";
  * Ventrion's own illustrations, cut out of their backgrounds, as the backgrounds of two
  * principles: a warehouse of bulk bags where one carries the red tag (one name among
  * many), and a ship's hold laden with cargo (however far it travels). The first
- * principle keeps the trading house, drawn in the style of the network map.
+ * principle keeps the trading house, drawn in the colours of the network globe.
  */
 const BACKGROUNDS: Partial<Record<PrincipleId, { image: StaticImageData; side: "left" | "right" }>> = {
   quality: { image: warehouse, side: "right" },
@@ -109,7 +109,7 @@ export function Principles() {
               <li key={principle.id} className="shell">
                 <div className="grid gap-7 border-y border-line py-[clamp(3rem,6vw,5.5rem)] lg:grid-cols-12 lg:gap-8">
                   <Reveal className="lg:col-span-5">
-                    <h3 className="display-md max-w-[14ch] text-balance text-ivory">
+                    <h3 className={PRINCIPLE_TITLE}>
                       <Emphasis text={principle.title} />
                     </h3>
                     <div className="mt-8 w-full max-w-[28rem] lg:mt-12">

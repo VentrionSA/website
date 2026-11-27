@@ -286,7 +286,7 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
   const checks = [
     {
       icon: ShieldCheck,
-      label: "Connection",
+      label: "Channel",
       value: https ? "Encrypted · HTTPS" : "Not encrypted (local preview)",
       ok: https,
     },
@@ -545,12 +545,12 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
                   </div>
                 ) : phase === "limited" ? (
                   <p className="mt-5 border border-paper/15 bg-black/15 p-4 text-[13.5px] leading-relaxed text-paper/75">
-                    Too many attempts from this connection. For your protection, please try again in{" "}
+                    Too many attempts from this network. For your protection, please try again in{" "}
                     {Math.max(1, Math.ceil(retryAfter / 60))} minute{Math.ceil(retryAfter / 60) > 1 ? "s" : ""}.
                   </p>
                 ) : phase === "error" ? (
                   <p className="mt-5 border border-paper/15 bg-black/15 p-4 text-[13.5px] leading-relaxed text-paper/75">
-                    The secure service could not be reached. Please check your connection and try again.
+                    The secure service could not be reached. Please check that you are online and try again.
                   </p>
                 ) : null}
               </div>

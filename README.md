@@ -1,8 +1,8 @@
 # Ventrion — website
 
-A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (an interactive map of the whole world), our principles (the eagles section, "The way we work", and three principles, the first with a trading house drawn in the style of the network map, the other two set over Ventrion's illustrations, a warehouse of bulk bags and a ship's hold, as their backgrounds, in `components/sections/principles/`; the table of elements sits beneath the network map), a closing statement, contact.
+A single-page "digital business card" for Ventrion, an independent trade facilitation company working through a trusted network. Sections: hero, independent trade facilitation, the network (an interactive 3D globe), our principles (the eagles section, "The way we work", and three principles, the first with a trading house drawn in the colours of the globe, the other two set over Ventrion's illustrations, a warehouse of bulk bags and a ship's hold, as their backgrounds, in `components/sections/principles/`; the table of elements sits beneath the globe), a closing statement, contact.
 
-**Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Lucide · Zod.
+**Stack:** Next.js 16 (App Router, TypeScript) · Tailwind CSS v4 · GSAP + ScrollTrigger + SplitText · Lenis smooth scroll · Motion (Framer Motion) · Three.js / React Three Fiber · Lucide · Zod.
 
 ```bash
 npm install
@@ -47,13 +47,13 @@ Give the printed Client ID to the client privately, add the printed entry to `CL
 
 ## Content
 
-- **Navigation, markets and the four principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
+- **Navigation, markets and the three principles:** `lib/content.ts`; other section copy lives in `components/sections/*`.
 - **Imagery:** section backgrounds in `assets/images/backdrops/` (mapped in `lib/backdrops.ts`) are placeholder photography from Pexels (free commercial licence, no attribution required); replace with commissioned photography at the same filenames (≥ 2400px wide; Next.js serves AVIF/WebP automatically). The eagles artwork (`assets/images/art/trust-eagles.jpg`) is Ventrion's own, cleaned, extended and graded; the warehouse and ship's hold illustrations (`assets/images/art/warehouse.webp`, `ship-hold.webp`) are Ventrion's own, cut out of their backgrounds as transparent images, soft shadows kept.
 - **Logo:** traced from the supplied artwork — `components/brand/logo-paths.ts`, plus SVGs in `public/brand/`.
-- **Network map:** country outlines from Natural Earth at 1:50m (the `world-atlas` package), projected to Equal Earth by `npm run build:map` (`scripts/build-network-map.mjs`, using `d3-geo` and `topojson-client`) into `lib/geo/network-map.ts`; run it again after changing the markets. Marker positions come from `MARKETS` in `lib/content.ts`. The map is a pinned scene: it holds the screen while the page scrolls on, and the scroll itself (scrubbed) carries the camera from the whole world into the network on its right; on phones it closes in on the Gulf and Central Asia, then travels east to China and Indonesia. A tour highlights the markets in turn, keeping to those in view. With reduced motion the map is a still view of the network, not pinned.
+- **Network globe:** `components/three/GlobeCanvas.tsx` (three.js through React Three Fiber). Its texture is drawn at runtime from `lib/geo/countries.json`: Natural Earth country outlines at 1:50m (the `world-atlas` package) in the equirectangular projection, simplified to the texture's resolution by `npm run build:map` (`scripts/build-globe-map.mjs`, using `d3-geo` and `topojson-client`); run it again after changing the markets. Marker positions come from `MARKETS` in `lib/content.ts`. The globe is as large as the screen allows (edge to edge on phones), turns to face the market chosen in the list, can be dragged and flicked, and tours the markets when left alone. Without WebGL, or on low-powered devices, a flat map of the network stands in (`components/sections/network/FlatMap.tsx`).
 
 ## Accessibility & performance notes
 
 - Respects `prefers-reduced-motion` (no smooth scroll, no scroll animations, static 3D fallbacks).
-- The network map is plain SVG: the camera only changes its viewBox, and markers and labels are moved directly, so React does not re-render while it glides.
+- The globe is lazy-loaded (its bundle warmed when the browser is idle), renders only while on screen, lowers its resolution if the device cannot hold the frame rate, and falls back to a flat map when WebGL is unavailable or the device is low-powered.
 - Keyboard-accessible navigation, mobile menu and client portal (focus trap, Escape to close), and market selector.
