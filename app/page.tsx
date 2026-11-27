@@ -1,8 +1,8 @@
 import { Hero } from "@/components/sections/Hero";
 import { Introduction } from "@/components/sections/Introduction";
-import { VisionMission } from "@/components/sections/VisionMission";
+import { MissionVision } from "@/components/sections/MissionVision";
 import { Network } from "@/components/sections/Network";
-import { Principles } from "@/components/sections/Principles";
+import { Values } from "@/components/sections/Values";
 import { Closing } from "@/components/sections/Closing";
 import { Contact } from "@/components/sections/Contact";
 import { Preloader } from "@/components/layout/Preloader";
@@ -16,9 +16,9 @@ export default function HomePage() {
       </noscript>
       <Hero />
       <Introduction />
-      <VisionMission />
       <Network />
-      <Principles />
+      <MissionVision />
+      <Values />
       <Closing />
       <Contact />
     </main>

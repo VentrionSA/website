@@ -4,7 +4,7 @@ import { MARK_PATH } from "@/components/brand/logo-paths";
  * The mission, drawn in the colours of the network globe: a compass whose rose is the
  * Ventrion star, with a course laid off it to the east-north-east, towards a destination
  * marked in burgundy. The course swings in and settles as the drawing scrolls into view
- * (see VisionMission.tsx), then holds, with the faint sway of a real compass.
+ * (see MissionVision.tsx), then holds, with the faint sway of a real compass.
  */
 
 const LINE = "rgb(24 67 53 / 0.5)";

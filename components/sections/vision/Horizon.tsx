@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
  * The vision, drawn in the colours of the network globe: a clear horizon with the sun
  * rising over it, light on the water, and a ship holding its course towards it. The sea
  * keeps moving, the ship rides it, and the sun climbs as the drawing scrolls into view
- * (see VisionMission.tsx).
+ * (see MissionVision.tsx).
  */
 
 const LINE = "rgb(24 67 53 / 0.5)";

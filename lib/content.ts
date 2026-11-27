@@ -11,15 +11,24 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/#contact", label: "Contact" },
 ];
 
-/** The phone menu: every section, numbered as on the page, each with a line of its own. */
-export type MenuLink = NavLink & { index: string; note: string };
+/**
+ * The phone menu: every section, numbered as on the page, each with a line of its own.
+ * `sections` lists the page sections that count as this entry when marking where the
+ * reader is (Mission, Vision & Values runs over two).
+ */
+export type MenuLink = NavLink & { index: string; note: string; sections: string[] };
 
 export const MENU_LINKS: MenuLink[] = [
-  { href: "/#about", label: "About", index: "01", note: "Independent trade facilitation" },
-  { href: "/#vision", label: "Vision & Mission", index: "02", note: "A clear horizon. A steady course." },
-  { href: "/#network", label: "Network", index: "03", note: "Middle East · Central Asia · Asia" },
-  { href: "/#principles", label: "Principles", index: "04", note: "Trust does." },
-  { href: "/#contact", label: "Contact", index: "05", note: "Every engagement begins with a meeting." },
+  { href: "/#about", label: "About", index: "01", note: "Independent trade facilitation", sections: ["about"] },
+  { href: "/#network", label: "Network", index: "02", note: "Middle East · Central Asia · Asia", sections: ["network"] },
+  {
+    href: "/#mission",
+    label: "Mission, Vision & Values",
+    index: "03",
+    note: "A steady course. A clear horizon.",
+    sections: ["mission", "values"],
+  },
+  { href: "/#contact", label: "Contact", index: "04", note: "Every engagement begins with a meeting.", sections: ["contact"] },
 ];
 
 /** The regions named in the band beneath the hero. */
@@ -73,7 +82,18 @@ export const MISSION: Statement = {
   support: "Every counterpart vetted. Every conversation candid. Every commitment kept.",
 };
 
-/* ── Principles of the network ─────────────────────────────────────────── */
+/* ── Values ────────────────────────────────────────────────────────────── */
+
+export type Value = { name: string; line: string };
+
+export const VALUES: Value[] = [
+  { name: "Trust", line: "The ground every relationship we build stands on." },
+  { name: "Transparency", line: "Clear expectations and honest answers, from the first meeting." },
+  { name: "Accountability", line: "Our name stands behind everything we facilitate." },
+  { name: "Discretion", line: "Candid with our clients, and discreet about them." },
+];
+
+/* ── The commitments that put the values into practice ─────────────────── */
 
 export type PrincipleId = "principals" | "quality" | "distance";
 

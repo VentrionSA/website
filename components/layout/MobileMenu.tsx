@@ -13,7 +13,7 @@ import { LogoMark } from "@/components/brand/Logo";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
-const SECTION_IDS = MENU_LINKS.map((l) => l.href.replace("/#", ""));
+const SECTION_IDS = MENU_LINKS.flatMap((l) => l.sections);
 
 /**
  * The phone menu: the page's five sections, numbered as on the page, the one in view
@@ -116,7 +116,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
             <nav aria-label="Mobile">
               <ul className="border-t border-line">
                 {MENU_LINKS.map((link, i) => {
-                  const current = active === SECTION_IDS[i];
+                  const current = active !== null && link.sections.includes(active);
                   return (
                     <li key={link.href} className="overflow-hidden border-b border-line">
                       <motion.a

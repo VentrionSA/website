@@ -31,12 +31,13 @@ function Panel({ label, drawing, content, className = "" }: { label: string; dra
 }
 
 /**
- * Where Ventrion is going, and how it travels: the vision over a horizon with the sun
- * rising, the mission over a compass with its course laid. The drawings stay alive (the
- * sea moves, the ship rides it, the course holds with a faint sway), and as they scroll
- * into view the sun climbs and the course swings in and settles.
+ * The opening of "Mission, Vision & Values": the mission over a compass with its course
+ * laid, then the vision over a horizon with the sun rising (the values follow, in
+ * Values.tsx). The drawings stay alive (the course holds with a faint sway, the sea moves
+ * and the ship rides it), and as they scroll into view the course swings in and settles
+ * and the sun climbs.
  */
-export function VisionMission() {
+export function MissionVision() {
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -65,25 +66,25 @@ export function VisionMission() {
   );
 
   return (
-    <section ref={root} id="vision" aria-labelledby="vision-title" className="relative isolate overflow-clip bg-ink pb-[clamp(2.5rem,5vw,4rem)] pt-[clamp(6rem,12vw,11rem)]">
+    <section ref={root} id="mission" aria-labelledby="mission-title" className="relative isolate overflow-clip bg-ink pb-[clamp(2.5rem,5vw,4rem)] pt-[clamp(6rem,12vw,11rem)]">
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-mark/25 to-transparent" />
 
       <div className="shell relative">
         <div className="flex flex-col items-center text-center">
-          <Eyebrow index="02" align="center">
-            Vision &amp; Mission
+          <Eyebrow index="03" align="center">
+            Mission, Vision &amp; Values
           </Eyebrow>
-          <SplitHeading id="vision-title" className="display-lg mt-8 max-w-[16ch] text-balance text-ivory">
-            A clear horizon. <em className="text-burgundy">A steady course.</em>
+          <SplitHeading id="mission-title" className="display-lg mt-8 max-w-[16ch] text-balance text-ivory">
+            A steady course. <em className="text-burgundy">A clear horizon.</em>
           </SplitHeading>
         </div>
 
         <div className="mt-14 grid border-t border-line lg:mt-20 lg:grid-cols-2">
-          <Panel label="Our vision" drawing={<Horizon />} content={VISION} className="lg:pr-12 xl:pr-16" />
+          <Panel label="Our mission" drawing={<Compass />} content={MISSION} className="lg:pr-12 xl:pr-16" />
           <Panel
-            label="Our mission"
-            drawing={<Compass />}
-            content={MISSION}
+            label="Our vision"
+            drawing={<Horizon />}
+            content={VISION}
             className="border-t border-line lg:border-l lg:border-t-0 lg:pl-12 xl:pl-16"
           />
         </div>
