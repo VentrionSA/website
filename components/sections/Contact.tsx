@@ -5,6 +5,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import { PortalTrigger } from "@/components/portal/ClientPortal";
 import { getCallAction, getMailtoHref, getWhatsAppHref, siteConfig } from "@/lib/site";
+import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
+import { BACKDROPS } from "@/lib/backdrops";
 import { MarketClocks } from "./contact/MarketClocks";
 
 /** The call to action that closes the page: one wide burgundy bar, the number set large. */
@@ -50,6 +52,7 @@ export function Contact() {
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
+      <SectionBackdrop src={BACKDROPS.contact} wash={0.8} side="both" saturate={0.45} />
       <div className="shell relative flex flex-col items-center text-center">
         <Eyebrow index="05" align="center">
           Contact

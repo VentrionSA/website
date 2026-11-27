@@ -9,19 +9,29 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
 import { WayWeWork } from "./principles/WayWeWork";
 import { TradingHouse } from "./principles/diagrams/TradingHouse";
-import { IllustratedPrinciple, PRINCIPLE_TITLE } from "./principles/IllustratedPrinciple";
-import warehouse from "@/assets/images/art/warehouse.webp";
-import shipHold from "@/assets/images/art/ship-hold.webp";
+import { PhotoPrinciple, PRINCIPLE_TITLE } from "./principles/PhotoPrinciple";
+import wheatField from "@/assets/images/principles/wheat-field.jpg";
+import shipInFog from "@/assets/images/principles/ship-in-fog.jpg";
 
 /**
- * Ventrion's own illustrations, cut out of their backgrounds, as the backgrounds of two
- * principles: a warehouse of bulk bags where one carries the red tag (one name among
- * many), and a ship's hold laden with cargo (however far it travels). The first
- * principle keeps the trading house, drawn in the colours of the network globe.
+ * Photographs behind two of the principles, graded to the page's ivory: ripe wheat with
+ * the nearest ears in focus and the field soft behind them (the few that are chosen), and
+ * a ship crossing a calm sea under a dawn sky, a bank of fog beyond (however far it goes).
+ * The first principle keeps the trading house, drawn in the colours of the network globe.
  */
-const BACKGROUNDS: Partial<Record<PrincipleId, { image: StaticImageData; side: "left" | "right" }>> = {
-  quality: { image: warehouse, side: "right" },
-  distance: { image: shipHold, side: "left" },
+const PHOTOS: Partial<Record<PrincipleId, { image: StaticImageData; side: "left" | "right"; position: string; alt: string }>> = {
+  quality: {
+    image: wheatField,
+    side: "right",
+    position: "62% 62%",
+    alt: "Ripe wheat against a pale sky, the nearest ears in sharp focus.",
+  },
+  distance: {
+    image: shipInFog,
+    side: "left",
+    position: "24% 58%",
+    alt: "A ship crossing a calm sea at dawn, a bank of fog on the horizon.",
+  },
 };
 
 /** "Trust does." oversized; "Trust" in burgundy italic, filled by a sweep of light as it scrolls into view. */
@@ -101,9 +111,9 @@ export function Principles() {
         </div>
         <ul className="mt-10 lg:mt-14">
           {PRINCIPLES.map((principle) => {
-            const background = BACKGROUNDS[principle.id];
-            if (background) {
-              return <IllustratedPrinciple key={principle.id} principle={principle} image={background.image} side={background.side} />;
+            const photo = PHOTOS[principle.id];
+            if (photo) {
+              return <PhotoPrinciple key={principle.id} principle={principle} {...photo} />;
             }
             return (
               <li key={principle.id} className="shell">

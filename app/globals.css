@@ -417,33 +417,6 @@
     }
   }
 
-  /* Closing portolan chart: light runs in along the routes to the star; the ring turns.
-     Both rest while the chart is off screen. */
-  .portolan-pulse {
-    stroke-dasharray: 0.06 0.94;
-    stroke-dashoffset: 0.06;
-    animation: portolan-pulse 6.5s linear infinite;
-    animation-play-state: paused;
-  }
-  .portolan-ring {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: flow-spin 90s linear infinite;
-    animation-play-state: paused;
-  }
-  .is-live .portolan-pulse,
-  .is-live .portolan-ring {
-    animation-play-state: running;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .portolan-pulse {
-      display: none;
-    }
-    .portolan-ring {
-      animation: none;
-    }
-  }
-
   /* Market clocks: the hands turn about the dial's centre; the second hand ticks */
   .clock-hand {
     transform-box: view-box;
@@ -621,15 +594,6 @@
 @keyframes vm-march {
   to {
     stroke-dashoffset: -11;
-  }
-}
-
-@keyframes portolan-pulse {
-  from {
-    stroke-dashoffset: 0.06;
-  }
-  to {
-    stroke-dashoffset: -0.94;
   }
 }
 
