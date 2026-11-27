@@ -21,13 +21,13 @@ Values still in `[BRACKETS]` are treated as “not configured”. Set them in **
 
 | Variable | Example | Used for |
 | --- | --- | --- |
-| `NEXT_PUBLIC_CONTACT_PHONE` | `+966 5X XXX XXXX` | The "Call Ventrion" buttons (contact section, closing, mobile menu, portal) and the footer |
+| `NEXT_PUBLIC_CONTACT_PHONE` | `+966 5X XXX XXXX` | The "Arrange a meeting" buttons (contact section, closing, mobile menu, portal), which dial it, and the footer |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | `+9665XXXXXXXX` | Contact section and footer (`wa.me` link with a pre-filled message); hidden until set |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | defaults to `info@ventrion.sa` | Contact section, footer, structured data |
 | `NEXT_PUBLIC_COMPANY_LEGAL_NAME` | `Ventrion Company` | Privacy policy and terms |
 | `NEXT_PUBLIC_SITE_URL` | `https://www.yourdomain.com` | Canonical URLs, sitemap, Open Graph (falls back to the Vercel URL) |
 
-Until the telephone number is set, the call buttons read "Request a call" and open an email to Ventrion asking for a call back.
+Until the telephone number is set, those buttons read "Request a meeting" and open an email to Ventrion asking to arrange one. The site speaks of meetings, never of calls.
 
 ### 2. Client portal ("Track your progress")
 

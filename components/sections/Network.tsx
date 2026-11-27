@@ -102,7 +102,7 @@ export function Network() {
           </p>
         </Reveal>
         <SplitHeading id="network-title" className="display-xl mt-6 max-w-[16ch] text-balance text-ivory">
-          It is created by knowing <em className="text-burgundy">who to call.</em>
+          It is created by knowing <em className="text-burgundy">the right people.</em>
         </SplitHeading>
       </div>
 
@@ -208,10 +208,9 @@ export function Network() {
               The shortest path to a <em className="text-burgundy">serious</em> counterpart.
             </p>
             <p data-reveal className="mt-6 text-[16px] leading-[1.8] text-mist">
-              We value our clients&rsquo; time as much as they do, and we are candid from the first call: if we cannot
-              help, we say so. Wherever possible, we go straight to the principals; where we cannot, we work only through
-              people we know and trust. Every counterpart is qualified before we bring them to the table, so our clients
-              meet only parties who are serious and ready to do business.
+              We value our clients&rsquo; time as much as they do, and we are candid from the first meeting. We work with
+              principals as peers, and only with counterparts we know and trust. Every counterpart is qualified before we
+              bring them to the table, so our clients meet only parties who are serious and ready to do business.
             </p>
           </Reveal>
         </div>

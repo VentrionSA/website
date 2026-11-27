@@ -53,7 +53,7 @@ export type Statement = {
 };
 
 export const VISION: Statement = {
-  statement: "To be the *first call* for trusted trade across the Middle East, Central Asia and Asia.",
+  statement: "To be the *first choice* for trusted trade across the Middle East, Central Asia and Asia.",
   support: "Known for the opportunities we create, the time we save and the trust we keep.",
 };
 
@@ -80,10 +80,10 @@ export const PRINCIPLES: Principle[] = [
   {
     id: "principals",
     title: "Principals We *Know*",
-    lead: "We prefer *direct relationships* over chains of intermediaries.",
+    lead: "We build *direct relationships*, not chains of intermediaries.",
     body: [
-      "Wherever possible, Ventrion deals with the principals themselves: the decision-makers our clients need to reach, whether they are looking for a buyer or a seller. Many of these relationships have developed through years of cooperation.",
-      "This creates something that cannot be achieved by working through a chain of intermediaries:",
+      "Ventrion works with the principals themselves, as peers: the decision-makers our clients need to reach, whether they are looking for a buyer or a seller. Many of these relationships have grown through years of cooperation.",
+      "This creates something no chain of intermediaries can match:",
     ],
     closing: "accountability between people who expect to work together again.",
   },
@@ -104,6 +104,6 @@ export const PRINCIPLES: Principle[] = [
     body: [
       "Our network spans markets thousands of kilometres apart. Our clients are never passed along a chain: they deal with the people at Ventrion who know their engagement, and who answer to them personally.",
     ],
-    closing: "One call reaches the whole network.",
+    closing: "One meeting opens the whole network.",
   },
 ];

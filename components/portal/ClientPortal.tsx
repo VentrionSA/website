@@ -530,7 +530,7 @@ function PortalDialog({ onClose }: { onClose: () => void }) {
                   <div className="mt-5 border border-[#e3a3ab]/35 bg-burgundy/15 p-4 text-[13.5px] leading-relaxed">
                     <p className="text-paper">We could not verify this Client ID.</p>
                     <p className="mt-1 text-paper/65">
-                      Check the ID and try again. If it still cannot be verified, please speak with Ventrion.
+                      Check the ID and try again. If it is still not recognised, please speak with Ventrion.
                     </p>
                     <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 font-text text-[14px]">
                       <a href={call.href} className="underline decoration-paper/30 underline-offset-4 hover:decoration-paper">

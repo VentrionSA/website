@@ -35,7 +35,7 @@ function CallBar() {
           strokeWidth={1.5}
           aria-hidden="true"
         />
-        {call.isPhone ? "Private and confidential" : "We will call you back"}
+        {call.isPhone ? "Private and confidential" : "We will be in touch"}
       </span>
     </a>
   );
@@ -58,7 +58,7 @@ export function Contact() {
           Contact
         </Eyebrow>
         <SplitHeading id="contact-title" className="display-xl mt-8 max-w-[17ch] text-balance text-ivory">
-          Every engagement begins with a <em className="text-burgundy">call.</em>
+          Every engagement begins with a <em className="text-burgundy">meeting.</em>
         </SplitHeading>
         <Reveal className="mt-7 max-w-[30rem]">
           <p className="text-balance text-[17px] leading-relaxed text-mist">

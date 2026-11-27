@@ -25,8 +25,8 @@ export const siteConfig = {
   /** Business contact details — placeholders until confirmed. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@ventrion.sa",
   /**
-   * The number the "Call Ventrion" buttons dial, written as it should be displayed.
-   * Without a number, those buttons become "Request a call" (an email asking Ventrion to call back).
+   * The number the "Arrange a meeting" buttons dial, written as it should be displayed.
+   * Without a number, those buttons become "Request a meeting" (an email asking Ventrion to be in touch).
    */
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+966 55 151 0051",
   /** International format, digits only or with +, e.g. +9665XXXXXXXX */
@@ -74,17 +74,20 @@ export function getTelHref(): string | null {
   return `tel:${plus}${display.replace(/\D/g, "")}`;
 }
 
-/** Email asking Ventrion to call back: the call action until a phone number is configured. */
+/** Email asking Ventrion to arrange a meeting: the meeting action until a phone number is configured. */
 export function getCallbackHref(): string | null {
   if (isPlaceholder(siteConfig.email)) return null;
-  const subject = "Call request";
-  const body = "Hello Ventrion,\n\nPlease call me on: \nBest time to call: \n\nName: \nCompany: ";
+  const subject = "Meeting request";
+  const body = "Hello Ventrion,\n\nI would like to arrange a meeting.\n\nTelephone: \nPreferred time: \n\nName: \nCompany: ";
   return `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-/** The single call action used across the site: dial Ventrion, or ask for a call back. */
+/**
+ * The single action used across the site to arrange a meeting: by telephone, or by email
+ * until a number is configured. (The site speaks of meetings, never of calls.)
+ */
 export function getCallAction(): { href: string; label: string; detail: string; isPhone: boolean } {
   const tel = getTelHref();
-  if (tel) return { href: tel, label: "Call Ventrion", detail: getPhoneDisplay() ?? "", isPhone: true };
-  return { href: getCallbackHref() ?? "/#contact", label: "Request a call", detail: "We will call you back", isPhone: false };
+  if (tel) return { href: tel, label: "Arrange a meeting", detail: getPhoneDisplay() ?? "", isPhone: true };
+  return { href: getCallbackHref() ?? "/#contact", label: "Request a meeting", detail: "We will be in touch", isPhone: false };
 }

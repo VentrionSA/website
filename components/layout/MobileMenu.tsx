@@ -128,7 +128,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                 >
                   <span className="flex items-center gap-3">
                     <Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
-                    {call.isPhone ? `Call ${call.detail}` : call.label}
+                    {call.label}
                   </span>
                   <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
                 </a>
