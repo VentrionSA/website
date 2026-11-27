@@ -33,16 +33,19 @@ export function Hero() {
       {/* The wake */}
       <div className="relative isolate flex min-h-[34rem] flex-1 flex-col overflow-hidden">
         <div data-hero-media aria-hidden="true" className="absolute inset-0 -z-20 origin-top will-change-transform">
-          <Image
-            src={BACKDROPS.hero}
-            alt=""
-            fill
-            priority
-            quality={88}
-            placeholder="blur"
-            sizes="(min-aspect-ratio: 195/100) 100vw, 180svh"
-            className="object-cover object-[74%_50%] md:object-[80%_50%] lg:object-right"
-          />
+          {/* a slow push along the wake, towards the ship: the picture is never quite still */}
+          <div className="hero-drift absolute inset-0">
+            <Image
+              src={BACKDROPS.hero}
+              alt=""
+              fill
+              priority
+              quality={88}
+              placeholder="blur"
+              sizes="(min-aspect-ratio: 195/100) 100vw, 180svh"
+              className="object-cover object-[74%_50%] md:object-[80%_50%] lg:object-right"
+            />
+          </div>
         </div>
         <div aria-hidden="true" className="hero-veil absolute inset-0 -z-10" />
 

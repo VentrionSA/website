@@ -2,6 +2,7 @@ import Image, { type StaticImageData } from "next/image";
 import type { Principle } from "@/lib/content";
 import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
+import { Drift } from "@/components/ui/Drift";
 
 /** The principles' titles: large, solid, set in the display serif. */
 export const PRINCIPLE_TITLE =
@@ -40,13 +41,15 @@ export function IllustratedPrinciple({
           artRight ? "sm:justify-self-end xl:mr-[2vw]" : "sm:justify-self-start xl:ml-[2vw]"
         }`}
       >
-        <Image
-          src={image}
-          alt=""
-          sizes="(min-width: 1280px) min(70vw, 1152px), (min-width: 640px) 86vw, 100vw"
-          quality={85}
-          className={`h-auto w-full ${ART_OPACITY}`}
-        />
+        <Drift>
+          <Image
+            src={image}
+            alt=""
+            sizes="(min-width: 1280px) min(70vw, 1152px), (min-width: 640px) 86vw, 100vw"
+            quality={85}
+            className={`h-auto w-full ${ART_OPACITY}`}
+          />
+        </Drift>
         {/* stacked: the lower edge dissolves into the page, under the title */}
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-ink to-transparent xl:hidden" />
       </Reveal>

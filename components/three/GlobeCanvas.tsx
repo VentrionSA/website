@@ -2,11 +2,12 @@
 
 import { memo, useEffect, useMemo, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { PerformanceMonitor } from "@react-three/drei";
+import { Line, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
+import type { Line2, LineSegments2 } from "three-stdlib";
 import { MARKETS } from "@/lib/content";
 import countryData from "@/lib/geo/countries.json";
-import { latLonToVector3 } from "./geo";
+import { arcPoints, latLonToVector3 } from "./geo";
 
 type Tier = "high" | "low";
 /**
@@ -381,6 +382,68 @@ const Marker = memo(function Marker({
   );
 });
 
+/* ── Routes: the network, alive ────────────────────────────────────────── */
+
+const DOT_GEOMETRY = new THREE.SphereGeometry(1, 12, 10);
+/** Seconds: each route draws out, then a light travels it, rests, and goes again. */
+const ROUTE = { draw: 1.1, stagger: 0.08, travel: 2.6, rest: 1.2 };
+
+/**
+ * One route from the market in focus: a fine line that draws itself out along the great
+ * circle, then a burgundy light that keeps travelling it outwards.
+ */
+function Route({ points, order, calm }: { points: THREE.Vector3[]; order: number; calm: boolean }) {
+  const line = useRef<Line2 | LineSegments2>(null);
+  const light = useRef<THREE.Mesh>(null);
+  const born = useRef<number | null>(null);
+  const segments = points.length - 1;
+
+  useFrame(({ clock }) => {
+    const now = clock.getElapsedTime();
+    if (born.current === null) born.current = now;
+    const age = now - born.current - order * ROUTE.stagger;
+    const geometry = line.current?.geometry as THREE.InstancedBufferGeometry | undefined;
+    if (geometry) {
+      const drawn = calm ? 1 : THREE.MathUtils.clamp(age / ROUTE.draw, 0, 1);
+      geometry.instanceCount = Math.round((1 - Math.pow(1 - drawn, 3)) * segments);
+    }
+    const dot = light.current;
+    if (!dot) return;
+    const t = calm || age < ROUTE.draw ? -1 : ((age - ROUTE.draw) % (ROUTE.travel + ROUTE.rest)) / ROUTE.travel;
+    dot.visible = t >= 0 && t <= 1;
+    if (!dot.visible) return;
+    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const f = eased * segments;
+    const i = Math.min(Math.floor(f), segments - 1);
+    dot.position.lerpVectors(points[i], points[i + 1], f - i);
+  });
+
+  return (
+    <>
+      <Line ref={line} points={points} color={GREEN} lineWidth={1.25} transparent opacity={0.5} depthWrite={false} />
+      <mesh ref={light} geometry={DOT_GEOMETRY} scale={0.0085} visible={false} renderOrder={4}>
+        <meshBasicMaterial color={BURGUNDY} toneMapped={false} />
+      </mesh>
+    </>
+  );
+}
+
+/** Routes from the market in focus to the rest of the network, drawn afresh whenever the focus moves. */
+function Routes({ focusIndex, calm }: { focusIndex: number; calm: boolean }) {
+  const routes = useMemo(() => {
+    const from = MARKETS[focusIndex];
+    return MARKETS.flatMap((to, i) => (i === focusIndex ? [] : [{ i, points: arcPoints(from, to, { radius: 1.004, segments: 72 }) }]));
+  }, [focusIndex]);
+
+  return (
+    <group key={focusIndex}>
+      {routes.map((route, n) => (
+        <Route key={route.i} points={route.points} order={n} calm={calm} />
+      ))}
+    </group>
+  );
+}
+
 /* ── Rotation rig ──────────────────────────────────────────────────────── */
 
 function targetFor(index: number) {
@@ -653,6 +716,7 @@ export default function GlobeCanvas({ focusIndex, orientIndex, onHover, onSelect
         />
         <Rig orientIndex={orientIndex} drag={drag}>
           <GlobeBody focusIndex={focusIndex} tier={tier} calm={calm} />
+          <Routes focusIndex={focusIndex} calm={calm} />
           {MARKETS.map((_, i) => (
             <Marker key={i} index={i} focused={i === focusIndex} calm={calm} drag={drag} onHover={onHover} onSelect={onSelect} />
           ))}

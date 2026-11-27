@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/Hero";
 import { Introduction } from "@/components/sections/Introduction";
+import { VisionMission } from "@/components/sections/VisionMission";
 import { Network } from "@/components/sections/Network";
 import { Principles } from "@/components/sections/Principles";
 import { Closing } from "@/components/sections/Closing";
@@ -15,6 +16,7 @@ export default function HomePage() {
       </noscript>
       <Hero />
       <Introduction />
+      <VisionMission />
       <Network />
       <Principles />
       <Closing />

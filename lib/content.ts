@@ -43,6 +43,25 @@ export const MARKETS: Market[] = [
 
 export const REGIONS: Region[] = ["Middle East", "Central Asia & Caspian", "Asia"];
 
+/* ── Vision and mission ────────────────────────────────────────────────── */
+
+export type Statement = {
+  /** Set large in the serif. *Starred* words are emphasised. */
+  statement: string;
+  /** The line beneath it. */
+  support: string;
+};
+
+export const VISION: Statement = {
+  statement: "To be the *first call* for trusted trade across the Middle East, Central Asia and Asia.",
+  support: "Known for the opportunities we create, the time we save and the trust we keep.",
+};
+
+export const MISSION: Statement = {
+  statement: "To create opportunities for our clients by facilitating trade with counterparts *we know and trust.*",
+  support: "Every counterpart vetted. Every conversation candid. Every commitment kept.",
+};
+
 /* ── Principles of the network ─────────────────────────────────────────── */
 
 export type PrincipleId = "principals" | "quality" | "distance";

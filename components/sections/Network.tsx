@@ -95,7 +95,7 @@ export function Network() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-mark/25 to-transparent" />
 
       <div className="shell relative">
-        <Eyebrow index="02">The Network</Eyebrow>
+        <Eyebrow index="03">The Network</Eyebrow>
         <Reveal className="mt-10">
           <p className="display-sm max-w-[30ch] text-balance text-mist">
             <em className="text-ivory">International reach</em> is not created by having thousands of names in a directory.

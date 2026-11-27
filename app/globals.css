@@ -375,6 +375,96 @@
     }
   }
 
+  /* Vision and mission: the sea keeps moving and the ship rides it, the sun's rings breathe
+     and its light glints; the course holds with a faint sway while its dashes run on */
+  .vm-wave {
+    animation: vm-wave 16s linear infinite;
+  }
+  .vm-rings {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: vm-breathe 5.5s ease-in-out infinite alternate;
+  }
+  .vm-glint {
+    animation: vm-glint 2.8s ease-in-out infinite alternate;
+  }
+  .vm-drift {
+    animation: vm-drift 34s ease-in-out infinite alternate;
+  }
+  .vm-ship {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: vm-bob 4.6s ease-in-out infinite alternate;
+  }
+  .vm-sway {
+    transform-box: view-box;
+    transform-origin: 150px 104px;
+    animation: vm-sway 5.2s ease-in-out infinite alternate;
+  }
+  .vm-course {
+    stroke-dasharray: 5 6;
+    animation: vm-march 1.4s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vm-wave,
+    .vm-rings,
+    .vm-glint,
+    .vm-drift,
+    .vm-ship,
+    .vm-sway,
+    .vm-course {
+      animation: none;
+    }
+  }
+
+  /* Closing portolan chart: light runs in along the routes to the star; the ring turns.
+     Both rest while the chart is off screen. */
+  .portolan-pulse {
+    stroke-dasharray: 0.06 0.94;
+    stroke-dashoffset: 0.06;
+    animation: portolan-pulse 6.5s linear infinite;
+    animation-play-state: paused;
+  }
+  .portolan-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: flow-spin 90s linear infinite;
+    animation-play-state: paused;
+  }
+  .is-live .portolan-pulse,
+  .is-live .portolan-ring {
+    animation-play-state: running;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .portolan-pulse {
+      display: none;
+    }
+    .portolan-ring {
+      animation: none;
+    }
+  }
+
+  /* Market clocks: the hands turn about the dial's centre; the second hand ticks */
+  .clock-hand {
+    transform-box: view-box;
+    transform-origin: 32px 32px;
+  }
+  .clock-second {
+    transition: transform 0.28s cubic-bezier(0.3, 1.7, 0.5, 1);
+  }
+
+  /* Hero: a slow push along the wake towards the ship, and back */
+  .hero-drift {
+    transform-origin: 84% 22%;
+    animation: hero-drift 30s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-drift {
+      animation: none;
+    }
+  }
+
   /* Form controls */
   .field-input {
     width: 100%;
@@ -472,6 +562,83 @@
   }
   to {
     transform: skewY(-5deg) scaleX(0.94);
+  }
+}
+
+@keyframes vm-wave {
+  to {
+    transform: translateX(calc(-1 * var(--vm-wave-length, 48px)));
+  }
+}
+
+@keyframes vm-breathe {
+  from {
+    transform: scale(0.94);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes vm-glint {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vm-drift {
+  from {
+    transform: translateX(-12px);
+  }
+  to {
+    transform: translateX(16px);
+  }
+}
+
+@keyframes vm-bob {
+  from {
+    transform: translateY(0.6px) rotate(-1deg);
+  }
+  to {
+    transform: translateY(-0.6px) rotate(0.8deg);
+  }
+}
+
+@keyframes vm-sway {
+  from {
+    transform: rotate(-0.9deg);
+  }
+  to {
+    transform: rotate(0.9deg);
+  }
+}
+
+@keyframes vm-march {
+  to {
+    stroke-dashoffset: -11;
+  }
+}
+
+@keyframes portolan-pulse {
+  from {
+    stroke-dashoffset: 0.06;
+  }
+  to {
+    stroke-dashoffset: -0.94;
+  }
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
   }
 }
 

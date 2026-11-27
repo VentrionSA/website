@@ -5,8 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import { PortalTrigger } from "@/components/portal/ClientPortal";
 import { getCallAction, getMailtoHref, getWhatsAppHref, siteConfig } from "@/lib/site";
-import { SectionBackdrop } from "@/components/ui/SectionBackdrop";
-import { BACKDROPS } from "@/lib/backdrops";
+import { MarketClocks } from "./contact/MarketClocks";
 
 /** The call to action that closes the page: one wide burgundy bar, the number set large. */
 function CallBar() {
@@ -51,9 +50,8 @@ export function Contact() {
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
-      <SectionBackdrop src={BACKDROPS.contact} wash={0.8} side="both" saturate={0.45} />
       <div className="shell relative flex flex-col items-center text-center">
-        <Eyebrow index="04" align="center">
+        <Eyebrow index="05" align="center">
           Contact
         </Eyebrow>
         <SplitHeading id="contact-title" className="display-xl mt-8 max-w-[17ch] text-balance text-ivory">
@@ -108,6 +106,11 @@ export function Contact() {
               </span>
             </PortalTrigger>
           </div>
+        </Reveal>
+
+        {/* the clock wall: the time where our markets are, right now */}
+        <Reveal className="mt-20 w-full max-w-[60rem] border-t border-line pt-12 sm:mt-24" delay={0.1}>
+          <MarketClocks />
         </Reveal>
       </div>
     </section>
