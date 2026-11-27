@@ -7,32 +7,8 @@ import { KeyRound } from "lucide-react";
 import { LogoLockup } from "@/components/brand/Logo";
 import { PortalTrigger } from "@/components/portal/ClientPortal";
 import { NAV_LINKS } from "@/lib/content";
+import { useActiveSection } from "@/lib/useActiveSection";
 import { MobileMenu } from "./MobileMenu";
-
-function useActiveSection(ids: string[], enabled: boolean) {
-  const [active, setActive] = useState<string | null>(null);
-  useEffect(() => {
-    if (!enabled) return;
-    const els = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
-    if (!els.length) return;
-    // Only the section crossing the middle of the screen is current; between linked
-    // sections (the figure, the principles, the closing line) no link is underlined.
-    const inBand = new Set<string>();
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) inBand.add(entry.target.id);
-          else inBand.delete(entry.target.id);
-        });
-        setActive(ids.find((id) => inBand.has(id)) ?? null);
-      },
-      { rootMargin: "-45% 0px -50% 0px" },
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [ids, enabled]);
-  return active;
-}
 
 const SECTION_IDS = NAV_LINKS.map((l) => l.href.replace("/#", ""));
 

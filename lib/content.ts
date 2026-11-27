@@ -11,6 +11,17 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/#contact", label: "Contact" },
 ];
 
+/** The phone menu: every section, numbered as on the page, each with a line of its own. */
+export type MenuLink = NavLink & { index: string; note: string };
+
+export const MENU_LINKS: MenuLink[] = [
+  { href: "/#about", label: "About", index: "01", note: "Independent trade facilitation" },
+  { href: "/#vision", label: "Vision & Mission", index: "02", note: "A clear horizon. A steady course." },
+  { href: "/#network", label: "Network", index: "03", note: "Middle East · Central Asia · Asia" },
+  { href: "/#principles", label: "Principles", index: "04", note: "Trust does." },
+  { href: "/#contact", label: "Contact", index: "05", note: "Every engagement begins with a meeting." },
+];
+
 /** The regions named in the band beneath the hero. */
 export const HERO_REGIONS = ["Middle East", "Central Asia", "Asia"] as const;
 
