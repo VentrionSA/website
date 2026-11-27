@@ -51,7 +51,7 @@ export function Contact() {
   const mail = getMailtoHref();
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
+    <section id="contact" aria-labelledby="contact-title" className="relative isolate overflow-clip bg-ink pb-[clamp(6rem,12vw,11rem)] pt-[clamp(3.5rem,7vw,6.5rem)]">
       <SectionBackdrop src={BACKDROPS.contact} wash={0.8} side="both" saturate={0.45} />
       <div className="shell relative flex flex-col items-center text-center">
         <Eyebrow index="05" align="center">

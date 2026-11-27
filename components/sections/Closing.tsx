@@ -35,7 +35,7 @@ export function Closing() {
       ref={root}
       id="closing"
       aria-labelledby="closing-title"
-      className="relative isolate flex min-h-[88svh] items-center overflow-clip bg-ink py-[clamp(7rem,14vw,12rem)]"
+      className="relative isolate flex min-h-[88svh] items-center overflow-clip bg-ink pb-[clamp(3.5rem,7vw,6.5rem)] pt-[clamp(7rem,14vw,12rem)]"
     >
       <SectionBackdrop src={BACKDROPS.closing} wash={0.55} side="both" saturate={0.55} />
       <div className="shell relative flex flex-col items-center text-center">
