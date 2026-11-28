@@ -438,6 +438,20 @@
     }
   }
 
+  /* Principle photographs: the picture itself fades out at its edges (a mask, so no layer of
+     page colour sits over a moving picture). Stacked, the lower edge dissolves under the title;
+     from 1280px, where the photograph is the band's background, the top and bottom do. */
+  .photo-fade {
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgb(0 0 0 / 0.45) 79%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 58%, rgb(0 0 0 / 0.45) 79%, transparent 100%);
+  }
+  @media (min-width: 1280px) {
+    .photo-fade {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    }
+  }
+
   /* Form controls */
   .field-input {
     width: 100%;

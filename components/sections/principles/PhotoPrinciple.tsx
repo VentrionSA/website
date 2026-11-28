@@ -36,14 +36,14 @@ export function PhotoPrinciple({
 
   return (
     <li className="relative isolate xl:flex xl:min-h-[min(88svh,52vw)] xl:items-center">
-      {/* The photograph: a block above the copy, then from 1280px the band's background */}
-      <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/9] xl:absolute xl:inset-0 xl:-z-10 xl:aspect-auto">
+      {/* The photograph: a block above the copy, then from 1280px the band's background. Its edges
+          fade out by a mask on the photograph itself (photo-fade), not by a layer of page colour laid
+          over it: Safari can leave a hairline of the moving picture showing past such a layer. */}
+      <div className="photo-fade relative aspect-[4/3] overflow-hidden sm:aspect-[16/9] xl:absolute xl:inset-0 xl:-z-10 xl:aspect-auto">
         <Drift className="absolute inset-x-0 -inset-y-[7%]" distance={6} scale={1.06}>
           <Image src={image} alt={alt} fill sizes="100vw" quality={82} placeholder="blur" className="object-cover" style={{ objectPosition: position }} />
         </Drift>
-        {/* stacked: the lower edge dissolves into the page, under the title */}
-        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-ink via-ink/55 to-transparent xl:hidden" />
-        {/* 1280px up: the page colour reaches in from the copy's side, and softens the band's edges */}
+        {/* 1280px up: the page colour reaches in from the copy's side */}
         <div
           aria-hidden="true"
           className={`absolute inset-0 hidden xl:block ${
@@ -52,8 +52,6 @@ export function PhotoPrinciple({
               : "bg-[linear-gradient(270deg,var(--color-ink)_0%,var(--color-ink)_26%,color-mix(in_srgb,var(--color-ink)_86%,transparent)_36%,color-mix(in_srgb,var(--color-ink)_45%,transparent)_48%,transparent_64%)]"
           }`}
         />
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 hidden h-[16%] bg-gradient-to-b from-ink to-transparent xl:block" />
-        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 hidden h-[16%] bg-gradient-to-t from-ink to-transparent xl:block" />
       </div>
 
       {/* The copy */}
