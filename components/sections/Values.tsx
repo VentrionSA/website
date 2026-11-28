@@ -3,9 +3,10 @@
 import { useRef } from "react";
 import type { StaticImageData } from "next/image";
 import { gsap, MOTION_QUERIES, useGSAP } from "@/lib/gsap";
-import { PRINCIPLES, VALUES, type PrincipleId } from "@/lib/content";
+import { PRINCIPLES, type PrincipleId } from "@/lib/content";
 import { Reveal } from "@/components/ui/Reveal";
 import { Emphasis } from "@/components/ui/Emphasis";
+import { Ornament } from "@/components/ui/Ornament";
 import { WayWeWork } from "./principles/WayWeWork";
 import { TradingHouse } from "./principles/diagrams/TradingHouse";
 import { PhotoPrinciple, PRINCIPLE_TITLE } from "./principles/PhotoPrinciple";
@@ -82,40 +83,21 @@ function TrustStatement() {
 }
 
 /**
- * The close of "Mission, Vision & Values": what Ventrion holds to. "Trust does.", the four
- * values in a line each, the eagles ("The way we work"), and the commitments that put the
- * values into practice.
+ * The values in practice, closing "Mission, Vision & Values" (the values themselves are its
+ * third panel, in MissionVision.tsx): "Trust does.", the eagles ("The way we work"), and the
+ * commitments.
  */
 export function Values() {
   return (
-    <section id="values" aria-labelledby="values-title" className="relative isolate overflow-clip bg-ink pt-[clamp(3rem,6vw,5.5rem)]">
+    <section id="values" aria-labelledby="values-title" className="relative isolate overflow-clip bg-ink pt-[clamp(3.5rem,7vw,6rem)]">
       <div className="shell relative flex flex-col items-center text-center">
-        <p className="flex items-center gap-4 font-text text-[12px] font-medium uppercase tracking-[0.2em] text-ivory sm:text-[13px]">
-          <span aria-hidden="true" className="h-px w-10 bg-burgundy sm:w-12" />
-          <span className="-mr-[0.2em]">Our values</span>
-          <span aria-hidden="true" className="h-px w-10 bg-burgundy sm:w-12" />
-        </p>
-        <Reveal className="mt-10">
+        <Ornament />
+        <Reveal className="mt-[clamp(3rem,6vw,4.5rem)]">
           <p className="display-md max-w-[24ch] text-balance text-mist">
             <em className="text-ivory">Network size alone</em> is not what matters to us.
           </p>
         </Reveal>
         <TrustStatement />
-
-        {/* the values, a line each */}
-        <Reveal
-          as="ul"
-          stagger={0.1}
-          className="mt-[clamp(3.5rem,7vw,6rem)] grid w-full max-w-6xl grid-cols-1 gap-y-9 border-t border-line pt-10 text-left sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-4 lg:gap-x-8 lg:pt-12"
-        >
-          {VALUES.map((value) => (
-            <li key={value.name} data-reveal>
-              <span aria-hidden="true" className="block h-px w-8 bg-burgundy" />
-              <p className="mt-5 font-serif text-[1.75rem] leading-tight text-ivory sm:text-[2rem]">{value.name}</p>
-              <p className="mt-3 max-w-[26rem] text-[15.5px] leading-[1.7] text-mist">{value.line}</p>
-            </li>
-          ))}
-        </Reveal>
       </div>
 
       <WayWeWork />

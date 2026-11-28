@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogoMark, LogoWordmark } from "@/components/brand/Logo";
+import { Ornament } from "@/components/ui/Ornament";
 import { PortalTrigger } from "@/components/portal/ClientPortal";
 import { NAV_LINKS } from "@/lib/content";
 import { getMailtoHref, getPhoneDisplay, getTelHref, getWhatsAppHref, siteConfig } from "@/lib/site";
@@ -15,7 +16,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden border-t border-line bg-ink" aria-labelledby="footer-heading">
+    <footer className="relative overflow-hidden bg-ink" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
@@ -27,15 +28,17 @@ export function Footer() {
       >
         <LogoMark className="float-mark h-[70vw] w-auto max-h-[620px] lg:h-[30vw]" />
       </div>
-      <div className="shell relative pb-10 pt-24 lg:pt-32">
+      <div className="shell relative pb-10 pt-6 lg:pt-10">
+        <Ornament className="mb-14 lg:mb-20" />
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-6">
             <a href="/#top" className="inline-flex items-center gap-4 text-ivory" aria-label="Ventrion — back to top">
               <LogoMark className="h-12 w-auto text-mark" />
               <LogoWordmark className="h-[15px] w-auto" />
             </a>
-            <p className="display-sm mt-10 max-w-[22ch] text-ivory">
-              Creating opportunities. <em className="text-burgundy">In every direction.</em>
+            <p className="display-sm mt-10 text-ivory">
+              <span className="block">Creating opportunities.</span>
+              <em className="block text-burgundy">In every direction.</em>
             </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-mist">An independent trade facilitation company.</p>
           </div>

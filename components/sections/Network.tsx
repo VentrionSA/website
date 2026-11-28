@@ -8,6 +8,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { SplitHeading } from "@/components/ui/SplitHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { ElementTable } from "./network/ElementTable";
+import { MarketTicker } from "./network/MarketTicker";
 
 const loadGlobe = () => import("@/components/three/GlobeCanvas");
 const GlobeCanvas = dynamic(loadGlobe, { ssr: false });
@@ -91,10 +92,10 @@ export function Network() {
   }, []);
 
   return (
-    <section id="network" aria-labelledby="network-title" className="relative isolate overflow-clip bg-ink py-[clamp(6rem,12vw,11rem)]">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-mark/25 to-transparent" />
+    <section id="network" aria-labelledby="network-title" className="relative isolate overflow-clip bg-ink pb-[clamp(3.5rem,7vw,6rem)]">
+      <MarketTicker />
 
-      <div className="shell relative">
+      <div className="shell relative mt-[clamp(4.5rem,9vw,8rem)]">
         <Eyebrow index="02">The Network</Eyebrow>
         <Reveal className="mt-10">
           <p className="display-sm max-w-[30ch] text-balance text-mist">

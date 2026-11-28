@@ -236,7 +236,7 @@ function Steps() {
           <li
             key={step.title}
             data-reveal
-            className={`relative border-b border-line py-8 md:border-b-0 md:py-10 ${i > 0 ? "md:border-l md:pl-8 lg:pl-10" : ""} ${i < 2 ? "md:pr-8 lg:pr-10" : ""}`}
+            className={`relative border-b border-line py-8 last:border-b-0 md:border-b-0 md:py-10 ${i > 0 ? "md:border-l md:pl-8 lg:pl-10" : ""} ${i < 2 ? "md:pr-8 lg:pr-10" : ""}`}
           >
             {/* a mark on the rule above each step: the last one in burgundy */}
             <span
@@ -254,7 +254,7 @@ function Steps() {
 
 export function Introduction() {
   return (
-    <section id="about" aria-labelledby="about-title" className="relative isolate overflow-clip bg-ink py-[clamp(7rem,14vw,12rem)]">
+    <section id="about" aria-labelledby="about-title" className="relative isolate overflow-clip bg-ink pb-[clamp(4rem,8vw,7rem)] pt-[clamp(7rem,14vw,12rem)]">
       <div className="shell flex flex-col items-center text-center">
         <Eyebrow index="01" align="center">
           Independent Trade Facilitation
