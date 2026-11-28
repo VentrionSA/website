@@ -1,6 +1,17 @@
 import { Fragment } from "react";
 import { MARKETS } from "@/lib/content";
-import { LogoMark } from "@/components/brand/Logo";
+
+/**
+ * A small four-pointed star in the shape of the Ventrion star, for sizes too small to show
+ * the mark's detail (and light enough to repeat: the full mark is 14 KB of drawing).
+ */
+function StarGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="-6 -6 12 12" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M0-6 1.4-1.4 6 0 1.4 1.4 0 6-1.4 1.4-6 0-1.4-1.4Z" />
+    </svg>
+  );
+}
 
 /**
  * The network's markets passing slowly by, between hairlines, as on a trading floor's
@@ -15,7 +26,7 @@ export function MarketTicker() {
         <span className="whitespace-nowrap px-6 font-serif text-[1.35rem] italic leading-none text-ivory/85 sm:px-9 sm:text-[1.6rem]">
           {market.name}
         </span>
-        <LogoMark className="h-3 w-auto shrink-0 text-burgundy/70 sm:h-3.5" />
+        <StarGlyph className="h-3 w-3 shrink-0 text-burgundy/70 sm:h-3.5 sm:w-3.5" />
       </Fragment>
     ));
 
